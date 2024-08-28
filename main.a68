@@ -1,0 +1,56 @@
+#!/usr/bin/a68g --script #
+# -*- coding: utf-8 -*- #
+
+PR include "types.a68" PR;
+PR include "ops.a68" PR;
+PR include "csv.a68" PR;
+
+[0] INT now := local time;
+# year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+DATE now date = (now[3], now[2], now[1]);
+TIME now time = (now[4], now[5]);
+
+[] TASK tasks = (
+	(1, "Take a shower", "", "", FALSE, pending, now date, (no time, no time), today),
+	(2, "Water plants", "", "", FALSE, done, now date, (no time, no time), today),
+	(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", "", FALSE, pending, now date, (no time, no time), today),
+	(4, "Buy chips", "", "", FALSE, done, now date, (no time, no time), today),
+
+	(5, "Scriptures Study", "", "", FALSE, pending, now date, (now time, now time), today),
+	(6, "Lunch", "", "", FALSE, done, now date, (now time, now time), today),
+	(7, "Math Study", "Some description for my math class this is a course I purchased yey", "", FALSE, pending, now date, (now time, now time), today),
+	(8, "Portuguese Study", "", "The teacher canceled for some illness", FALSE, canceled, now date, (now time, now time), today)
+);
+
+FILE f;
+INT err := open(f, "./tasks.csv", stand out channel);
+
+IF err = 0 THEN
+	putf(f, ($gl$, task csv header));
+
+	FOR i TO UPB tasks DO
+		putf(f, (task csv fmt, tasks[i]))
+	OD;
+
+	close(f)
+ELSE
+	printf(($"Error: "gl$, err))
+FI;
+
+IF a68g argc = 1 THEN
+	err := open(f, "./tasks.csv", stand in channel);
+
+	IF err /= 0 THEN
+		printf(($"Error: "gl$, err));
+		exit(1)
+	FI;
+
+	CSV regs = read csv(f);
+
+	FOR i TO UPB regs DO
+		TASK task = csv to task(regs[i]);
+		printf((task csv fmt, task))
+	OD;
+
+	close(f)
+FI

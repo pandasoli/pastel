@@ -1,0 +1,111 @@
+# -*- coding: utf-8 -*- #
+
+MODE FLEXCSVFIELD = STRING;
+MODE CSVFIELDS = [0] FLEXCSVFIELD;
+MODE FLEXCSVFIELDS =  REF CSVFIELDS;
+MODE CSV = [0] FLEXCSVFIELDS;
+MODE FLEXCSV = REF CSV;
+
+OP +:= = (REF FLEXCSVFIELDS in out, FLEXCSVFIELD item) REF FLEXCSVFIELDS: (
+	HEAP [UPB in out + 1] FLEXCSVFIELD new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+OP +:= = (REF FLEXCSV in out, FLEXCSVFIELDS item) REF FLEXCSV: (
+	HEAP [UPB in out + 1] FLEXCSVFIELDS new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item; # identifier ELEMs are HEAP, so not a potential scope violation #
+	in out := new
+);
+
+CHAR nl = REPR 10;
+
+PROC read csv = (REF FILE csv) FLEXCSV: (
+	FLEXCSVFIELD chunk := "";
+	INT chunk counter := 0;
+	INT fields count := 0;
+	INT line count := 0;
+	BOOL finished := FALSE;
+
+	PROC current = CHAR: chunk[chunk counter];
+
+	PROC next = CHAR: (
+		IF chunk counter = 0 OR chunk counter + 1 > UPB chunk THEN
+			getf(csv, ($gl$, chunk));
+			chunk +:= nl;
+
+			chunk counter := 0;
+			line count +:= 1
+		FI;
+
+		chunk counter +:= 1;
+		chunk[chunk counter]
+	);
+
+	next;
+
+	PROC parse = FLEXCSVFIELDS: (
+		on logical file end(csv, (REF FILE eof csv) BOOL: ( done eof; TRUE ));
+
+		FLEXCSVFIELDS fields := HEAP CSVFIELDS := "";
+		BOOL in quotes := FALSE;
+		INT quote start := 0;
+
+		DO
+			IF in quotes THEN
+				IF current = """" THEN
+					# This probably would generate an error if eof
+						but I couldn't check it #
+					IF next = """" THEN
+						fields[UPB fields] +:= """";
+						next
+					ELSE
+						in quotes := FALSE
+					FI
+				ELSE
+					fields[UPB fields] +:= current;
+					next
+				FI
+			ELIF current = "," THEN
+				fields +:= "";
+				next
+			ELIF current = """" THEN
+				in quotes := TRUE;
+				next
+			ELIF current = nl THEN
+				next;
+				GOTO done
+			ELSE
+				fields[UPB fields] +:= current;
+				next
+			FI
+		OD;
+
+		done eof:
+		finished := TRUE;
+
+		done:
+		IF fields count > 0 AND UPB fields /= fields count THEN
+			printf(($"Error: unexpected number of fields ("g(-0)") in line "g(-0)" (expected "g(-0)")"l$, UPB fields, line count, fields count))
+		FI;
+
+		IF in quotes THEN
+			printf(($"Error: unclosed quotes starting in line "g(-0)" column "g(-0)l$, line count, quote start))
+		FI;
+
+		fields
+	);
+
+	FLEXCSVFIELDS header = parse;
+	fields count := UPB header;
+
+	FLEXCSV regs := HEAP CSV := ();
+
+	WHILE NOT finished DO
+		regs +:= parse
+	OD;
+
+	regs
+)

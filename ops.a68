@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*- #
+
+OP TOINT = (STRING str) INT: (
+	INT n := 0, sign := 1;
+	FOR i TO UPB str WHILE sign /= 0 DO
+		IF is digit(str[i]) THEN n := n * 10 + ABS str[i] - ABS "0"
+		ELIF i = 1 AND str[i] = "-" THEN sign := -1
+		ELIF i /= 1 OR str[i] /= "+" THEN sign := 0
+		FI
+	OD;
+	n * sign
+);
+
+PROC str to date = (STRING str) DATE:
+	DATE(
+		TOINT (str[1] + str[2]),
+		TOINT (str[4] + str[5]),
+		TOINT (str[7] + str[8] + str[9] + str[10])
+	);
+
+PROC str to time = (STRING str) TIME:
+	TIME(TOINT (str[1] + str[2]), TOINT (str[4] + str[5]));
+
+PROC csv to task = (FLEXCSVFIELDS fields) TASK:
+	TASK(
+		# id # TOINT fields[1],
+		# title # fields[2],
+		# description # fields[3],
+		# reason # fields[4],
+		# in_group # fields[5] = "T",
+		# state # TOINT fields[6],
+		# date # str to date(fields[7]),
+		(
+			# start # str to time(fields[8]),
+			# finish # str to time(fields[9])
+		),
+		# repeatition # TOINT fields[10]
+	)
