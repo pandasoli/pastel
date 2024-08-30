@@ -1,6 +1,7 @@
 #!/usr/bin/a68g --script #
 # -*- coding: utf-8 -*- #
 
+PR nowarnings PR
 PR include "types.a68" PR;
 PR include "ops.a68" PR;
 PR include "csv.a68" PR;

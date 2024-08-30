@@ -48,7 +48,7 @@ OP REPR = (TIME time) STRING:
 	IF minutes OF time <= 9 THEN "0"
 	ELSE "" FI + whole(minutes OF time, 0);
 
-OP +:= = (REF FLEX [] TASK in out, TASK item) [] TASK: (
+OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	[UPB in out + 1] TASK new;
 	new[:UPB in out] := in out;
 	new[UPB new] := item;
