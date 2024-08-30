@@ -22,6 +22,8 @@ TASKREPEATITION everyweekday = 7;
 FORMAT task csv fmt = $g(-0)","""g""","""g""","""g""","g","g(-0)",", 2d"/", 2d"/", 4d",", 2d":", 2d",", 2d":", 2d","g(-0)l$;
 STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,IN_GROUP,STATUS,DATE,START,FINISH,REPETITION";
 
+CHAR esc = REPR 27;
+
 MODE TASK = STRUCT (
 	INT id,
 	STRING title,

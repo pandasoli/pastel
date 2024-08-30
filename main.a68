@@ -5,9 +5,8 @@ PR include "types.a68" PR;
 PR include "ops.a68" PR;
 PR include "csv.a68" PR;
 
-[0] INT now := local time;
-# year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-DATE now date = (now[3], now[2], now[1]);
+[0] INT now := local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+DATE now date = (now[2], now[3], now[1]);
 TIME now time = (now[4], now[5]);
 
 [] TASK tasks = (
@@ -42,15 +41,117 @@ IF a68g argc = 1 THEN
 
 	IF err /= 0 THEN
 		printf(($"Error: "gl$, err));
-		exit(1)
+		stop
 	FI;
 
 	CSV regs = read csv(f);
+	FLEX [0] TASK timed tasks;
+
+	printf($"      ╭"l$);
 
 	FOR i TO UPB regs DO
 		TASK task = csv to task(regs[i]);
-		printf((task csv fmt, task))
+
+		IF hours OF start OF time OF task /= 0 THEN # change to nil later #
+			timed tasks +:= task
+		ELSE
+			STRING effect =
+				IF state OF task = pending THEN ""
+				ELSE esc + "[9m"
+				FI;
+			STRING state =
+				IF state OF task = pending THEN "○"
+				ELIF state OF task = done THEN esc + "[32m●"
+				ELSE esc + "[31m✖"
+				FI;
+
+			printf(($"      │"g" "ggg"[m"l$, state, effect, title OF task, esc));
+
+			IF UPB description OF task > 0 THEN
+				INT i := 1;
+
+				WHILE i < UPB description OF task DO
+					INT end = min(i + 37, UPB description OF task);
+
+					WHILE (description OF task)[i] = " " DO i +:= 1
+					OD;
+
+					printf(($"      │    "gl$, (description OF task)[i:end]));
+					i +:= 37
+				OD;
+
+				printf($"      │"l$)
+			FI
+		FI
 	OD;
+
+	printf($"      │"l$);
+	printf($"      │"l$);
+
+	FOR i TO UPB timed tasks DO
+		TASK task = timed tasks[i];
+
+		BOOL show finish time =
+			hours OF finish OF time OF task > hours OF start OF time OF task OR
+			minutes OF start OF time OF task + 5 /= minutes OF finish OF time OF task;
+		BOOL show description =
+			(UPB description OF task > 0 AND state OF task /= canceled) OR
+			(UPB reason OF task > 0 AND state OF task = canceled);
+		STRING effect =
+			IF state OF task = pending THEN ""
+			ELSE esc + "[9m"
+			FI;
+		STRING state =
+			IF year OF date OF task = now[1] AND
+				 month OF date OF task = now[2] AND
+				 day OF date OF task = now[3] AND
+				 hours OF start OF time OF task <= now[4]   AND now[4] <= hours OF finish OF time OF task AND
+				 minutes OF start OF time OF task <= now[5] AND now[5] <= minutes OF finish OF time OF task THEN
+				esc + "[34m"
+			ELIF state OF task = done THEN esc + "[32m"
+			ELIF state OF task = canceled THEN esc + "[31m"
+			ELSE "" FI +
+			IF state OF task = pending THEN "○"
+			ELIF state OF task = done THEN "●"
+			ELSE "✖"
+			FI;
+
+		printf(($g" "g" "ggg"[m"l$, REPR start OF time OF task, state, effect, title OF task, esc));
+
+		IF show finish time THEN
+			printf(($g" │"$, REPR finish OF time OF task))
+		ELIF show description THEN
+			print("      │")
+		FI;
+
+		IF show description THEN
+			STRING description = (state OF task = canceled | reason OF task | description OF task);
+			INT i := 1;
+
+			WHILE i < UPB description DO
+				INT end = min(i + 37, UPB description);
+
+				WHILE description[i] = " " DO i +:= 1
+				OD;
+
+				IF state OF task = canceled AND i = 1 THEN
+					printf(($g"[31m-"g"[m   "gl$, esc, esc, description[i:end]))
+				ELSE
+					IF i > 1 THEN
+						print("      │")
+					FI;
+					printf(($"    "gl$, description[i:end]))
+				FI;
+				i +:= 37
+			OD
+		ELIF show finish time THEN
+			new line(stand out)
+		FI;
+
+		printf($"      │"l$)
+	OD;
+
+	printf($"      ╰"l$);
 
 	close(f)
 FI

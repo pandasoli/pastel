@@ -35,4 +35,22 @@ PROC csv to task = (FLEXCSVFIELDS fields) TASK:
 			# finish # str to time(fields[9])
 		),
 		# repeatition # TOINT fields[10]
-	)
+	);
+
+PROC min = (INT a, b) INT:
+	IF a < b THEN a
+	ELSE b
+	FI;
+
+OP REPR = (TIME time) STRING: 
+	IF hours OF time <= 9 THEN "0"
+	ELSE "" FI + whole(hours OF time, 0) + ":" +
+	IF minutes OF time <= 9 THEN "0"
+	ELSE "" FI + whole(minutes OF time, 0);
+
+OP +:= = (REF FLEX [] TASK in out, TASK item) [] TASK: (
+	[UPB in out + 1] TASK new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+)
