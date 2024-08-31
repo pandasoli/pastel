@@ -37,6 +37,55 @@ ELSE
 	printf(($"Error: "gl$, err))
 FI;
 
+PROC print task = (TASK task) VOID: (
+	BOOL is all day = hours OF start OF time OF task = 0;
+
+	[] STRING state =
+		IF   state OF task = pending  THEN ("○", "")
+		ELIF state OF task = done     THEN (esc + "[32m●", esc + "[9m")
+		ELIF state OF task = canceled THEN (esc + "[31m✖", esc + "[9m")
+		ELSE ("", "")
+		FI;
+
+	# left side #
+	IF is all day THEN
+		printf($"      │"$)
+	ELSE
+		printf(($g" "$, REPR start OF time OF task))
+	FI;
+
+	# right side #
+	printf(($g" "ggg"[m"l$, state[1], state[2], title OF task, esc));
+
+	# bottom #
+	STRING description = (state OF task = canceled AND UPB reason OF task > 0 | reason OF task | description OF task);
+
+	# left side #
+	IF NOT is all day THEN
+		printf(($g" │   "$, REPR finish OF time OF task))
+	ELIF UPB description > 0 THEN
+		print("      │    ")
+	FI;
+
+	# right side #
+	IF UPB description > 0 THEN
+		INT i := 1;
+		STRING right padding = (is all day | "    " | "   ");
+
+		WHILE i < UPB description DO
+			INT len = min(37, UPB description - i) + 1;
+
+			printf(($gl$, description[i:][:len]));
+			printf(($"      │"g$, right padding));
+			i +:= len
+		OD;
+
+		new line(stand out)
+	ELIF NOT is all day THEN
+		printf($l"      │"l$);
+	FI
+);
+
 IF a68g argc = 1 THEN
 	err := open(f, "./tasks.csv", stand in channel);
 
@@ -56,33 +105,7 @@ IF a68g argc = 1 THEN
 		IF hours OF start OF time OF task /= 0 THEN # change to nil later #
 			timed tasks +:= task
 		ELSE
-			STRING effect =
-				IF state OF task = pending THEN ""
-				ELSE esc + "[9m"
-				FI;
-			STRING state =
-				IF state OF task = pending THEN "○"
-				ELIF state OF task = done THEN esc + "[32m●"
-				ELSE esc + "[31m✖"
-				FI;
-
-			printf(($"      │"g" "ggg"[m"l$, state, effect, title OF task, esc));
-
-			IF UPB description OF task > 0 THEN
-				INT i := 1;
-
-				WHILE i < UPB description OF task DO
-					INT end = min(i + 37, UPB description OF task);
-
-					WHILE (description OF task)[i] = " " DO i +:= 1
-					OD;
-
-					printf(($"      │    "gl$, (description OF task)[i:end]));
-					i +:= 37
-				OD;
-
-				printf($"      │"l$)
-			FI
+			print task(task)
 		FI
 	OD;
 
@@ -91,65 +114,7 @@ IF a68g argc = 1 THEN
 
 	FOR i TO UPB timed tasks DO
 		TASK task = timed tasks[i];
-
-		BOOL show finish time =
-			hours OF finish OF time OF task > hours OF start OF time OF task OR
-			minutes OF start OF time OF task + 5 /= minutes OF finish OF time OF task;
-		BOOL show description =
-			(UPB description OF task > 0 AND state OF task /= canceled) OR
-			(UPB reason OF task > 0 AND state OF task = canceled);
-		STRING effect =
-			IF state OF task = pending THEN ""
-			ELSE esc + "[9m"
-			FI;
-		STRING state =
-			IF year OF date OF task = now[1] AND
-				 month OF date OF task = now[2] AND
-				 day OF date OF task = now[3] AND
-				 hours OF start OF time OF task <= now[4]   AND now[4] <= hours OF finish OF time OF task AND
-				 minutes OF start OF time OF task <= now[5] AND now[5] <= minutes OF finish OF time OF task THEN
-				esc + "[34m"
-			ELIF state OF task = done THEN esc + "[32m"
-			ELIF state OF task = canceled THEN esc + "[31m"
-			ELSE "" FI +
-			IF state OF task = pending THEN "○"
-			ELIF state OF task = done THEN "●"
-			ELSE "✖"
-			FI;
-
-		printf(($g" "g" "ggg"[m"l$, REPR start OF time OF task, state, effect, title OF task, esc));
-
-		IF show finish time THEN
-			printf(($g" │"$, REPR finish OF time OF task))
-		ELIF show description THEN
-			print("      │")
-		FI;
-
-		IF show description THEN
-			STRING description = (state OF task = canceled | reason OF task | description OF task);
-			INT i := 1;
-
-			WHILE i < UPB description DO
-				INT end = min(i + 37, UPB description);
-
-				WHILE description[i] = " " DO i +:= 1
-				OD;
-
-				IF state OF task = canceled AND i = 1 THEN
-					printf(($g"[31m-"g"[m   "gl$, esc, esc, description[i:end]))
-				ELSE
-					IF i > 1 THEN
-						print("      │")
-					FI;
-					printf(($"    "gl$, description[i:end]))
-				FI;
-				i +:= 37
-			OD
-		ELIF show finish time THEN
-			new line(stand out)
-		FI;
-
-		printf($"      │"l$)
+		print task(task)
 	OD;
 
 	printf($"      ╰"l$);
