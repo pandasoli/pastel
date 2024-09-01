@@ -21,21 +21,53 @@ PROC str to date = (STRING str) DATE:
 PROC str to time = (STRING str) TIME:
 	TIME(TOINT (str[1] + str[2]), TOINT (str[4] + str[5]));
 
-PROC csv to task = (FLEXCSVFIELDS fields) TASK:
+PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
+	REF TIMES time := (fields[8] = "" | NIL |
+		HEAP TIMES := (
+			# start # str to time(fields[8]),
+			# finish # (fields[9] = "" | NIL |
+				HEAP TIME := str to time(fields[9])
+			)
+		)
+	);
+
 	TASK(
 		# id # TOINT fields[1],
 		# title # fields[2],
 		# description # fields[3],
-		# reason # fields[4],
+		# reason # (fields[4] = "" | NIL | fields[4]),
 		# in_group # fields[5] = "T",
 		# state # TOINT fields[6],
 		# date # str to date(fields[7]),
-		(
-			# start # str to time(fields[8]),
-			# finish # str to time(fields[9])
-		),
+		# time # time,
 		# repeatition # TOINT fields[10]
+	)
+);
+
+PROC task to csv = (TASK task) STRING: (
+	BOOL has time = time OF task :=: REF TIMES(NIL);
+
+	[] STRING fields = (
+		# id # whole(id OF task, 0),
+		# titlle # """" + title OF task + """",
+		# description # """" + description OF task + """",
+		# reason # (reason OF task :=: REF STRING(NIL) | "" | """" + reason OF task + """"),
+		# in_group # (in_group OF task | "T" | "F"),
+		# state # whole(state OF task, 0),
+		# date # REPR date OF task,
+		# start # (has time | "" | REPR start OF time OF task),
+		# finish # (has time | "" | (finish OF time OF task :=: REF TIME(NIL) | "" | REPR finish OF time OF task)),
+		# repeatition # whole(repeatition OF task, 0)
 	);
+
+	STRING reg := "";
+
+	FOR i TO UPB fields DO
+		reg +:= fields[i] + (i < UPB fields | "," | "")
+	OD;
+
+	reg
+);
 
 PROC min = (INT a, b) INT:
 	IF a < b THEN a
@@ -43,10 +75,13 @@ PROC min = (INT a, b) INT:
 	FI;
 
 OP REPR = (TIME time) STRING: 
-	IF hours OF time <= 9 THEN "0"
-	ELSE "" FI + whole(hours OF time, 0) + ":" +
-	IF minutes OF time <= 9 THEN "0"
-	ELSE "" FI + whole(minutes OF time, 0);
+	(hours OF time <= 9 | "0" | "") + whole(hours OF time, 0) + ":" +
+	(minutes OF time <= 9 | "0" | "") + whole(minutes OF time, 0);
+
+OP REPR = (DATE date) STRING: 
+	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
+	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
+	whole(year OF date, 0);
 
 OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	[UPB in out + 1] TASK new;

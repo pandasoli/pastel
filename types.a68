@@ -27,18 +27,20 @@ TASKREPEATITION everyweekday = 7;
 FORMAT task csv fmt = $g(-0)","""g""","""g""","""g""","g","g(-0)","f(date csv fmt)","f(time csv fmt)","f(time csv fmt)","g(-0)l$;
 STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,IN_GROUP,STATUS,DATE,START,FINISH,REPETITION";
 
+MODE TIMES = STRUCT(
+	TIME start,
+	REF TIME finish # nullable #
+);
+
 MODE TASK = STRUCT (
 	INT id,
 	STRING title,
 	STRING description,
-	STRING reason, # nullable #
+	REF STRING reason, # nullable #
 	BOOL in_group,
 	TASKSTATE state,
 	DATE date,
-	STRUCT (
-		TIME start,
-		TIME finish # nullable #
-	) time, # nullable #
+	REF TIMES time,
 	TASKREPEATITION repeatition
 );
 
@@ -49,7 +51,7 @@ MODE NOTE = STRUCT (
 	INT id,
 	STRING content,
 	DATE date,
-	TIME time # nullable #
+	REF TIME time # nullable #
 );
 
 FORMAT week csv fmt = $""""g""","""g""","f(date csv fmt)l$;

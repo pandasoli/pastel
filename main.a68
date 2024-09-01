@@ -11,15 +11,15 @@ DATE now date = (now[2], now[3], now[1]);
 TIME now time = (now[4], now[5]);
 
 [] TASK tasks = (
-	(1, "Take a shower", "", "", FALSE, pending, now date, (no time, no time), today),
-	(2, "Water plants", "", "", FALSE, done, now date, (no time, no time), today),
-	(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", "", FALSE, pending, now date, (no time, no time), today),
-	(4, "Buy chips", "", "", FALSE, done, now date, (no time, no time), today),
+	(1, "Take a shower", "", NIL, FALSE, pending, now date, NIL, today),
+	(2, "Water plants", "", NIL, FALSE, done, now date, NIL, today),
+	(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, now date, NIL, today),
+	(4, "Buy chips", "", NIL, FALSE, done, now date, NIL, today),
 
-	(5, "Scriptures Study", "", "", FALSE, pending, now date, (now time, now time), today),
-	(6, "Lunch", "", "", FALSE, done, now date, (now time, now time), today),
-	(7, "Math Study", "Some description for my math class this is a course I purchased yey", "", FALSE, pending, now date, (now time, now time), today),
-	(8, "Portuguese Study", "", "The teacher canceled for some illness", FALSE, canceled, now date, (now time, now time), today)
+	(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
+	(6, "Lunch", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
+	(7, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
+	(8, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := (now time, LOC TIME := now time), today)
 );
 
 FILE f;
@@ -29,7 +29,8 @@ IF err = 0 THEN
 	putf(f, ($gl$, task csv header));
 
 	FOR i TO UPB tasks DO
-		putf(f, (task csv fmt, tasks[i]))
+		STRING str = task to csv(tasks[i]);
+		putf(f, ($gl$, str))
 	OD;
 
 	close(f)
@@ -38,7 +39,7 @@ ELSE
 FI;
 
 PROC print task = (TASK task) VOID: (
-	BOOL is all day = hours OF start OF time OF task = 0;
+	BOOL is all day = time OF task :=: REF TIMES(NIL);
 
 	[] STRING state =
 		IF   state OF task = pending  THEN ("○", "")
@@ -58,11 +59,17 @@ PROC print task = (TASK task) VOID: (
 	printf(($g" "ggg"[m"l$, state[1], state[2], title OF task, esc));
 
 	# bottom #
-	STRING description = (state OF task = canceled AND UPB reason OF task > 0 | reason OF task | description OF task);
+	STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
 
 	# left side #
 	IF NOT is all day THEN
-		printf(($g" │   "$, REPR finish OF time OF task))
+		IF finish OF time OF task :/=: REF TIME(NIL) THEN
+			printf(($g" │   "$, REPR finish OF time OF task));
+
+			IF UPB description = 0 THEN
+				new line(stand out)
+			FI
+		FI
 	ELIF UPB description > 0 THEN
 		print("      │    ")
 	FI;
@@ -82,12 +89,13 @@ PROC print task = (TASK task) VOID: (
 
 		new line(stand out)
 	ELIF NOT is all day THEN
-		printf($l"      │"l$);
+		printf($"      │"l$)
 	FI
 );
 
 IF a68g argc = 1 THEN
-	err := open(f, "./tasks.csv", stand in channel);
+	FILE f;
+	INT err := open(f, "./tasks.csv", stand in channel);
 
 	IF err /= 0 THEN
 		printf(($"Error: "gl$, err));
@@ -102,10 +110,10 @@ IF a68g argc = 1 THEN
 	FOR i TO UPB regs DO
 		TASK task = csv to task(regs[i]);
 
-		IF hours OF start OF time OF task /= 0 THEN # change to nil later #
-			timed tasks +:= task
-		ELSE
+		IF time OF task :=: REF TIMES(NIL) THEN
 			print task(task)
+		ELSE
+			timed tasks +:= task
 		FI
 	OD;
 
