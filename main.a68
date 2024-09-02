@@ -17,9 +17,10 @@ TIME now time = (now[4], now[5]);
 	(4, "Buy chips", "", NIL, FALSE, done, now date, NIL, today),
 
 	(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
-	(6, "Lunch", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
-	(7, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
-	(8, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := (now time, LOC TIME := now time), today)
+	(6, "Lunch", "Eat something healthy", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
+	(7, "Free time", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
+	(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
+	(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := (now time, LOC TIME := now time), today)
 );
 
 FILE f;
@@ -39,7 +40,9 @@ ELSE
 FI;
 
 PROC print task = (TASK task) VOID: (
-	BOOL is all day = time OF task :=: REF TIMES(NIL);
+	BOOL
+		is all day = time OF task :=: REF TIMES(NIL),
+		has finish = (is all day | FALSE | finish OF time OF task :/=: REF TIME(NIL));
 
 	[] STRING state =
 		IF   state OF task = pending  THEN ("○", "")
@@ -63,12 +66,10 @@ PROC print task = (TASK task) VOID: (
 
 	# left side #
 	IF NOT is all day THEN
-		IF finish OF time OF task :/=: REF TIME(NIL) THEN
-			printf(($g" │   "$, REPR finish OF time OF task));
-
-			IF UPB description = 0 THEN
-				new line(stand out)
-			FI
+		IF has finish THEN
+			printf(($g" │   "$, REPR finish OF time OF task))
+		ELSE
+			print("      │   ")
 		FI
 	ELIF UPB description > 0 THEN
 		print("      │    ")
@@ -89,7 +90,10 @@ PROC print task = (TASK task) VOID: (
 
 		new line(stand out)
 	ELIF NOT is all day THEN
-		printf($"      │"l$)
+		new line(stand out);
+
+		IF has finish THEN printf($"      │"l$)
+		FI
 	FI
 );
 
