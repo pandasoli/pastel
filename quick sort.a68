@@ -9,10 +9,13 @@ PROC sort tasks = (TASK a, b) BOOL: (
 	ELIF b all day THEN FALSE # b #
 	ELSE
 		INT
-			a hours   = hours   OF start OF time OF a,
-			b hours   = hours   OF start OF time OF b,
-			a minutes = minutes OF start OF time OF a,
-			b minutes = minutes OF start OF time OF b;
+			a hours   := hours   OF start OF time OF a,
+			b hours   := hours   OF start OF time OF b,
+			a minutes := minutes OF start OF time OF a,
+			b minutes := minutes OF start OF time OF b;
+
+		a hours := (a hours = 0 | 24 | a hours);
+		b hours := (b hours = 0 | 24 | b hours);
 
 		IF a hours = b hours THEN
 			IF a minutes < b minutes THEN TRUE # a #
