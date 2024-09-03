@@ -5,6 +5,7 @@ PR nowarnings PR
 PR include "types.a68" PR;
 PR include "ops.a68" PR;
 PR include "csv.a68" PR;
+PR include "quick sort.a68" PR;
 
 [0] INT now := local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
 DATE now date = (now[2], now[3], now[1]);
@@ -16,11 +17,11 @@ TIME now time = (now[4], now[5]);
 	(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, now date, NIL, today),
 	(4, "Buy chips", "", NIL, FALSE, done, now date, NIL, today),
 
-	(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
-	(6, "Lunch", "Eat something healthy", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
+	(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
+	(6, "Lunch", "Eat something healthy", NIL, FALSE, done, now date, LOC TIMES := ((12, 0), NIL), today),
 	(7, "Free time", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
-	(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := (now time, LOC TIME := now time), today),
-	(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := (now time, LOC TIME := now time), today)
+	(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := ((13, 0), NIL), today),
+	(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := ((15, 0), NIL), today)
 );
 
 FILE f;
@@ -107,26 +108,48 @@ IF a68g argc = 1 THEN
 	FI;
 
 	CSV regs = read csv(f);
-	FLEX [0] TASK timed tasks;
+	FLEX [0] TASK tasks;
+
+	FOR i TO UPB regs DO
+		tasks +:= csv to task(regs[i])
+	OD;
+
+	quick sort tasks(tasks, 1, UPB tasks, (TASK a, b) BOOL: (
+		BOOL
+			a all day = time OF a :=: REF TIMES(NIL),
+			b all day = time OF b :=: REF TIMES(NIL);
+
+		  IF a all day THEN TRUE # a #
+		ELIF b all day THEN FALSE # b #
+		ELSE
+			INT
+				a hours   = hours   OF start OF time OF a,
+				b hours   = hours   OF start OF time OF b,
+				a minutes = minutes OF start OF time OF a,
+				b minutes = minutes OF start OF time OF b;
+
+			IF a hours = b hours THEN
+				IF a minutes < b minutes THEN TRUE # a #
+				ELSE FALSE # b #
+				FI
+			ELIF a hours < b hours THEN TRUE # a #
+			ELSE FALSE # b #
+			FI
+		FI
+	));
+
+	BOOL found sep := FALSE;
 
 	printf($"      ╭"l$);
 
-	FOR i TO UPB regs DO
-		TASK task = csv to task(regs[i]);
+	FOR i TO UPB tasks DO
+		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
+			found sep := TRUE;
+			printf($"      │"l$);
+			printf($"      │"l$)
+		FI;
 
-		IF time OF task :=: REF TIMES(NIL) THEN
-			print task(task)
-		ELSE
-			timed tasks +:= task
-		FI
-	OD;
-
-	printf($"      │"l$);
-	printf($"      │"l$);
-
-	FOR i TO UPB timed tasks DO
-		TASK task = timed tasks[i];
-		print task(task)
+		print task(tasks[i])
 	OD;
 
 	printf($"      ╰"l$);

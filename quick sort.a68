@@ -1,0 +1,30 @@
+PR include "types.a68" PR;
+
+PROC swap = (REF [] TASK arr, INT i, j) VOID: (
+	TASK temp = arr[i];
+	arr[i] := arr[j];
+	arr[j] := temp
+);
+
+PROC partition = (REF [] TASK arr, INT low, high, PROC (TASK, TASK) BOOL test) INT: (
+	TASK pivot = arr[high];
+	INT i := low - 1;
+
+	FOR j FROM low TO high - 1 DO
+		IF test(arr[j], pivot) THEN
+			i +:= 1;
+			swap(arr, i, j)
+		FI
+	OD;
+
+  swap(arr, i + 1, high);
+  i + 1
+);
+
+PROC quick sort tasks = (REF [] TASK arr, INT low, high, PROC (TASK, TASK) BOOL test) VOID:
+	IF low < high THEN
+		INT pi = partition(arr, low, high, test);
+
+		quick sort tasks(arr, low, pi - 1, test);
+		quick sort tasks(arr, pi + 1, high, test)
+	FI
