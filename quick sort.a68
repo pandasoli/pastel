@@ -1,17 +1,41 @@
 PR include "types.a68" PR;
 
+PROC sort tasks = (TASK a, b) BOOL: (
+	BOOL
+		a all day = time OF a :=: REF TIMES(NIL),
+		b all day = time OF b :=: REF TIMES(NIL);
+
+		IF a all day THEN TRUE # a #
+	ELIF b all day THEN FALSE # b #
+	ELSE
+		INT
+			a hours   = hours   OF start OF time OF a,
+			b hours   = hours   OF start OF time OF b,
+			a minutes = minutes OF start OF time OF a,
+			b minutes = minutes OF start OF time OF b;
+
+		IF a hours = b hours THEN
+			IF a minutes < b minutes THEN TRUE # a #
+			ELSE FALSE # b #
+			FI
+		ELIF a hours < b hours THEN TRUE # a #
+		ELSE FALSE # b #
+		FI
+	FI
+);
+
 PROC swap = (REF [] TASK arr, INT i, j) VOID: (
 	TASK temp = arr[i];
 	arr[i] := arr[j];
 	arr[j] := temp
 );
 
-PROC partition = (REF [] TASK arr, INT low, high, PROC (TASK, TASK) BOOL test) INT: (
+PROC partition = (REF [] TASK arr, INT low, high) INT: (
 	TASK pivot = arr[high];
 	INT i := low - 1;
 
 	FOR j FROM low TO high - 1 DO
-		IF test(arr[j], pivot) THEN
+		IF sort tasks(arr[j], pivot) THEN
 			i +:= 1;
 			swap(arr, i, j)
 		FI
@@ -21,10 +45,10 @@ PROC partition = (REF [] TASK arr, INT low, high, PROC (TASK, TASK) BOOL test) I
   i + 1
 );
 
-PROC quick sort tasks = (REF [] TASK arr, INT low, high, PROC (TASK, TASK) BOOL test) VOID:
+PROC quick sort tasks = (REF [] TASK arr, INT low, high) VOID:
 	IF low < high THEN
-		INT pi = partition(arr, low, high, test);
+		INT pi = partition(arr, low, high);
 
-		quick sort tasks(arr, low, pi - 1, test);
-		quick sort tasks(arr, pi + 1, high, test)
+		quick sort tasks(arr, low, pi - 1);
+		quick sort tasks(arr, pi + 1, high)
 	FI

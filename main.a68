@@ -4,103 +4,17 @@
 PR nowarnings PR
 PR include "types.a68" PR;
 PR include "ops.a68" PR;
-PR include "csv.a68" PR;
+PR include "csv.a68" PR
 PR include "quick sort.a68" PR;
+PR include "prints.a68" PR;
 
-[0] INT now := local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-DATE now date = (now[2], now[3], now[1]);
-TIME now time = (now[4], now[5]);
-
-[] TASK tasks = (
-	(1, "Take a shower", "", NIL, FALSE, pending, now date, NIL, today),
-	(2, "Water plants", "", NIL, FALSE, done, now date, NIL, today),
-	(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, now date, NIL, today),
-	(4, "Buy chips", "", NIL, FALSE, done, now date, NIL, today),
-
-	(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
-	(6, "Lunch", "Eat something healthy", NIL, FALSE, done, now date, LOC TIMES := ((12, 0), NIL), today),
-	(7, "Free time", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
-	(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := ((13, 0), NIL), today),
-	(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := ((15, 0), NIL), today)
-);
+PR include "generate test.a68" PR;
 
 FILE f;
-INT err := open(f, "./tasks.csv", stand out channel);
-
-IF err = 0 THEN
-	putf(f, ($gl$, task csv header));
-
-	FOR i TO UPB tasks DO
-		STRING str = task to csv(tasks[i]);
-		putf(f, ($gl$, str))
-	OD;
-
-	close(f)
-ELSE
-	printf(($"Error: "gl$, err))
-FI;
-
-PROC print task = (TASK task) VOID: (
-	BOOL
-		is all day = time OF task :=: REF TIMES(NIL),
-		has finish = (is all day | FALSE | finish OF time OF task :/=: REF TIME(NIL));
-
-	[] STRING state =
-		IF   state OF task = pending  THEN ("○", "")
-		ELIF state OF task = done     THEN (esc + "[32m●", esc + "[9m")
-		ELIF state OF task = canceled THEN (esc + "[31m✖", esc + "[9m")
-		ELSE ("", "")
-		FI;
-
-	# left side #
-	IF is all day THEN
-		printf($"      │"$)
-	ELSE
-		printf(($g" "$, REPR start OF time OF task))
-	FI;
-
-	# right side #
-	printf(($g" "ggg"[m"l$, state[1], state[2], title OF task, esc));
-
-	# bottom #
-	STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
-
-	# left side #
-	IF NOT is all day THEN
-		IF has finish THEN
-			printf(($g" │   "$, REPR finish OF time OF task))
-		ELSE
-			print("      │   ")
-		FI
-	ELIF UPB description > 0 THEN
-		print("      │    ")
-	FI;
-
-	# right side #
-	IF UPB description > 0 THEN
-		INT i := 1;
-		STRING right padding = (is all day | "    " | "   ");
-
-		WHILE i < UPB description DO
-			INT len = min(37, UPB description - i) + 1;
-
-			printf(($gl$, description[i:][:len]));
-			printf(($"      │"g$, right padding));
-			i +:= len
-		OD;
-
-		new line(stand out)
-	ELIF NOT is all day THEN
-		new line(stand out);
-
-		IF has finish THEN printf($"      │"l$)
-		FI
-	FI
-);
+INT err;
 
 IF a68g argc = 1 THEN
-	FILE f;
-	INT err := open(f, "./tasks.csv", stand in channel);
+	err := open(f, "./tasks.csv", stand in channel);
 
 	IF err /= 0 THEN
 		printf(($"Error: "gl$, err));
@@ -108,39 +22,17 @@ IF a68g argc = 1 THEN
 	FI;
 
 	CSV regs = read csv(f);
-	FLEX [0] TASK tasks;
+	close(f);
 
+	FLEX [0] TASK tasks;
 	FOR i TO UPB regs DO
 		tasks +:= csv to task(regs[i])
 	OD;
 
-	quick sort tasks(tasks, 1, UPB tasks, (TASK a, b) BOOL: (
-		BOOL
-			a all day = time OF a :=: REF TIMES(NIL),
-			b all day = time OF b :=: REF TIMES(NIL);
-
-		  IF a all day THEN TRUE # a #
-		ELIF b all day THEN FALSE # b #
-		ELSE
-			INT
-				a hours   = hours   OF start OF time OF a,
-				b hours   = hours   OF start OF time OF b,
-				a minutes = minutes OF start OF time OF a,
-				b minutes = minutes OF start OF time OF b;
-
-			IF a hours = b hours THEN
-				IF a minutes < b minutes THEN TRUE # a #
-				ELSE FALSE # b #
-				FI
-			ELIF a hours < b hours THEN TRUE # a #
-			ELSE FALSE # b #
-			FI
-		FI
-	));
-
+	quick sort tasks(tasks, 1, UPB tasks);
 	BOOL found sep := FALSE;
 
-	printf($"      ╭"l$);
+	printf($l"      ╭"l$);
 
 	FOR i TO UPB tasks DO
 		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
@@ -152,7 +44,5 @@ IF a68g argc = 1 THEN
 		print task(tasks[i])
 	OD;
 
-	printf($"      ╰"l$);
-
-	close(f)
+	printf($"      ╰"ll$)
 FI
