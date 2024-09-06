@@ -118,18 +118,24 @@ PROC wrap text = (STRING text, INT width) [] STRING: (
 	WHILE text i < UPB text DO
 		INT
 			next space = strchr(text[text i:], " "),
-			next dash = strchr(text[text i:], " ");
+			next dash = strchr(text[text i:], "-");
 
 		INT next := (next space < next dash | next space | next dash);
 
 		IF UPB part + next > width THEN
-			parts +:= part;
+			IF next > width THEN
+				INT len = width - UPB part - 1;
+				parts +:= part + text[text i:][:len] + "-";
+				next := len;
+				part := ""
+			ELSE
+				parts +:= part;
 
-			IF part[UPB part] = " " THEN
-				parts[UPB parts] := part[:UPB part - 1]
-			FI;
-
-			part := text[text i:][:next]
+				IF part[UPB part] = " " THEN
+					parts[UPB parts] := part[:UPB part - 1]
+				FI;
+				part := text[text i:][:next]
+			FI
 		ELSE
 			part +:= text[text i:][:next]
 		FI;
