@@ -10,6 +10,9 @@ PR include "prints.a68" PR;
 
 PR include "generate test.a68" PR;
 
+[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+DATE today date = (now[2], now[3], now[1]);
+
 FILE f;
 INT err;
 
@@ -26,7 +29,11 @@ IF a68g argc = 1 THEN
 
 	FLEX [0] TASK tasks;
 	FOR i TO UPB regs DO
-		tasks +:= csv to task(regs[i])
+		TASK task = csv to task(regs[i]);
+
+		IF date OF task = today date THEN
+			tasks +:= task
+		FI
 	OD;
 
 	quick sort tasks(tasks, 1, UPB tasks);

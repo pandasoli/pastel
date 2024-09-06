@@ -79,9 +79,14 @@ OP REPR = (TIME time) STRING:
 	(minutes OF time <= 9 | "0" | "") + whole(minutes OF time, 0);
 
 OP REPR = (DATE date) STRING: 
-	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
 	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
+	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
 	whole(year OF date, 0);
+
+OP = = (DATE a, b) BOOL:
+	day OF a = day OF b AND
+	month OF a = month OF b AND
+	year OF a = year OF b;
 
 OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	[UPB in out + 1] TASK new;

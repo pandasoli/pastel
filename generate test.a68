@@ -1,5 +1,5 @@
 BEGIN
-	[0] INT now := local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+	[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
 	DATE now date = (now[2], now[3], now[1]);
 	TIME now time = (now[4], now[5]);
 
