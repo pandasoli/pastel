@@ -23,10 +23,10 @@ PROC str to time = (STRING str) TIME:
 
 PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
 	REF TIMES time := (fields[8] = "" | NIL |
-		HEAP TIMES := (
+		LOC TIMES := (
 			# start # str to time(fields[8]),
 			# finish # (fields[9] = "" | NIL |
-				HEAP TIME := str to time(fields[9])
+				LOC TIME := str to time(fields[9])
 			)
 		)
 	);
