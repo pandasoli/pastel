@@ -37,15 +37,12 @@ PROC print task = (TASK task) VOID: (
 
 	# right side #
 	IF UPB description > 0 THEN
-		INT i := 1;
 		STRING right padding = (is all day | "    " | "   ");
+		[] STRING parts = wrap text(description, 37);
 
-		WHILE i < UPB description DO
-			INT len = min(37, UPB description - i) + 1;
-
-			printf(($gl$, description[i:][:len]));
-			printf(($"      │"g$, right padding));
-			i +:= len
+		FOR i TO UPB parts DO
+			printf(($gl$, parts[i]));
+			printf(($"      │"g$, right padding))
 		OD;
 
 		new line(stand out)

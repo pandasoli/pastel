@@ -88,4 +88,54 @@ OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	new[:UPB in out] := in out;
 	new[UPB new] := item;
 	in out := new
+);
+
+OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
+	[UPB in out + 1] STRING new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC strchr = (STRING str, CHAR ch) INT: (
+	INT pos := UPB str;
+
+	FOR i TO UPB str DO
+		IF str[i] = ch THEN
+			pos := i;
+			GOTO done
+		FI
+	OD;
+
+	done: pos
+);
+
+PROC wrap text = (STRING text, INT width) [] STRING: (
+	FLEX [0] STRING parts;
+	STRING part;
+	INT text i := 1;
+
+	WHILE text i < UPB text DO
+		INT
+			next space = strchr(text[text i:], " "),
+			next dash = strchr(text[text i:], " ");
+
+		INT next := (next space < next dash | next space | next dash);
+
+		IF UPB part + next > width THEN
+			parts +:= part;
+
+			IF part[UPB part] = " " THEN
+				parts[UPB parts] := part[:UPB part - 1]
+			FI;
+
+			part := text[text i:][:next]
+		ELSE
+			part +:= text[text i:][:next]
+		FI;
+
+		text i +:= next
+	OD;
+
+	parts +:= part
 )
