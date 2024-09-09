@@ -5,11 +5,11 @@ PROC print task = (TASK task) VOID: (
 		has finish = (is all day | FALSE | finish OF time OF task :/=: REF TIME(NIL));
 
 	[] STRING state =
-		IF   state OF task = pending  THEN ("○", "")
-		ELIF state OF task = done     THEN (esc + "[32m●", esc + "[9m")
-		ELIF state OF task = canceled THEN (esc + "[31m✖", esc + "[9m")
-		ELSE ("", "")
-		FI;
+		(  state OF task = pending  | ("○", "")
+		|: state OF task = done     | (esc + "[32m●", esc + "[9m")
+		|: state OF task = canceled | (esc + "[31m✖", esc + "[9m")
+		| ("", "")
+		);
 
 	# left side #
 	IF is all day THEN

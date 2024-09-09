@@ -69,10 +69,7 @@ PROC task to csv = (TASK task) STRING: (
 	reg
 );
 
-PROC min = (INT a, b) INT:
-	IF a < b THEN a
-	ELSE b
-	FI;
+PROC min = (INT a, b) INT: (a < b | a | b);
 
 OP REPR = (TIME time) STRING: 
 	(hours OF time <= 9 | "0" | "") + whole(hours OF time, 0) + ":" +
