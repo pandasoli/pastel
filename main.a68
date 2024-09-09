@@ -10,14 +10,38 @@ PR include "prints.a68" PR;
 
 PR include "generate test.a68" PR;
 
-[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-DATE today date = (now[2], now[3], now[1]);
+PROC get argv = (INT argi, STRING err msg) STRING: (
+	IF argi > a68g argc THEN
+		printf(($gl$, err msg));
+		stop
+	FI;
 
-FILE f;
-INT err;
+	a68g argv(argi)
+);
 
-IF a68g argc = 1 THEN
-	err := open(f, "./tasks.csv", stand in channel);
+PROC get all tasks = [] TASK: (
+	FILE f;
+	INT err = open(f, "./tasks.csv", stand in channel);
+
+	IF err /= 0 THEN
+		printf(($"Error: "gl$, err));
+		stop
+	FI;
+
+	CSV regs = read csv(f);
+	close(f);
+
+	FLEX [0] TASK tasks;
+	FOR i TO UPB regs DO
+		tasks +:= csv to task(regs[i])
+	OD;
+
+	tasks
+);
+
+PROC get today tasks = [] TASK: (
+	FILE f;
+	INT err = open(f, "./tasks.csv", stand in channel);
 
 	IF err /= 0 THEN
 		printf(($"Error: "gl$, err));
@@ -37,6 +61,16 @@ IF a68g argc = 1 THEN
 	OD;
 
 	quick sort tasks(tasks, 1, UPB tasks);
+
+	tasks
+);
+
+[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+DATE today date = (now[2], now[3], now[1]);
+
+
+IF a68g argc = 1 THEN
+	[] TASK tasks = get today tasks;
 	BOOL found sep := FALSE;
 
 	printf($l"      ╭"l$);
@@ -52,4 +86,60 @@ IF a68g argc = 1 THEN
 	OD;
 
 	printf($"      ╰"ll$)
+ELSE
+	INT argi := 2;
+	STRING arg := a68g argv(argi);
+
+	IF arg = "add" THEN
+		TASK task := (
+			# id # 0,
+			# title # "",
+			# description # "",
+			# reason # NIL,
+			# in_group # FALSE,
+			# state # pending,
+			# date # today date,
+			# time # NIL,
+			# repeatition # today stack
+		);
+
+		title OF task := get argv(argi +:= 1, "Expected task title");
+		description OF task := (a68g argc >= argi + 1 | a68g argv(argi +:= 1) | "");
+
+		# not really eficient #
+		(
+			[] TASK tasks = get all tasks;
+
+			FOR i TO UPB tasks DO
+				IF id OF tasks[i] >= id OF task THEN
+					id OF task := id OF tasks[i] + 1
+				FI
+			OD
+		);
+
+		WHILE argi < a68g argc DO
+			arg := a68g argv(argi +:= 1);
+
+			IF arg = "at" THEN
+				arg := get argv(argi +:= 1, "Expected time after 'at'");
+				time OF task := LOC TIMES := (str to time(arg), NIL)
+			ELIF arg = "to" THEN
+				arg := get argv(argi +:= 1, "Expected time after 'to'");
+				finish OF time OF task := LOC TIME := str to time(arg)
+			ELSE
+				printf(($"Unexpected '"g"' in here"l$, arg));
+				stop
+			FI
+		OD;
+
+		FILE f;
+		INT err := open(f, "./tasks.csv", stand out channel);
+		IF err /= 0 THEN
+			printf(($"Error: "gl$, err));
+			stop
+		FI;
+
+		print task(task);
+		close(f)
+	FI
 FI

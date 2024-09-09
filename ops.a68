@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*- #
 
+PR include "types.a68" PR
+PR include "csv.a68" PR
+
 OP TOINT = (STRING str) INT: (
 	INT n := 0, sign := 1;
 	FOR i TO UPB str WHILE sign /= 0 DO
@@ -11,15 +14,29 @@ OP TOINT = (STRING str) INT: (
 	n * sign
 );
 
-PROC str to date = (STRING str) DATE:
+PROC str to date = (STRING str) DATE: (
+	IF UPB str /= 10 OR
+		 str[3] /= "/" OR str[6] /= "/"
+	THEN
+		printf(($g" cannot be coerced to DATE"l$, str));
+		stop
+	FI;
+
 	DATE(
 		TOINT (str[1] + str[2]),
 		TOINT (str[4] + str[5]),
 		TOINT (str[7] + str[8] + str[9] + str[10])
-	);
+	)
+);
 
-PROC str to time = (STRING str) TIME:
-	TIME(TOINT (str[1] + str[2]), TOINT (str[4] + str[5]));
+PROC str to time = (STRING str) TIME: (
+	IF UPB str /= 5 OR str[3] /= ":" THEN
+		printf(($g" cannot be coerced to TIME"l$, str));
+		stop
+	FI;
+
+	TIME(TOINT (str[1] + str[2]), TOINT (str[4] + str[5]))
+);
 
 PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
 	REF TIMES time := (fields[8] = "" | NIL |
