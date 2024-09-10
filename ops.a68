@@ -86,8 +86,6 @@ PROC task to csv = (TASK task) STRING: (
 	reg
 );
 
-PROC min = (INT a, b) INT: (a < b | a | b);
-
 OP REPR = (TIME time) STRING: 
 	(hours OF time <= 9 | "0" | "") + whole(hours OF time, 0) + ":" +
 	(minutes OF time <= 9 | "0" | "") + whole(minutes OF time, 0);
@@ -122,7 +120,7 @@ PROC strchr = (STRING str, CHAR ch) INT: (
 	FOR i TO UPB str DO
 		IF str[i] = ch THEN
 			pos := i;
-			GOTO done
+			done
 		FI
 	OD;
 

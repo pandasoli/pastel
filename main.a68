@@ -19,7 +19,7 @@ PROC get argv = (INT argi, STRING err msg) STRING: (
 	a68g argv(argi)
 );
 
-PROC get all tasks = [] TASK: (
+PROC get all tasks = (PROC (TASK) VOID callback) VOID: (
 	FILE f;
 	INT err = open(f, "./tasks.csv", stand in channel);
 
@@ -28,15 +28,11 @@ PROC get all tasks = [] TASK: (
 		stop
 	FI;
 
-	CSV regs = read csv(f);
-	close(f);
+	read csv(f, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to task(fields))
+	);
 
-	FLEX [0] TASK tasks;
-	FOR i TO UPB regs DO
-		tasks +:= csv to task(regs[i])
-	OD;
-
-	tasks
+	close(f)
 );
 
 PROC get today tasks = [] TASK: (
@@ -48,20 +44,19 @@ PROC get today tasks = [] TASK: (
 		stop
 	FI;
 
-	CSV regs = read csv(f);
-	close(f);
-
 	FLEX [0] TASK tasks;
-	FOR i TO UPB regs DO
-		TASK task = csv to task(regs[i]);
+
+	read csv(f, (FLEXCSVFIELDS fields) VOID: (
+		TASK task = csv to task(fields);
 
 		IF date OF task = today date THEN
 			tasks +:= task
 		FI
-	OD;
+	));
 
 	quick sort tasks(tasks, 1, UPB tasks);
 
+	close(f);
 	tasks
 );
 
@@ -107,14 +102,10 @@ ELSE
 		description OF task := (a68g argc >= argi + 1 | a68g argv(argi +:= 1) | "");
 
 		# not really eficient #
-		(
-			[] TASK tasks = get all tasks;
-
-			FOR i TO UPB tasks DO
-				IF id OF tasks[i] >= id OF task THEN
-					id OF task := id OF tasks[i] + 1
-				FI
-			OD
+		get all tasks((TASK t) VOID:
+			IF id OF t >= id OF task THEN
+				id OF task := id OF t + 1
+			FI
 		);
 
 		WHILE argi < a68g argc DO

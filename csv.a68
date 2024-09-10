@@ -3,8 +3,6 @@
 MODE FLEXCSVFIELD = STRING;
 MODE CSVFIELDS = [0] FLEXCSVFIELD;
 MODE FLEXCSVFIELDS =  REF CSVFIELDS;
-MODE CSV = [0] FLEXCSVFIELDS;
-MODE FLEXCSV = REF CSV;
 
 OP +:= = (REF FLEXCSVFIELDS in out, FLEXCSVFIELD item) REF FLEXCSVFIELDS: (
 	HEAP [UPB in out + 1] FLEXCSVFIELD new;
@@ -13,16 +11,9 @@ OP +:= = (REF FLEXCSVFIELDS in out, FLEXCSVFIELD item) REF FLEXCSVFIELDS: (
 	in out := new
 );
 
-OP +:= = (REF FLEXCSV in out, FLEXCSVFIELDS item) REF FLEXCSV: (
-	HEAP [UPB in out + 1] FLEXCSVFIELDS new;
-	new[:UPB in out] := in out;
-	new[UPB new] := item; # identifier ELEMs are HEAP, so not a potential scope violation #
-	in out := new
-);
-
 CHAR nl = REPR 10;
 
-PROC read csv = (REF FILE csv) FLEXCSV: (
+PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 	FLEXCSVFIELD chunk := "";
 	INT chunk counter := 0;
 	INT fields count := 0;
@@ -101,11 +92,7 @@ PROC read csv = (REF FILE csv) FLEXCSV: (
 	FLEXCSVFIELDS header = parse;
 	fields count := UPB header;
 
-	FLEXCSV regs := HEAP CSV := ();
-
 	WHILE NOT finished DO
-		regs +:= parse
-	OD;
-
-	regs
+		callback(parse)
+	OD
 )
