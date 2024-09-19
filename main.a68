@@ -123,14 +123,6 @@ ELSE
 			FI
 		OD;
 
-		FILE f;
-		INT err := open(f, "./tasks.csv", stand out channel);
-		IF err /= 0 THEN
-			printf(($"Error: "gl$, err));
-			stop
-		FI;
-
-		print task(task);
-		close(f)
+		append file("./tasks.csv", task to csv(task))
 	FI
 FI

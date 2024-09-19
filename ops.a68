@@ -161,4 +161,7 @@ PROC wrap text = (STRING text, INT width) [] STRING: (
 	OD;
 
 	parts +:= part
-)
+);
+
+PROC append file = (STRING path, text) INT:
+	execve("/bin/sh", ("sh", "-c", "echo """ + text + """>>" + path), "")
