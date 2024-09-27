@@ -7,12 +7,13 @@ PR include "ops.a68" PR;
 PR include "csv.a68" PR
 PR include "quick sort.a68" PR;
 PR include "prints.a68" PR;
+PR include "file.a68" PR;
 
 PR include "generate test.a68" PR;
 
 PROC get argv = (INT argi, STRING err msg) STRING: (
 	IF argi > a68g argc THEN
-		printf(($gl$, err msg));
+		putf(stand error, ($g"[31m"gg"[m"ll$, esc, err msg, esc));
 		stop
 	FI;
 
@@ -24,7 +25,7 @@ PROC get all tasks = (PROC (TASK) VOID callback) VOID: (
 	INT err = open(f, "./tasks.csv", stand in channel);
 
 	IF err /= 0 THEN
-		printf(($"Error: "gl$, err));
+		putf(stand error, ($g"[31mCouldn't open file tasks.csv (error "g(-0)")"g"[m"ll$, esc, err, esc));
 		stop
 	FI;
 
@@ -40,7 +41,7 @@ PROC get today tasks = [] TASK: (
 	INT err = open(f, "./tasks.csv", stand in channel);
 
 	IF err /= 0 THEN
-		printf(($"Error: "gl$, err));
+		putf(stand error, ($g"[31mCouldn't open file tasks.csv (error "g(-0)")"g"[m"ll$, esc, err, esc));
 		stop
 	FI;
 
@@ -74,7 +75,15 @@ IF a68g argc = 1 THEN
 		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
 			found sep := TRUE;
 			printf($"      │"l$);
-			printf($"      │"l$)
+
+			IF i > 1 THEN
+				TASK task = tasks[i - 1];
+				STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
+
+				IF UPB description = 0 THEN
+					printf($"      │"l$)
+				FI
+			FI
 		FI;
 
 		print task(tasks[i])
@@ -118,11 +127,34 @@ ELSE
 				arg := get argv(argi +:= 1, "Expected time after 'to'");
 				finish OF time OF task := LOC TIME := str to time(arg)
 			ELSE
-				printf(($"Unexpected '"g"' in here"l$, arg));
+				putf(stand error, ($g"[31mUnexpected '"g"' in here"g"[m"ll$, esc, arg, esc));
 				stop
 			FI
 		OD;
 
 		append file("./tasks.csv", task to csv(task))
+	ELIF arg = "remove" THEN
+		arg := get argv(argi +:= 1, "Expected index after 'remove'");
+		INT index = TOINT arg;
+
+		[] TASK tasks = get today tasks;
+
+		IF index > UPB tasks THEN
+			putf(stand error, ($g"[31m"gg"[m"ll$, esc, "There're not many items in today's list", esc));
+			stop
+		FI;
+
+		TASK task = tasks[index];
+
+		append file("./new-tasks.csv", task csv header);
+
+		get all tasks((TASK t) VOID:
+			IF id OF t /= id OF task THEN
+				STRING str = task to csv(t);
+				append file("./new-tasks.csv", str)
+			FI
+		);
+
+		move file("./new-tasks.csv", "./tasks.csv")
 	FI
 FI
