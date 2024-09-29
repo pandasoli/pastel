@@ -1,0 +1,99 @@
+# -*- coding: utf-8 -*- #
+
+PR include "date.a68" PR
+PR include "time.a68" PR
+PR include "../utils.a68" PR;
+PR include "../csv.a68" PR;
+
+STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,IN_GROUP,STATUS,DATE,START,FINISH,REPETITION";
+
+MODE TASKSTATE = SHORT INT;
+MODE TASKREPEATITION = SHORT INT;
+
+MODE TIMES = STRUCT(
+	TIME start,
+	REF TIME finish # nullable #
+);
+
+MODE TASK = STRUCT (
+	INT id,
+	STRING title,
+	STRING description,
+	REF STRING reason, # nullable #
+	BOOL in_group,
+	TASKSTATE state,
+	DATE date,
+	REF TIMES time,
+	TASKREPEATITION repeatition
+);
+
+TASKSTATE pending = 1;
+TASKSTATE done = 2;
+TASKSTATE canceled = 3;
+
+TASKREPEATITION today = 1;
+TASKREPEATITION todaystack = 2;
+TASKREPEATITION daily = 3;
+TASKREPEATITION weekly = 4;
+TASKREPEATITION monthly = 5;
+TASKREPEATITION annually = 6;
+TASKREPEATITION everyweekday = 7;
+
+OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
+	[UPB in out + 1] TASK new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
+	REF TIMES time := (fields[8] = "" | NIL |
+		LOC TIMES := (
+			# start # str to time(fields[8]),
+			# finish # (fields[9] = "" | NIL |
+				LOC TIME := str to time(fields[9])
+			)
+		)
+	);
+
+	TASK(
+		# id # TOINT fields[1],
+		# title # fields[2],
+		# description # fields[3],
+		# reason # (fields[4] = "" | NIL | fields[4]),
+		# in_group # fields[5] = "T",
+		# state # TOINT fields[6],
+		# date # str to date(fields[7]),
+		# time # time,
+		# repeatition # TOINT fields[10]
+	)
+);
+
+PROC task to csv = (TASK task) STRING: (
+	BOOL
+		has description = description OF task /= "",
+		has reason = reason OF task :/=: REF STRING(NIL),
+		has time = time OF task :/=: REF TIMES(NIL),
+		has finish = (has time | finish OF time OF task :/=: REF TIME(NIL) | FALSE);
+
+	[] STRING fields = (
+		# id # whole(id OF task, 0),
+		# title # """" + title OF task + """",
+		# description # (has description | """" + description OF task + """" | ""),
+		# reason # (has reason | """" + reason OF task + """" | ""),
+		# in_group # (in_group OF task | "T" | "F"),
+		# state # whole(state OF task, 0),
+		# date # REPR date OF task,
+		# start # (has time | REPR start OF time OF task | ""),
+		# finish # (has time AND has finish | REPR finish OF time OF task | ""),
+		# repeatition # whole(repeatition OF task, 0)
+	);
+
+	STRING reg := "";
+
+	FOR i TO UPB fields DO
+		reg +:= fields[i] + (i < UPB fields | "," | "")
+	OD;
+
+	reg
+)

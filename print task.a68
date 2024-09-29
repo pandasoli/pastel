@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*- #
+
+PR include "globals.a68" PR;
 
 PROC print task = (TASK task) VOID: (
 	BOOL

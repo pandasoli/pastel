@@ -1,4 +1,6 @@
-PR include "types.a68" PR;
+# -*- coding: utf-8 -*- #
+
+PR include "types/task.a68" PR;
 
 PROC sort tasks = (TASK a, b) BOOL: (
 	BOOL

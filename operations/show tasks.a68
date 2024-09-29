@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../print task.a68" PR;
+PR include "../utils.a68" PR;
+
+PROC show tasks = VOID: (
+	[] TASK tasks = get today tasks;
+	BOOL found sep := FALSE;
+
+	printf($l"      ╭"l$);
+
+	FOR i TO UPB tasks DO
+		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
+			found sep := TRUE;
+			printf($"      │"l$);
+
+			IF i > 1 THEN
+				TASK task = tasks[i - 1];
+				STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
+
+				IF UPB description = 0 THEN
+					printf($"      │"l$)
+				FI
+			FI
+		FI;
+
+		print task(tasks[i])
+	OD;
+
+	printf($"      ╰"ll$)
+)

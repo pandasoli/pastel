@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*- #
+
+PROC openf = (REF FILE f, STRING file name, CHANNEL chann) VOID:
+	IF file is regular(file name) THEN
+		IF open(f, file name, chann) /= 0 THEN
+			putf(stand error, ($"Couldn't open file "gl$, file name));
+			stop
+		FI
+	ELSE
+		IF establish(f, file name, chann) /= 0 THEN
+			putf(stand error, ($"Couldn't establish file "gl$, file name));
+			stop
+		FI
+	FI

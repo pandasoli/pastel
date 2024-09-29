@@ -1,0 +1,87 @@
+# -*- coding: utf-8 -*- #
+
+OP TOINT = (STRING str) INT: (
+	INT n := 0, sign := 1;
+
+	FOR i TO UPB str WHILE sign /= 0 DO
+		IF is digit(str[i]) THEN n := n * 10 + ABS str[i] - ABS "0"
+		ELIF i = 1 AND str[i] = "-" THEN sign := -1
+		ELIF i /= 1 OR str[i] /= "+" THEN sign := 0
+		FI
+	OD;
+
+	n * sign
+);
+
+OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
+	[UPB in out + 1] STRING new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC sh scape = (STRING str, CHAR ch) STRING: (
+	STRING text := str;
+	INT text len := UPB text, i := 1;
+
+	WHILE i <= text len DO
+		IF text[i] = ch THEN
+			text := text[:i - 1] + "\" + text[i:];
+			text len +:= 1;
+			i +:= 1
+		FI;
+
+		i +:= 1
+	OD;
+
+	text
+);
+
+PROC strchr = (STRING str, CHAR ch) INT: (
+	INT pos := UPB str;
+
+	FOR i TO UPB str DO
+		IF str[i] = ch THEN
+			pos := i;
+			done
+		FI
+	OD;
+
+	done: pos
+);
+
+PROC wrap text = (STRING text, INT width) [] STRING: (
+	FLEX [0] STRING parts;
+	STRING part;
+	INT text i := 1;
+
+	WHILE text i < UPB text DO
+		INT
+			next space = strchr(text[text i:], " "),
+			next dash = strchr(text[text i:], "-");
+
+		INT next := (next space < next dash | next space | next dash);
+
+		IF UPB part + next > width THEN
+			IF next > width THEN
+				INT len = width - UPB part - 1;
+				parts +:= part + text[text i:][:len] + "-";
+				next := len;
+				part := ""
+			ELSE
+				parts +:= part;
+
+				IF part[UPB part] = " " THEN
+					parts[UPB parts] := part[:UPB part - 1]
+				FI;
+				part := text[text i:][:next]
+			FI
+		ELSE
+			part +:= text[text i:][:next]
+		FI;
+
+		text i +:= next
+	OD;
+
+	parts +:= part
+)

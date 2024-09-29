@@ -1,0 +1,11 @@
+# -*- coding: utf-8 -*- #
+
+STRING note csv header = "ID,CONTENT,DATE,TIME";
+FORMAT note csv fmt = $g(-0)","""g""","f(date csv fmt)","f(time csv fmt)l$;
+
+MODE NOTE = STRUCT (
+	INT id,
+	STRING content,
+	DATE date,
+	REF TIME time # nullable #
+)

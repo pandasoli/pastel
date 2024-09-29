@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*- #
+
+STRING week csv header = "TITLE,DESCRIPTION,DATE";
+FORMAT week csv fmt = $""""g""","""g""","f(date csv fmt)l$;
+
+MODE WEEK = STRUCT (
+	STRING title,
+	STRING description,
+	DATE date
+)

@@ -1,44 +1,33 @@
-BEGIN
-	[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-	DATE now date = (now[2], now[3], now[1]);
-	TIME now time = (now[4], now[5]);
+# -*- coding: utf-8 -*- #
 
+PR include "types/task.a68" PR;
+
+PROC generate test = VOID: (
 	[] TASK tasks = (
-		(1, "Take a shower", "", NIL, FALSE, pending, now date, NIL, today),
-		(2, "Water plants", "", NIL, FALSE, done, now date, NIL, today),
-		(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, now date, NIL, today),
-		(4, "Buy chips", "", NIL, FALSE, done, now date, NIL, today),
+		(1, "Take a shower", "", NIL, FALSE, pending, today date, NIL, today),
+		(2, "Water plants", "", NIL, FALSE, done, today date, NIL, today),
+		(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, today date, NIL, today),
+		(4, "Buy chips", "", NIL, FALSE, done, today date, NIL, today),
 
-		(5, "Scriptures Study", "", NIL, FALSE, pending, now date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
-		(6, "Lunch", "Eat something healthy", NIL, FALSE, done, now date, LOC TIMES := ((12, 0), NIL), today),
-		(7, "Free time", "", NIL, FALSE, done, now date, LOC TIMES := (now time, NIL), today),
-		(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, now date, LOC TIMES := ((13, 0), NIL), today),
-		(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, now date, LOC TIMES := ((15, 0), NIL), today)
+		(5, "Scriptures Study", "", NIL, FALSE, pending, today date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
+		(6, "Lunch", "Eat something healthy", NIL, FALSE, done, today date, LOC TIMES := ((12, 0), NIL), today),
+		(7, "Free time", "", NIL, FALSE, done, today date, LOC TIMES := (current time, NIL), today),
+		(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, today date, LOC TIMES := ((13, 0), NIL), today),
+		(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, today date, LOC TIMES := ((15, 0), NIL), today)
 	);
 
-	FILE f;
-	INT err := open(f, "./tasks.csv", stand out channel);
+	FILE f1, f2;
+	openf(f1, "./tasks.csv", stand out channel);
+	openf(f2, "./last-id.txt", stand out channel);
 
-	IF err = 0 THEN
-		putf(f, ($gl$, task csv header));
+	putf(f1, ($gl$, task csv header));
+	put(f2, id OF tasks[UPB tasks]);
 
-		FOR i TO UPB tasks DO
-			STRING str = task to csv(tasks[i]);
-			putf(f, ($gl$, str))
-		OD;
+	FOR i TO UPB tasks DO
+		STRING str = task to csv(tasks[i]);
+		putf(f1, ($gl$, str))
+	OD;
 
-		close(f)
-	ELSE
-		putf(stand error, ($"Error: "gl$, err));
-		stop
-	FI;
-
-	err := open(f, "./last-id.txt", stand out channel);
-
-	IF err = 0 THEN
-		putf(f, ($gl$, id OF tasks[UPB tasks]));
-		close(f)
-	ELSE
-		putf(stand error, ($"Error: "g(-0)l$, err))
-	FI
-END
+	close(f1);
+	close(f2)
+)

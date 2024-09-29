@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../text processing.a68" PR;
+
+FORMAT date csv fmt = $2d"/", 2d"/", 4d$;
+
+MODE DATE = STRUCT ( INT month, day, year );
+
+# local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+DATE today date = (local time[2], local time[3], local time[1]);
+
+OP REPR = (DATE date) STRING: 
+	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
+	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
+	whole(year OF date, 0);
+
+OP = = (DATE a, b) BOOL:
+	day OF a = day OF b AND
+	month OF a = month OF b AND
+	year OF a = year OF b;
+
+PROC str to date = (STRING str) DATE: (
+	IF UPB str /= 10 OR
+		 str[3] /= "/" OR str[6] /= "/"
+	THEN
+		printf(($g" cannot be coerced to DATE"l$, str));
+		stop
+	FI;
+
+	DATE(
+		TOINT (str[1] + str[2]),
+		TOINT (str[4] + str[5]),
+		TOINT (str[7] + str[8] + str[9] + str[10])
+	)
+)

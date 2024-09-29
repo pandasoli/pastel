@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*- #
+
+STRING group csv header = "TITLE,DATE,IDS";
+FORMAT group csv fmt = $""""g""","f(date csv fmt)","""g""""$;
+
+MODE GROUP = STRUCT (
+	STRING title,
+	DATE date,
+	FLEX [0] INT ids
+)

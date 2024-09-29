@@ -2,159 +2,24 @@
 # -*- coding: utf-8 -*- #
 
 PR nowarnings PR
-PR include "types.a68" PR;
-PR include "ops.a68" PR;
-PR include "csv.a68" PR
-PR include "quick sort.a68" PR;
-PR include "prints.a68" PR;
-PR include "file.a68" PR;
-
-PROC get argv = (INT argi, STRING err msg) STRING: (
-	IF argi > a68g argc THEN
-		putf(stand error, ($g"[31m"gg"[m"ll$, esc, err msg, esc));
-		stop
-	FI;
-
-	a68g argv(argi)
-);
-
-PROC get all tasks = (PROC (TASK) VOID callback) VOID: (
-	FILE f;
-	INT err = open(f, "./tasks.csv", stand in channel);
-
-	IF err /= 0 THEN
-		putf(stand error, ($g"[31mCouldn't open file tasks.csv (error "g(-0)")"g"[m"ll$, esc, err, esc));
-		stop
-	FI;
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID:
-		callback(csv to task(fields))
-	);
-
-	close(f)
-);
-
-PROC get today tasks = [] TASK: (
-	FILE f;
-	INT err = open(f, "./tasks.csv", stand in channel);
-
-	IF err /= 0 THEN
-		putf(stand error, ($g"[31mCouldn't open file tasks.csv (error "g(-0)")"g"[m"ll$, esc, err, esc));
-		stop
-	FI;
-
-	FLEX [0] TASK tasks;
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID: (
-		TASK task = csv to task(fields);
-
-		IF date OF task = today date THEN
-			tasks +:= task
-		FI
-	));
-
-	quick sort tasks(tasks, 1, UPB tasks);
-
-	close(f);
-	tasks
-);
-
-[] INT now = local time; # year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-DATE today date = (now[2], now[3], now[1]);
-
+PR include "generate test.a68" PR
+PR include "operations/show tasks.a68" PR
+PR include "operations/add task.a68" PR;
+PR include "operations/remove task.a68" PR;
 
 IF a68g argc = 1 THEN
-	[] TASK tasks = get today tasks;
-	BOOL found sep := FALSE;
+	IF NOT file is regular("./tasks.csv") THEN
+		putf(stand error, ($gll$, "You don't have no tasks yet"));
+		stop
+	FI;
 
-	printf($l"      ╭"l$);
-
-	FOR i TO UPB tasks DO
-		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
-			found sep := TRUE;
-			printf($"      │"l$);
-
-			IF i > 1 THEN
-				TASK task = tasks[i - 1];
-				STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
-
-				IF UPB description = 0 THEN
-					printf($"      │"l$)
-				FI
-			FI
-		FI;
-
-		print task(tasks[i])
-	OD;
-
-	printf($"      ╰"ll$)
+	show tasks
 ELSE
 	INT argi := 2;
 	STRING arg := a68g argv(argi);
 
-	IF arg = "gen" THEN
-		PR include "generate test.a68" PR
-	ELIF arg = "add" THEN
-		TASK task := (
-			# id # 0,
-			# title # "",
-			# description # "",
-			# reason # NIL,
-			# in_group # FALSE,
-			# state # pending,
-			# date # today date,
-			# time # NIL,
-			# repeatition # today stack
-		);
-
-		title OF task := get argv(argi +:= 1, "Expected task title");
-		description OF task := (a68g argc >= argi + 1 | a68g argv(argi +:= 1) | "");
-
-		# not really eficient #
-		get all tasks((TASK t) VOID:
-			IF id OF t >= id OF task THEN
-				id OF task := id OF t + 1
-			FI
-		);
-
-		WHILE argi < a68g argc DO
-			arg := a68g argv(argi +:= 1);
-
-			IF arg = "at" THEN
-				arg := get argv(argi +:= 1, "Expected time after 'at'");
-				time OF task := LOC TIMES := (str to time(arg), NIL)
-			ELIF arg = "to" THEN
-				arg := get argv(argi +:= 1, "Expected time after 'to'");
-				finish OF time OF task := LOC TIME := str to time(arg)
-			ELSE
-				putf(stand error, ($g"[31mUnexpected '"g"' in here"g"[m"ll$, esc, arg, esc));
-				stop
-			FI
-		OD;
-
-		append file("./tasks.csv", task to csv(task))
-	ELIF arg = "remove" THEN
-		arg := get argv(argi +:= 1, "Expected index after 'remove'");
-		INT index = TOINT arg;
-
-		[] TASK tasks = get today tasks;
-
-		IF index > UPB tasks THEN
-			putf(stand error, ($g"[31m"gg"[m"ll$, esc, "There're not many items in today's list", esc));
-			stop
-		FI;
-
-		TASK task = tasks[index];
-
-		append file("./new-tasks.csv", task csv header);
-
-		get all tasks((TASK t) VOID:
-			IF id OF t /= id OF task THEN
-				STRING str = task to csv(t);
-				append file("./new-tasks.csv", str)
-			FI
-		);
-
-		move file("./new-tasks.csv", "./tasks.csv")
+	IF   arg = "gen"    THEN generate test
+	ELIF arg = "add"    THEN add task(argi)
+	ELIF arg = "remove" THEN remove task(argi)
 	FI
 FI
