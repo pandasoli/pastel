@@ -9,8 +9,6 @@ PR include "quick sort.a68" PR;
 PR include "prints.a68" PR;
 PR include "file.a68" PR;
 
-PR include "generate test.a68" PR;
-
 PROC get argv = (INT argi, STRING err msg) STRING: (
 	IF argi > a68g argc THEN
 		putf(stand error, ($g"[31m"gg"[m"ll$, esc, err msg, esc));
@@ -94,7 +92,9 @@ ELSE
 	INT argi := 2;
 	STRING arg := a68g argv(argi);
 
-	IF arg = "add" THEN
+	IF arg = "gen" THEN
+		PR include "generate test.a68" PR
+	ELIF arg = "add" THEN
 		TASK task := (
 			# id # 0,
 			# title # "",

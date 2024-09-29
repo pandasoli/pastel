@@ -29,6 +29,16 @@ BEGIN
 
 		close(f)
 	ELSE
-		printf(($"Error: "gl$, err))
+		putf(stand error, ($"Error: "gl$, err));
+		stop
+	FI;
+
+	err := open(f, "./last-id.txt", stand out channel);
+
+	IF err = 0 THEN
+		putf(f, ($gl$, id OF tasks[UPB tasks]));
+		close(f)
+	ELSE
+		putf(stand error, ($"Error: "g(-0)l$, err))
 	FI
 END
