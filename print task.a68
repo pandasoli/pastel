@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*- #
 
+PR include "types/task.a68" PR;
+PR include "text processing.a68" PR
 PR include "globals.a68" PR;
 
 PROC print task = (TASK task) VOID: (
 	BOOL
-		is all day = time OF task :=: REF TIMES(NIL),
+		is all day = start OF time OF task :=: REF TIME(NIL),
 		has finish = (is all day | FALSE | finish OF time OF task :/=: REF TIME(NIL));
 
 	[] STRING state =

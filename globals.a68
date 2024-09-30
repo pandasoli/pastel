@@ -41,10 +41,26 @@ PROC get today tasks = [] TASK: (
 		FI
 	));
 
-	quick sort tasks(tasks, 1, UPB tasks);
 	close(f);
-
 	tasks
+);
+
+PROC get today notes = [] NOTE: (
+	FILE f;
+	FLEX [0] NOTE notes;
+
+	openf(f, "./notes.csv", stand in channel);
+
+	read csv(f, (FLEXCSVFIELDS fields) VOID: (
+		NOTE note = csv to note(fields);
+
+		IF date OF note = today date THEN
+			notes +:= note
+		FI
+	));
+
+	close(f);
+	notes
 );
 
 PROC get today groups = [] GROUP: (
@@ -62,6 +78,5 @@ PROC get today groups = [] GROUP: (
 	));
 
 	close(f);
-
 	groups
 )

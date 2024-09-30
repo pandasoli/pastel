@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../print task.a68" PR;
-PR include "../globals.a68" PR;
-PR include "../utils.a68" PR;
+PR include "../print task.a68" PR
+PR include "../print note.a68" PR
+PR include "../globals.a68" PR
+PR include "../utils.a68" PR
+PR include "../quick sort.a68" PR;
 
 PROC show tasks = VOID: (
 
@@ -19,7 +21,7 @@ PROC show tasks = VOID: (
 		done: group
 	);
 
-	PROC print group = (STRING title, [] TASK tasks, [] GROUP groups) VOID: (
+	PROC print group = (STRING title, [] SORTITEMS items, [] GROUP groups) VOID: (
 		FLEX [0] INT printed in group;
 		BOOL found sep := FALSE;
 		INT i := 1;
@@ -31,16 +33,26 @@ PROC show tasks = VOID: (
 			printf($l"      ╭"l$)
 		FI;
 
-		WHILE i <= UPB tasks DO
-			BOOL has time = time OF tasks[i] :/=: REF TIMES(NIL);
+		WHILE i <= UPB items DO
+			INT id = CASE items[i] IN
+				(TASK v): id OF v,
+				(NOTE v): id OF v
+			ESAC;
 
-			WHILE includes(printed in group, id OF tasks[i]) ORF (NOT has time AND (find task group(id OF tasks[i], groups) :/=: REF GROUP(NIL))) DO
+			BOOL has time = CASE items[i] IN
+				(TASK v): start OF time OF v :/=: REF TIME(NIL),
+				(NOTE v): time OF v :/=: REF TIME(NIL)
+			ESAC;
+
+#
+			WHILE includes(printed in group, id) ORF (NOT has time AND (find task group(id, groups) :/=: REF GROUP(NIL))) DO
 				i +:= 1;
 
-				IF i > UPB tasks THEN
+				IF i > UPB items THEN
 					done
 				FI
 			OD;
+#
 
 			# Add separator after no-time items #
 			IF has time AND NOT found sep THEN
@@ -48,34 +60,48 @@ PROC show tasks = VOID: (
 				printf($"      │"l$);
 
 				IF i > 1 THEN
-					TASK task = tasks[i - 1];
-					BOOL has reason = reason OF task :/=: REF STRING(NIL);
-					STRING description = (state OF task = canceled AND has reason | reason OF task | description OF task);
+					CASE items[i - 1] IN
+						(NOTE note):
+							printf($"      │"l$),
 
-					IF UPB description = 0 THEN
-						printf($"      │"l$)
-					FI
+						(TASK task): (
+							BOOL has reason = reason OF task :/=: REF STRING(NIL);
+							STRING description = (state OF task = canceled AND has reason | reason OF task | description OF task);
+
+							IF UPB description = 0 THEN
+								printf($"      │"l$)
+							FI
+						)
+					ESAC
 				FI
 			FI;
 
 			# print item #
-			REF GROUP group = find task group(id OF tasks[i], groups);
+			PROC get id = (SORTITEMS v) INT:
+				CASE v IN
+					(TASK v): id OF v,
+					(NOTE v): id OF v
+				ESAC;
+
+			REF GROUP group = find task group(get id(items[i]), groups);
 
 			IF (group :/=: REF GROUP(NIL)) AND has time THEN
-				FLEX [0] TASK these tasks;
+				FLEX [0] SORTITEMS these items;
 
-				FOR i TO UPB tasks DO
-					IF includes(ids OF group, id OF tasks[i]) THEN
-						printed in group +:= id OF tasks[i];
-						these tasks +:= tasks[i]
+				FOR i TO UPB items DO
+					IF includes(ids OF group, get id(items[i])) THEN
+						printed in group +:= get id(items[i]);
+						these items +:= items[i]
 					FI
 				OD;
 
-				printf($"      │"l$);
-				print group(title OF group, these tasks, ~);
+				print group(title OF group, these items, ~);
 				printf($"      │"l$)
 			ELSE
-				print task(tasks[i])
+				CASE items[i] IN
+					(TASK v): print task(v),
+					(NOTE v): print note(v)
+				ESAC
 			FI;
 
 			i +:= 1
@@ -86,7 +112,14 @@ PROC show tasks = VOID: (
 	);
 
 	[] TASK tasks = get today tasks;
+	[] NOTE notes = get today notes;
 	[] GROUP groups = get today groups;
 
-	print group("", tasks, groups)
+	FLEX [0] SORTITEMS items;
+
+	FOR i TO UPB tasks DO items +:= SORTITEMS(tasks[i]) OD;
+	FOR i TO UPB notes DO items +:= SORTITEMS(notes[i]) OD;
+
+	quick sort(items, 1, UPB items);
+	print group("", items, groups)
 )

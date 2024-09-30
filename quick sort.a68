@@ -1,20 +1,50 @@
 # -*- coding: utf-8 -*- #
 
-PR include "types/task.a68" PR;
+PR include "types/task.a68" PR
+PR include "types/note.a68" PR;
 
-PROC sort tasks = (TASK a, b) BOOL: (
+MODE SORTITEMS = UNION (TASK, NOTE);
+
+OP +:= = (REF FLEX [] SORTITEMS in out, SORTITEMS item) VOID: (
+	[UPB in out + 1] SORTITEMS new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC bigger = (SORTITEMS a, b) BOOL: (
+	PROC get time = (SORTITEMS v) REF TIME:
+		CASE v IN
+			(TASK v): start OF time OF v,
+			(NOTE v): time OF v
+		ESAC;
+
+	PROC get date = (SORTITEMS v) DATE:
+		CASE v IN
+			(TASK v): date OF v,
+			(NOTE v): date OF v
+		ESAC;
+
+	DATE
+		a date = get date(a),
+		b date = get date(b);
+
+	REF TIME
+		a time = get time(a),
+		b time = get time(b);
+
 	BOOL
-		a all day = time OF a :=: REF TIMES(NIL),
-		b all day = time OF b :=: REF TIMES(NIL);
+		a all day = a time :=: REF TIME(NIL),
+		b all day = b time :=: REF TIME(NIL);
 
 		IF a all day THEN TRUE # a #
 	ELIF b all day THEN FALSE # b #
 	ELSE
 		INT
-			a hours   := hours   OF start OF time OF a,
-			b hours   := hours   OF start OF time OF b,
-			a minutes := minutes OF start OF time OF a,
-			b minutes := minutes OF start OF time OF b;
+			a hours   := hours   OF a time,
+			b hours   := hours   OF b time,
+			a minutes := minutes OF a time,
+			b minutes := minutes OF b time;
 
 		a hours := (a hours = 0 | 24 | a hours);
 		b hours := (b hours = 0 | 24 | b hours);
@@ -29,18 +59,18 @@ PROC sort tasks = (TASK a, b) BOOL: (
 	FI
 );
 
-PROC swap = (REF [] TASK arr, INT i, j) VOID: (
-	TASK temp = arr[i];
+PROC swap = (REF [] SORTITEMS arr, INT i, j) VOID: (
+	SORTITEMS temp = arr[i];
 	arr[i] := arr[j];
 	arr[j] := temp
 );
 
-PROC partition = (REF [] TASK arr, INT low, high) INT: (
-	TASK pivot = arr[high];
+PROC partition = (REF [] SORTITEMS arr, INT low, high) INT: (
+	SORTITEMS pivot = arr[high];
 	INT i := low - 1;
 
 	FOR j FROM low TO high - 1 DO
-		IF sort tasks(arr[j], pivot) THEN
+		IF bigger(arr[j], pivot) THEN
 			i +:= 1;
 			swap(arr, i, j)
 		FI
@@ -50,10 +80,10 @@ PROC partition = (REF [] TASK arr, INT low, high) INT: (
   i + 1
 );
 
-PROC quick sort tasks = (REF [] TASK arr, INT low, high) VOID:
+PROC quick sort = (REF [] SORTITEMS arr, INT low, high) VOID:
 	IF low < high THEN
 		INT pi = partition(arr, low, high);
 
-		quick sort tasks(arr, low, pi - 1);
-		quick sort tasks(arr, pi + 1, high)
+		quick sort(arr, low, pi - 1);
+		quick sort(arr, pi + 1, high)
 	FI

@@ -18,6 +18,7 @@ BEGIN
 		FI;
 
 	a("./tasks.csv", task csv header);
+	a("./notes.csv", note csv header);
 	a("./groups.csv", group csv header);
 	a("./last-id.txt", "0")
 END;

@@ -2,8 +2,6 @@
 
 PR include "../text processing.a68" PR;
 
-FORMAT time csv fmt = $2d":", 2d$;
-
 MODE TIME = STRUCT ( INT hours, minutes );
 
 # local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #

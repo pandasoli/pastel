@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../text processing.a68" PR;
-
-FORMAT date csv fmt = $2d"/", 2d"/", 4d$;
+PR include "../text processing.a68" PR
 
 MODE DATE = STRUCT ( INT month, day, year );
 

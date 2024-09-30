@@ -12,7 +12,7 @@ PROC add task = (REF INT argi) VOID: (
 		# reason # NIL,
 		# state # pending,
 		# date # today date,
-		# time # NIL,
+		# time # (NIL, NIL),
 		# repeatition # today stack
 	);
 
@@ -38,7 +38,7 @@ PROC add task = (REF INT argi) VOID: (
 
 		IF arg = "at" THEN
 			arg := get argv(argi +:= 1, "Expected time after 'at'");
-			time OF task := LOC TIMES := (str to time(arg), NIL)
+			time OF task := (LOC TIME := str to time(arg), NIL)
 		ELIF arg = "to" THEN
 			arg := get argv(argi +:= 1, "Expected time after 'to'");
 			finish OF time OF task := LOC TIME := str to time(arg)

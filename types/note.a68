@@ -1,11 +1,41 @@
 # -*- coding: utf-8 -*- #
 
 STRING note csv header = "ID,CONTENT,DATE,TIME";
-FORMAT note csv fmt = $g(-0)","""g""","f(date csv fmt)","f(time csv fmt)l$;
 
 MODE NOTE = STRUCT (
 	INT id,
 	STRING content,
 	DATE date,
 	REF TIME time # nullable #
+);
+
+OP +:= = (REF FLEX [] NOTE in out, NOTE item) VOID: (
+	[UPB in out + 1] NOTE new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to note = (FLEXCSVFIELDS fields) NOTE: (
+	REF TIME time = (fields[4] = "" | NIL | HEAP TIME := str to time(fields[4]));
+
+	NOTE(
+		# id # TOINT fields[1],
+		# content # fields[2],
+		# date # str to date(fields[3]),
+		# time # time
+	)
+);
+
+PROC note to csv = (NOTE note) STRING: (
+	BOOL has time = time OF note :/=: REF TIME(NIL);
+
+	[] STRING fields = (
+		# id # whole(id OF note, 0),
+		# title # """" + content OF note + """",
+		# date # REPR date OF note,
+		# time # (has time | REPR time OF note | "")
+	);
+
+	join(fields, ",")
 )

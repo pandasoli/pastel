@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*- #
+
+PR include "types/note.a68" PR
+PR include "text processing.a68" PR;
+
+PROC print note = (NOTE note) VOID: (
+	[] STRING parts = wrap text(content OF note, 37);
+
+	printf($"      ├ "$);
+
+	FOR i TO UPB parts DO
+		printf(($gl$, parts[i]));
+		printf($"      │ "$)
+	OD;
+
+	new line(stand out)
+)

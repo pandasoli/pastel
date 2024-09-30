@@ -11,7 +11,7 @@ MODE TASKSTATE = SHORT INT;
 MODE TASKREPEATITION = SHORT INT;
 
 MODE TIMES = STRUCT(
-	TIME start,
+	REF TIME start, # nullable #
 	REF TIME finish # nullable #
 );
 
@@ -22,7 +22,7 @@ MODE TASK = STRUCT (
 	REF STRING reason, # nullable #
 	TASKSTATE state,
 	DATE date,
-	REF TIMES time,
+	TIMES time,
 	TASKREPEATITION repeatition
 );
 
@@ -46,13 +46,9 @@ OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 );
 
 PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
-	REF TIMES time := (fields[7] = "" | NIL |
-		LOC TIMES := (
-			# start # str to time(fields[7]),
-			# finish # (fields[8] = "" | NIL |
-				LOC TIME := str to time(fields[8])
-			)
-		)
+	TIMES times = (
+		# start #  (fields[7] = "" | NIL | HEAP TIME := str to time(fields[7])),
+		# finish # (fields[8] = "" | NIL | HEAP TIME := str to time(fields[8]))
 	);
 
 	TASK(
@@ -62,17 +58,17 @@ PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
 		# reason # (fields[4] = "" | NIL | fields[4]),
 		# state # TOINT fields[5],
 		# date # str to date(fields[6]),
-		# time # time,
+		# time # times,
 		# repeatition # TOINT fields[9]
 	)
 );
 
 PROC task to csv = (TASK task) STRING: (
 	BOOL
-		has description = description OF task /= "",
+		has description = UPB description OF task > 0,
 		has reason = reason OF task :/=: REF STRING(NIL),
-		has time = time OF task :/=: REF TIMES(NIL),
-		has finish = (has time | finish OF time OF task :/=: REF TIME(NIL) | FALSE);
+		has time = start OF time OF task :/=: REF TIME(NIL),
+		has finish = finish OF time OF task :/=: REF TIME(NIL);
 
 	[] STRING fields = (
 		# id # whole(id OF task, 0),
@@ -82,7 +78,7 @@ PROC task to csv = (TASK task) STRING: (
 		# state # whole(state OF task, 0),
 		# date # REPR date OF task,
 		# start # (has time | REPR start OF time OF task | ""),
-		# finish # (has time AND has finish | REPR finish OF time OF task | ""),
+		# finish # (has finish | REPR finish OF time OF task | ""),
 		# repeatition # whole(repeatition OF task, 0)
 	);
 
