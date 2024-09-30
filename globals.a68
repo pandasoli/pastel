@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- #
 
 PR include "types/task.a68" PR
+PR include "types/group.a68" PR
 PR include "quick sort.a68" PR
 PR include "csv.a68" PR;
 
@@ -44,4 +45,23 @@ PROC get today tasks = [] TASK: (
 	close(f);
 
 	tasks
+);
+
+PROC get today groups = [] GROUP: (
+	FILE f;
+	FLEX [0] GROUP groups;
+
+	openf(f, "./groups.csv", stand in channel);
+
+	read csv(f, (FLEXCSVFIELDS fields) VOID: (
+		GROUP group = csv to group(fields);
+
+		IF date OF group = today date THEN
+			groups +:= group
+		FI
+	));
+
+	close(f);
+
+	groups
 )

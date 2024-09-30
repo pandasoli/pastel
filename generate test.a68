@@ -4,30 +4,42 @@ PR include "types/task.a68" PR;
 
 PROC generate test = VOID: (
 	[] TASK tasks = (
-		(1, "Take a shower", "", NIL, FALSE, pending, today date, NIL, today),
-		(2, "Water plants", "", NIL, FALSE, done, today date, NIL, today),
-		(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, FALSE, pending, today date, NIL, today),
-		(4, "Buy chips", "", NIL, FALSE, done, today date, NIL, today),
+		(1, "Take a shower", "", NIL, pending, today date, NIL, today),
+		(2, "Water plants", "", NIL, done, today date, NIL, today),
+		(3, "Give myself some sunshine", "I've needing more D-vitamine at least I guess so, I'm wetto asf", NIL, pending, today date, NIL, today),
+		(4, "Buy chips", "", NIL, done, today date, NIL, today),
 
-		(5, "Scriptures Study", "", NIL, FALSE, pending, today date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
-		(6, "Lunch", "Eat something healthy", NIL, FALSE, done, today date, LOC TIMES := ((12, 0), NIL), today),
-		(7, "Free time", "", NIL, FALSE, done, today date, LOC TIMES := (current time, NIL), today),
-		(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, FALSE, pending, today date, LOC TIMES := ((13, 0), NIL), today),
-		(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", FALSE, canceled, today date, LOC TIMES := ((15, 0), NIL), today)
+		(5, "Scriptures Study", "", NIL, pending, today date, LOC TIMES := ((11, 0), LOC TIME := (11, 15)), today),
+		(6, "Lunch", "Eat something healthy", NIL, done, today date, LOC TIMES := ((12, 0), NIL), today),
+		(7, "Free time", "", NIL, done, today date, LOC TIMES := (current time, NIL), today),
+		(8, "Math Study", "Some description for my math class this is a course I purchased yey", NIL, pending, today date, LOC TIMES := ((13, 0), NIL), today),
+		(9, "Portuguese Study", "", LOC STRING := "The teacher canceled for some illness", canceled, today date, LOC TIMES := ((15, 0), NIL), today)
 	);
 
-	FILE f1, f2;
+	[] GROUP groups = (
+		GROUP ("Some things", today date, (3, 6, 8))
+	);
+
+	FILE f1, f2, f3;
 	openf(f1, "./tasks.csv", stand out channel);
-	openf(f2, "./last-id.txt", stand out channel);
+	openf(f2, "./groups.csv", stand out channel);
+	openf(f3, "./last-id.txt", stand out channel);
 
 	putf(f1, ($gl$, task csv header));
-	put(f2, id OF tasks[UPB tasks]);
+	putf(f2, ($gl$, group csv header));
+	put(f3, id OF tasks[UPB tasks]);
 
 	FOR i TO UPB tasks DO
 		STRING str = task to csv(tasks[i]);
 		putf(f1, ($gl$, str))
 	OD;
 
+	FOR i TO UPB groups DO
+		STRING str = group to csv(groups[i]);
+		putf(f2, ($gl$, str))
+	OD;
+
 	close(f1);
-	close(f2)
+	close(f2);
+	close(f3)
 )

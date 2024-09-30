@@ -10,7 +10,6 @@ PROC add task = (REF INT argi) VOID: (
 		# title # "",
 		# description # "",
 		# reason # NIL,
-		# in_group # FALSE,
 		# state # pending,
 		# date # today date,
 		# time # NIL,

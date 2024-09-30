@@ -42,6 +42,13 @@ task different-colored was trying to prevent.
       │ after noticing I needed to take a
       │ note about what happened today
       │
+      ╭ Supermarket                               Group
+      │
+      │○ Buy vegetables 
+      │○ Buy tomato salce 
+      │
+      ╰
+      │
 13:00 ○ Math Study
       │   Some description for my math class      Task description
       │   this is a course I purchased yey

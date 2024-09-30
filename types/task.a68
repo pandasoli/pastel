@@ -5,7 +5,7 @@ PR include "time.a68" PR
 PR include "../utils.a68" PR;
 PR include "../csv.a68" PR;
 
-STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,IN_GROUP,STATUS,DATE,START,FINISH,REPETITION";
+STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,STATUS,DATE,START,FINISH,REPETITION";
 
 MODE TASKSTATE = SHORT INT;
 MODE TASKREPEATITION = SHORT INT;
@@ -20,7 +20,6 @@ MODE TASK = STRUCT (
 	STRING title,
 	STRING description,
 	REF STRING reason, # nullable #
-	BOOL in_group,
 	TASKSTATE state,
 	DATE date,
 	REF TIMES time,
@@ -47,11 +46,11 @@ OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 );
 
 PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
-	REF TIMES time := (fields[8] = "" | NIL |
+	REF TIMES time := (fields[7] = "" | NIL |
 		LOC TIMES := (
-			# start # str to time(fields[8]),
-			# finish # (fields[9] = "" | NIL |
-				LOC TIME := str to time(fields[9])
+			# start # str to time(fields[7]),
+			# finish # (fields[8] = "" | NIL |
+				LOC TIME := str to time(fields[8])
 			)
 		)
 	);
@@ -61,11 +60,10 @@ PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
 		# title # fields[2],
 		# description # fields[3],
 		# reason # (fields[4] = "" | NIL | fields[4]),
-		# in_group # fields[5] = "T",
-		# state # TOINT fields[6],
-		# date # str to date(fields[7]),
+		# state # TOINT fields[5],
+		# date # str to date(fields[6]),
 		# time # time,
-		# repeatition # TOINT fields[10]
+		# repeatition # TOINT fields[9]
 	)
 );
 
@@ -81,7 +79,6 @@ PROC task to csv = (TASK task) STRING: (
 		# title # """" + title OF task + """",
 		# description # (has description | """" + description OF task + """" | ""),
 		# reason # (has reason | """" + reason OF task + """" | ""),
-		# in_group # (in_group OF task | "T" | "F"),
 		# state # whole(state OF task, 0),
 		# date # REPR date OF task,
 		# start # (has time | REPR start OF time OF task | ""),
@@ -89,11 +86,5 @@ PROC task to csv = (TASK task) STRING: (
 		# repeatition # whole(repeatition OF task, 0)
 	);
 
-	STRING reg := "";
-
-	FOR i TO UPB fields DO
-		reg +:= fields[i] + (i < UPB fields | "," | "")
-	OD;
-
-	reg
+	join(fields, ",")
 )

@@ -1,31 +1,92 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../print task.a68" PR;
+PR include "../globals.a68" PR;
 PR include "../utils.a68" PR;
 
 PROC show tasks = VOID: (
-	[] TASK tasks = get today tasks;
-	BOOL found sep := FALSE;
 
-	printf($l"      ╭"l$);
+	PROC find task group = (INT id, [] GROUP groups) REF GROUP: (
+		REF GROUP group := NIL;
 
-	FOR i TO UPB tasks DO
-		IF (time OF tasks[i] :/=: REF TIMES(NIL)) AND NOT found sep THEN
-			found sep := TRUE;
-			printf($"      │"l$);
-
-			IF i > 1 THEN
-				TASK task = tasks[i - 1];
-				STRING description = (state OF task = canceled AND (reason OF task :/=: REF STRING(NIL)) | reason OF task | description OF task);
-
-				IF UPB description = 0 THEN
-					printf($"      │"l$)
-				FI
+		FOR i TO UPB groups DO
+			IF includes(ids OF groups[i], id) THEN
+				group := HEAP GROUP := groups[i];
+				done
 			FI
+		OD;
+
+		done: group
+	);
+
+	PROC print group = (STRING title, [] TASK tasks, [] GROUP groups) VOID: (
+		FLEX [0] INT printed in group;
+		BOOL found sep := FALSE;
+		INT i := 1;
+
+		IF UPB title > 0 THEN
+			printf(($l"      ╭ "g"[1m"gg"[m"l$, esc, title, esc));
+			printf($"      │"l$)
+		ELSE
+			printf($l"      ╭"l$)
 		FI;
 
-		print task(tasks[i])
-	OD;
+		WHILE i <= UPB tasks DO
+			BOOL has time = time OF tasks[i] :/=: REF TIMES(NIL);
 
-	printf($"      ╰"ll$)
+			WHILE includes(printed in group, id OF tasks[i]) ORF (NOT has time AND (find task group(id OF tasks[i], groups) :/=: REF GROUP(NIL))) DO
+				i +:= 1;
+
+				IF i > UPB tasks THEN
+					done
+				FI
+			OD;
+
+			# Add separator after no-time items #
+			IF has time AND NOT found sep THEN
+				found sep := TRUE;
+				printf($"      │"l$);
+
+				IF i > 1 THEN
+					TASK task = tasks[i - 1];
+					BOOL has reason = reason OF task :/=: REF STRING(NIL);
+					STRING description = (state OF task = canceled AND has reason | reason OF task | description OF task);
+
+					IF UPB description = 0 THEN
+						printf($"      │"l$)
+					FI
+				FI
+			FI;
+
+			# print item #
+			REF GROUP group = find task group(id OF tasks[i], groups);
+
+			IF (group :/=: REF GROUP(NIL)) AND has time THEN
+				FLEX [0] TASK these tasks;
+
+				FOR i TO UPB tasks DO
+					IF includes(ids OF group, id OF tasks[i]) THEN
+						printed in group +:= id OF tasks[i];
+						these tasks +:= tasks[i]
+					FI
+				OD;
+
+				printf($"      │"l$);
+				print group(title OF group, these tasks, ~);
+				printf($"      │"l$)
+			ELSE
+				print task(tasks[i])
+			FI;
+
+			i +:= 1
+		OD;
+
+		done:
+		printf($"      ╰"ll$)
+	);
+
+	[] TASK tasks = get today tasks;
+	[] GROUP groups = get today groups;
+
+	print group("", tasks, groups)
 )

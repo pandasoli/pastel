@@ -1,10 +1,56 @@
 # -*- coding: utf-8 -*- #
 
 STRING group csv header = "TITLE,DATE,IDS";
-FORMAT group csv fmt = $""""g""","f(date csv fmt)","""g""""$;
 
 MODE GROUP = STRUCT (
 	STRING title,
 	DATE date,
 	FLEX [0] INT ids
+);
+
+OP +:= = (REF FLEX [] GROUP in out, GROUP item) VOID: (
+	[UPB in out + 1] GROUP new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to group = (FLEXCSVFIELDS fields) GROUP: (
+	PROC split ids = (STRING raw ids) [] INT: (
+		FLEX [0] INT ids;
+		STRING id;
+
+		FOR i TO UPB raw ids DO
+			IF raw ids[i] = ":" THEN
+				ids +:= TOINT id;
+				id := ""
+			ELSE
+				id +:= raw ids[i]
+			FI
+		OD;
+
+		ids
+	);
+
+	GROUP(
+		# title # fields[1],
+		# date # str to date(fields[2]),
+		# ids # split ids(fields[3])
+	)
+);
+
+PROC group to csv = (GROUP group) STRING: (
+	STRING ids;
+
+	FOR i TO UPB ids OF group DO
+		ids +:= whole((ids OF group)[i], 0) + (i < UPB ids OF group | ":" | "")
+	OD;
+
+	[] STRING fields = (
+		# title # """" + title OF group + """",
+		# date # REPR date OF group,
+		# ids # ids
+	);
+
+	join(fields, ",")
 )

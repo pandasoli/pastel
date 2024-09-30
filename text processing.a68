@@ -13,13 +13,6 @@ OP TOINT = (STRING str) INT: (
 	n * sign
 );
 
-OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
-	[UPB in out + 1] STRING new;
-	new[:UPB in out] := in out;
-	new[UPB new] := item;
-	in out := new
-);
-
 PROC sh scape = (STRING str, CHAR ch) STRING: (
 	STRING text := str;
 	INT text len := UPB text, i := 1;
@@ -48,6 +41,16 @@ PROC strchr = (STRING str, CHAR ch) INT: (
 	OD;
 
 	done: pos
+);
+
+PROC join = ([] STRING list, STRING delim) STRING: (
+	STRING res;
+
+	FOR i TO UPB list DO
+		res +:= list[i] + (i < UPB list | delim | "")
+	OD;
+
+	res
 );
 
 PROC wrap text = (STRING text, INT width) [] STRING: (

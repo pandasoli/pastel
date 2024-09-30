@@ -7,13 +7,22 @@ PR include "operations/show tasks.a68" PR
 PR include "operations/add task.a68" PR;
 PR include "operations/remove task.a68" PR;
 
-IF a68g argc = 1 THEN
-	IF NOT file is regular("./tasks.csv") THEN
-		putf(stand error, ($gll$, "You don't have no tasks yet"));
-		stop
-	FI;
+BEGIN
+	FILE f;
 
-	show tasks
+	PROC a = (STRING path, header) VOID:
+		IF NOT file is regular(path) THEN
+			openf(f, path, stand out channel);
+			put(f, header);
+			close(f)
+		FI;
+
+	a("./tasks.csv", task csv header);
+	a("./groups.csv", group csv header);
+	a("./last-id.txt", "0")
+END;
+
+IF a68g argc = 1 THEN show tasks
 ELSE
 	INT argi := 2;
 	STRING arg := a68g argv(argi);

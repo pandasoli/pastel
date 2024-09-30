@@ -11,4 +11,32 @@ PROC openf = (REF FILE f, STRING file name, CHANNEL chann) VOID:
 			putf(stand error, ($"Couldn't establish file "gl$, file name));
 			stop
 		FI
-	FI
+	FI;
+
+PROC includes = ([] INT list, INT item) BOOL: (
+	BOOL res := FALSE;
+
+	FOR i TO UPB list DO
+		IF list[i] = item THEN
+			res := TRUE;
+			done
+		FI
+	OD;
+	done:
+
+	res
+);
+
+OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
+	[UPB in out + 1] STRING new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+OP +:= = (REF FLEX [] INT in out, INT item) REF FLEX [] INT: (
+	[UPB in out + 1] INT new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+)
