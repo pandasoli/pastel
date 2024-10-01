@@ -1,37 +1,15 @@
 # -*- coding: utf-8 -*- #
 
-PR include "types/task.a68" PR
-PR include "types/note.a68" PR;
+PR include "types/item.a68" PR;
 
-MODE SORTITEMS = UNION (TASK, NOTE);
-
-OP +:= = (REF FLEX [] SORTITEMS in out, SORTITEMS item) VOID: (
-	[UPB in out + 1] SORTITEMS new;
-	new[:UPB in out] := in out;
-	new[UPB new] := item;
-	in out := new
-);
-
-PROC bigger = (SORTITEMS a, b) BOOL: (
-	PROC get time = (SORTITEMS v) REF TIME:
-		CASE v IN
-			(TASK v): start OF time OF v,
-			(NOTE v): time OF v
-		ESAC;
-
-	PROC get date = (SORTITEMS v) DATE:
-		CASE v IN
-			(TASK v): date OF v,
-			(NOTE v): date OF v
-		ESAC;
-
+PROC bigger = (ITEM a, b) BOOL: (
 	DATE
-		a date = get date(a),
-		b date = get date(b);
+		a date = get item date(a),
+		b date = get item date(b);
 
 	REF TIME
-		a time = get time(a),
-		b time = get time(b);
+		a time = get item time(a),
+		b time = get item time(b);
 
 	BOOL
 		a all day = a time :=: REF TIME(NIL),
@@ -59,14 +37,14 @@ PROC bigger = (SORTITEMS a, b) BOOL: (
 	FI
 );
 
-PROC swap = (REF [] SORTITEMS arr, INT i, j) VOID: (
-	SORTITEMS temp = arr[i];
+PROC swap = (REF [] ITEM arr, INT i, j) VOID: (
+	ITEM temp = arr[i];
 	arr[i] := arr[j];
 	arr[j] := temp
 );
 
-PROC partition = (REF [] SORTITEMS arr, INT low, high) INT: (
-	SORTITEMS pivot = arr[high];
+PROC partition = (REF [] ITEM arr, INT low, high) INT: (
+	ITEM pivot = arr[high];
 	INT i := low - 1;
 
 	FOR j FROM low TO high - 1 DO
@@ -80,7 +58,7 @@ PROC partition = (REF [] SORTITEMS arr, INT low, high) INT: (
   i + 1
 );
 
-PROC quick sort = (REF [] SORTITEMS arr, INT low, high) VOID:
+PROC quick sort = (REF [] ITEM arr, INT low, high) VOID:
 	IF low < high THEN
 		INT pi = partition(arr, low, high);
 

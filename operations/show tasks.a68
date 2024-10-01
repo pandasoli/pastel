@@ -21,7 +21,7 @@ PROC show tasks = VOID: (
 		done: group
 	);
 
-	PROC print group = (STRING title, [] SORTITEMS items, [] GROUP groups) VOID: (
+	PROC print group = (STRING title, [] ITEM items, [] GROUP groups) VOID: (
 		FLEX [0] INT printed in group;
 		BOOL found sep := FALSE;
 		INT i := 1;
@@ -34,28 +34,22 @@ PROC show tasks = VOID: (
 		FI;
 
 		WHILE i <= UPB items DO
-			INT id = CASE items[i] IN
-				(TASK v): id OF v,
-				(NOTE v): id OF v
-			ESAC;
+			INT id := get item id(items[i]);
+			BOOL has time := get item time(items[i]) :/=: REF TIME(NIL);
 
-			BOOL has time = CASE items[i] IN
-				(TASK v): start OF time OF v :/=: REF TIME(NIL),
-				(NOTE v): time OF v :/=: REF TIME(NIL)
-			ESAC;
-
-#
+			# Skip items that are were printed in groups or it's all day and is in a group #
 			WHILE includes(printed in group, id) ORF (NOT has time AND (find task group(id, groups) :/=: REF GROUP(NIL))) DO
 				i +:= 1;
+				id := get item id(items[i]);
+				has time := get item time(items[i]) :/=: REF TIME(NIL);
 
 				IF i > UPB items THEN
 					done
 				FI
 			OD;
-#
 
 			# Add separator after no-time items #
-			IF has time AND NOT found sep THEN
+			IF has time AND NOT found sep AND i > 1 THEN
 				found sep := TRUE;
 				printf($"      │"l$);
 
@@ -77,20 +71,14 @@ PROC show tasks = VOID: (
 			FI;
 
 			# print item #
-			PROC get id = (SORTITEMS v) INT:
-				CASE v IN
-					(TASK v): id OF v,
-					(NOTE v): id OF v
-				ESAC;
-
-			REF GROUP group = find task group(get id(items[i]), groups);
+			REF GROUP group = find task group(get item id(items[i]), groups);
 
 			IF (group :/=: REF GROUP(NIL)) AND has time THEN
-				FLEX [0] SORTITEMS these items;
+				FLEX [0] ITEM these items;
 
 				FOR i TO UPB items DO
-					IF includes(ids OF group, get id(items[i])) THEN
-						printed in group +:= get id(items[i]);
+					IF includes(ids OF group, get item id(items[i])) THEN
+						printed in group +:= get item id(items[i]);
 						these items +:= items[i]
 					FI
 				OD;
@@ -115,10 +103,10 @@ PROC show tasks = VOID: (
 	[] NOTE notes = get today notes;
 	[] GROUP groups = get today groups;
 
-	FLEX [0] SORTITEMS items;
+	FLEX [0] ITEM items;
 
-	FOR i TO UPB tasks DO items +:= SORTITEMS(tasks[i]) OD;
-	FOR i TO UPB notes DO items +:= SORTITEMS(notes[i]) OD;
+	FOR i TO UPB tasks DO items +:= ITEM(tasks[i]) OD;
+	FOR i TO UPB notes DO items +:= ITEM(notes[i]) OD;
 
 	quick sort(items, 1, UPB items);
 	print group("", items, groups)

@@ -29,6 +29,7 @@ PROC csv to group = (FLEXCSVFIELDS fields) GROUP: (
 			FI
 		OD;
 
+		ids +:= TOINT id;
 		ids
 	);
 
