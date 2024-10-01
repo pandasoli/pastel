@@ -3,7 +3,15 @@
 PR include "types/task.a68" PR
 PR include "types/group.a68" PR
 PR include "quick sort.a68" PR
+PR include "utils.a68" PR
 PR include "csv.a68" PR;
+
+STRING
+	data path = "/home/" + whoami + "/.local/share/pastel",
+	tasks data path = data path + "/tasks.csv",
+	notes data path = data path + "/notes.csv",
+	groups data path = data path + "/groups.csv",
+	last id data path = data path + "/last id.txt";
 
 CHAR esc = REPR 27;
 
@@ -18,7 +26,7 @@ PROC get argv = (INT argi, STRING err msg) STRING: (
 
 PROC get all tasks = (PROC (TASK) VOID callback) VOID: (
 	FILE f;
-	openf(f, "./tasks.csv", stand in channel);
+	openf(f, tasks data path, stand in channel);
 
 	read csv(f, (FLEXCSVFIELDS fields) VOID:
 		callback(csv to task(fields))
@@ -31,7 +39,7 @@ PROC get today tasks = [] TASK: (
 	FILE f;
 	FLEX [0] TASK tasks;
 
-	openf(f, "./tasks.csv", stand in channel);
+	openf(f, tasks data path, stand in channel);
 
 	read csv(f, (FLEXCSVFIELDS fields) VOID: (
 		TASK task = csv to task(fields);
@@ -49,7 +57,7 @@ PROC get today notes = [] NOTE: (
 	FILE f;
 	FLEX [0] NOTE notes;
 
-	openf(f, "./notes.csv", stand in channel);
+	openf(f, notes data path, stand in channel);
 
 	read csv(f, (FLEXCSVFIELDS fields) VOID: (
 		NOTE note = csv to note(fields);
@@ -67,7 +75,7 @@ PROC get today groups = [] GROUP: (
 	FILE f;
 	FLEX [0] GROUP groups;
 
-	openf(f, "./groups.csv", stand in channel);
+	openf(f, groups data path, stand in channel);
 
 	read csv(f, (FLEXCSVFIELDS fields) VOID: (
 		GROUP group = csv to group(fields);

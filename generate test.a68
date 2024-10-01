@@ -28,10 +28,10 @@ PROC generate test = VOID: (
 	);
 
 	FILE f1, f2, f3, f4;
-	openf(f1, "./tasks.csv", stand out channel);
-	openf(f2, "./notes.csv", stand out channel);
-	openf(f3, "./groups.csv", stand out channel);
-	openf(f4, "./last-id.txt", stand out channel);
+	openf(f1, tasks data path, stand out channel);
+	openf(f2, notes data path, stand out channel);
+	openf(f3, groups data path, stand out channel);
+	openf(f4, last id data path, stand out channel);
 
 	putf(f1, ($gl$, task csv header));
 	putf(f2, ($gl$, note csv header));

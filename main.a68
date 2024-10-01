@@ -17,10 +17,19 @@ BEGIN
 			close(f)
 		FI;
 
-	a("./tasks.csv", task csv header);
-	a("./notes.csv", note csv header);
-	a("./groups.csv", group csv header);
-	a("./last-id.txt", "0")
+	IF NOT file is directory(data path) THEN
+		INT err = execve("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
+
+		IF err < 0 THEN
+			putf(stand error, ($"Couldn't create "gl$, data path));
+			stop
+		FI
+	FI;
+
+	a(tasks data path, task csv header);
+	a(notes data path, note csv header);
+	a(groups data path, group csv header);
+	a(last id data path, "0")
 END;
 
 IF a68g argc = 1 THEN show tasks
