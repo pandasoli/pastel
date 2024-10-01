@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 
-PR include "types/task.a68" PR;
-PR include "text processing.a68" PR
-PR include "globals.a68" PR;
+PR include "../types/task.a68" PR;
+PR include "../text processing.a68" PR
+PR include "../globals.a68" PR;
 
 PROC print task = (TASK task) VOID: (
 	BOOL

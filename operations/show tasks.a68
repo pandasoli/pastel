@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../print task.a68" PR
-PR include "../print note.a68" PR
+PR include "../printing/task.a68" PR
+PR include "../printing/note.a68" PR
 PR include "../globals.a68" PR
 PR include "../utils.a68" PR
 PR include "../quick sort.a68" PR;
