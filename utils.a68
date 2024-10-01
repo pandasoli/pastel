@@ -13,18 +13,6 @@ PROC openf = (REF FILE f, STRING file name, CHANNEL chann) VOID:
 		FI
 	FI;
 
-PROC whoami = STRING: (
-	STRING output;
-	INT err = execve output("/bin/sh", ("sh", "-c", "whoami"), "", output);
-
-	IF err < 0 THEN
-		putf(stand error, $"Couldn't execute whoami"l$);
-		stop
-	FI;
-
-	output[:UPB output - 1]
-);
-
 PROC includes = ([] INT list, INT item) BOOL: (
 	BOOL res := FALSE;
 

@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*- #
+
+PROC append file = (STRING path, raw text) VOID: (
+	STRING text = sh scape(raw text, """");
+	INT err = execve("/bin/sh", ("sh", "-c", "echo """ + text + """>>" + path), "");
+
+	IF err < 0 THEN
+		putf(stand error, ($"Couldn't append to file "gl$, path));
+		stop
+	FI
+);
+
+PROC move file = (STRING from, to) VOID: (
+	STRING sh from = sh scape(from, " ");
+	STRING sh to = sh scape(to, " ");
+	INT err = execve("/bin/sh", ("sh", "-c", "mv " + sh from + " " + sh to), "");
+
+	IF err < 0 THEN
+		putf(stand error, ($"Couldn't move file "g" to "gl$, from, to));
+		stop
+	FI
+);
+
+PROC create directory = (STRING path) VOID: (
+	INT err = execve("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
+
+	IF err < 0 THEN
+		putf(stand error, ($"Couldn't create directory "gl$, data path));
+		stop
+	FI
+);
+
+PROC whoami = STRING: (
+	STRING output;
+	INT err = execve output("/bin/sh", ("sh", "-c", "whoami"), "", output);
+
+	IF err < 0 THEN
+		putf(stand error, $"Couldn't execute whoami"l$);
+		stop
+	FI;
+
+	output[:UPB output - 1]
+)

@@ -18,12 +18,7 @@ BEGIN
 		FI;
 
 	IF NOT file is directory(data path) THEN
-		INT err = execve("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
-
-		IF err < 0 THEN
-			putf(stand error, ($"Couldn't create "gl$, data path));
-			stop
-		FI
+		create directory(data path);
 	FI;
 
 	a(tasks data path, task csv header);
