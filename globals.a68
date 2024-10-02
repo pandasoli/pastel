@@ -25,71 +25,56 @@ PROC get argv = (INT argi, STRING err msg) STRING: (
 	a68g argv(argi)
 );
 
-PROC get all tasks = (PROC (TASK) VOID callback) VOID: (
+PROC read csv slowly = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 	FILE f;
-	openf(f, tasks data path, stand in channel);
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID:
-		callback(csv to task(fields))
-	);
-
+	openf(f, path, stand in channel);
+	read csv(f, callback);
 	close(f)
 );
 
+PROC get all tasks = (PROC (TASK) VOID callback) VOID:
+	read csv slowly(tasks data path, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to task(fields))
+	);
+
+PROC get all notes = (PROC (NOTE) VOID callback) VOID:
+	read csv slowly(notes data path, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to note(fields))
+	);
+
+PROC get all weeks = (PROC (WEEK) VOID callback) VOID:
+	read csv slowly(weeks data path, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to week(fields))
+	);
+
 PROC get today tasks = [] TASK: (
-	FILE f;
 	FLEX [0] TASK tasks;
 
-	openf(f, tasks data path, stand in channel);
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID: (
-		TASK task = csv to task(fields);
-
+	get all tasks((TASK task) VOID:
 		IF date OF task = today date THEN
 			tasks +:= task
 		FI
-	));
+	);
 
-	close(f);
 	tasks
 );
 
 PROC get today notes = [] NOTE: (
-	FILE f;
 	FLEX [0] NOTE notes;
 
-	openf(f, notes data path, stand in channel);
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID: (
-		NOTE note = csv to note(fields);
-
+	get all notes((NOTE note) VOID:
 		IF date OF note = today date THEN
 			notes +:= note
 		FI
-	));
+	);
 
-	close(f);
 	notes
 );
 
-PROC get all weeks = (PROC (WEEK) VOID callback) VOID: (
-	FILE f;
-	openf(f, weeks data path, stand in channel);
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID:
-		callback(csv to week(fields))
-	);
-
-	close(f)
-);
-
 PROC get today groups = [] GROUP: (
-	FILE f;
 	FLEX [0] GROUP groups;
 
-	openf(f, groups data path, stand in channel);
-
-	read csv(f, (FLEXCSVFIELDS fields) VOID: (
+	read csv slowly(groups data path, (FLEXCSVFIELDS fields) VOID: (
 		GROUP group = csv to group(fields);
 
 		IF date OF group = today date THEN
@@ -97,6 +82,5 @@ PROC get today groups = [] GROUP: (
 		FI
 	));
 
-	close(f);
 	groups
 )

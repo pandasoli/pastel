@@ -2,7 +2,8 @@
 
 PROC append file = (STRING path, raw text) VOID: (
 	STRING text = sh scape(raw text, """");
-	INT err = execve("/bin/sh", ("sh", "-c", "echo """ + text + """>>" + path), "");
+	STRING cmd = "echo """ + text + """>>" + path;
+	INT err = execve child("/bin/sh", ("sh", "-c", cmd), "");
 
 	IF err < 0 THEN
 		putf(stand error, ($"Couldn't append to file "gl$, path));
@@ -13,7 +14,7 @@ PROC append file = (STRING path, raw text) VOID: (
 PROC move file = (STRING from, to) VOID: (
 	STRING sh from = sh scape(from, " ");
 	STRING sh to = sh scape(to, " ");
-	INT err = execve("/bin/sh", ("sh", "-c", "mv " + sh from + " " + sh to), "");
+	INT err = execve child("/bin/sh", ("sh", "-c", "mv " + sh from + " " + sh to), "");
 
 	IF err < 0 THEN
 		putf(stand error, ($"Couldn't move file "g" to "gl$, from, to));
@@ -22,7 +23,7 @@ PROC move file = (STRING from, to) VOID: (
 );
 
 PROC create directory = (STRING path) VOID: (
-	INT err = execve("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
+	INT err = execve child("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
 
 	IF err < 0 THEN
 		putf(stand error, ($"Couldn't create directory "gl$, data path));

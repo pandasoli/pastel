@@ -4,8 +4,8 @@
 PR nowarnings PR
 PR include "generate test.a68" PR
 PR include "operations/show tasks.a68" PR
-PR include "operations/add.a68" PR;
-PR include "operations/remove task.a68" PR;
+PR include "operations/add.a68" PR
+PR include "operations/remove.a68" PR;
 PR include "utils.a68" PR;
 
 BEGIN
@@ -53,6 +53,6 @@ ELSE
 
 	IF   arg = "gen"    THEN generate test
 	ELIF arg = "add"    THEN add(argi)
-	ELIF arg = "remove" THEN remove task(argi)
+	ELIF arg = "remove" THEN remove(argi)
 	FI
 FI
