@@ -39,4 +39,39 @@ OP +:= = (REF FLEX [] INT in out, INT item) REF FLEX [] INT: (
 	new[:UPB in out] := in out;
 	new[UPB new] := item;
 	in out := new
+);
+
+PROC get days in month = (INT month, year) INT:
+	CASE month IN
+		31,
+		IF
+			IF year MOD 400 = 0 THEN TRUE
+			ELSE
+				(year MOD 4 = 0 | year MOD 100 /= 0 | FALSE)
+			FI
+		THEN 29
+		ELSE 28
+		FI,
+		31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+	ESAC;
+
+PROC get week start = DATE: (
+	# local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
+	INT
+		day := local time[3] - local time[7],
+		month := local time[2],
+		year := local time[1];
+
+	IF day <= 0 THEN
+		month -:= 1;
+
+		IF month = 0 THEN
+			month := 12;
+			year -:= 1
+		FI;
+
+		day +:= get days in month(month, year)
+	FI;
+
+	(month, day, year)
 )

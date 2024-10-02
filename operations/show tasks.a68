@@ -30,7 +30,7 @@ PROC show tasks = VOID: (
 			printf(($l"      ╭ "g"[1m"gg"[m"l$, esc, title, esc));
 			printf($"      │"l$)
 		ELSE
-			printf($l"      ╭"l$)
+			printf($"      ╭"l$)
 		FI;
 
 		WHILE i <= UPB items DO

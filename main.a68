@@ -6,6 +6,7 @@ PR include "generate test.a68" PR
 PR include "operations/show tasks.a68" PR
 PR include "operations/add task.a68" PR;
 PR include "operations/remove task.a68" PR;
+PR include "utils.a68" PR;
 
 BEGIN
 	FILE f;
@@ -18,19 +19,37 @@ BEGIN
 		FI;
 
 	IF NOT file is directory(data path) THEN
-		create directory(data path);
+		create directory(data path)
 	FI;
 
 	a(tasks data path, task csv header);
 	a(notes data path, note csv header);
+	a(weeks data path, week csv header);
 	a(groups data path, group csv header);
 	a(last id data path, "0")
 END;
 
-IF a68g argc = 1 THEN show tasks
+IF a68g argc = 1 THEN
+	DATE week start = get week start;
+
+	new line(stand out);
+
+	get all weeks((WEEK week) VOID:
+		IF week start = date OF week THEN
+			[] STRING parts = wrap text(description OF week, 30);
+
+			printf(($"          "gl$, center text(title OF week, 30)));
+
+			FOR i TO UPB parts DO
+				printf(($"          "gl$, center text(parts[i], 30)))
+			OD
+		FI
+	);
+
+	show tasks
 ELSE
 	INT argi := 2;
-	STRING arg := a68g argv(argi);
+	STRING arg = a68g argv(argi);
 
 	IF   arg = "gen"    THEN generate test
 	ELIF arg = "add"    THEN add task(argi)

@@ -1,10 +1,26 @@
 # -*- coding: utf-8 -*- #
 
 STRING week csv header = "TITLE,DESCRIPTION,DATE";
-FORMAT week csv fmt = $""""g""","""g""","f(date csv fmt)l$;
 
 MODE WEEK = STRUCT (
 	STRING title,
 	STRING description,
 	DATE date
+);
+
+PROC csv to week = (FLEXCSVFIELDS fields) WEEK:
+	WEEK(
+		# title # fields[1],
+		# description # fields[2],
+		# date # str to date(fields[3])
+	);
+
+PROC week to csv = (WEEK week) STRING: (
+	[] STRING fields = (
+		# title # """" + title OF week + """",
+		# description # """" + description OF week + """",
+		# date # REPR date OF week
+	);
+
+	join(fields, ",")
 )

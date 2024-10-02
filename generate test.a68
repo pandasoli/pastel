@@ -2,7 +2,8 @@
 
 PR include "types/task.a68" PR;
 PR include "types/note.a68" PR;
-PR include "types/group.a68" PR;
+PR include "types/week.a68" PR;
+PR include "types/group.a68" PR
 PR include "utils.a68" PR;
 
 PROC generate test = VOID: (
@@ -23,20 +24,26 @@ PROC generate test = VOID: (
 		NOTE (10, "It's a note I took in the afternoon after noticing I needed to take a note about what happened today", today date, LOC TIME := (12, 15))
 	);
 
+	[] WEEK weeks = (
+		WEEK ("My good week 🪴", "This is the week's description that is to remember how I want it to be during the days", get week start)
+	);
+
 	[] GROUP groups = (
 		GROUP ("Some things", today date, (3, 6, 8))
 	);
 
-	FILE f1, f2, f3, f4;
+	FILE f1, f2, f3, f4, f5;
 	openf(f1, tasks data path, stand out channel);
 	openf(f2, notes data path, stand out channel);
-	openf(f3, groups data path, stand out channel);
-	openf(f4, last id data path, stand out channel);
+	openf(f3, weeks data path, stand out channel);
+	openf(f4, groups data path, stand out channel);
+	openf(f5, last id data path, stand out channel);
 
 	putf(f1, ($gl$, task csv header));
 	putf(f2, ($gl$, note csv header));
-	putf(f3, ($gl$, group csv header));
-	put(f4, id OF notes[UPB notes]);
+	putf(f3, ($gl$, week csv header));
+	putf(f4, ($gl$, group csv header));
+	put(f5, id OF notes[UPB notes]);
 
 	FOR i TO UPB tasks DO
 		STRING str = task to csv(tasks[i]);
@@ -48,13 +55,19 @@ PROC generate test = VOID: (
 		putf(f2, ($gl$, str))
 	OD;
 
+	FOR i TO UPB weeks DO
+		STRING str = week to csv(weeks[i]);
+		putf(f3, ($gl$, str))
+	OD;
+
 	FOR i TO UPB groups DO
 		STRING str = group to csv(groups[i]);
-		putf(f3, ($gl$, str))
+		putf(f4, ($gl$, str))
 	OD;
 
 	close(f1);
 	close(f2);
 	close(f3);
-	close(f4)
+	close(f4);
+	close(f5)
 )

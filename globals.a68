@@ -10,6 +10,7 @@ STRING
 	data path = "/home/" + whoami + "/.local/share/pastel",
 	tasks data path = data path + "/tasks.csv",
 	notes data path = data path + "/notes.csv",
+	weeks data path = data path + "/weeks.csv",
 	groups data path = data path + "/groups.csv",
 	last id data path = data path + "/last id.txt";
 
@@ -69,6 +70,17 @@ PROC get today notes = [] NOTE: (
 
 	close(f);
 	notes
+);
+
+PROC get all weeks = (PROC (WEEK) VOID callback) VOID: (
+	FILE f;
+	openf(f, weeks data path, stand in channel);
+
+	read csv(f, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to week(fields))
+	);
+
+	close(f)
 );
 
 PROC get today groups = [] GROUP: (

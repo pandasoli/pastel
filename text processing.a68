@@ -65,7 +65,7 @@ PROC wrap text = (STRING text, INT width) [] STRING: (
 
 		INT next := (next space < next dash | next space | next dash);
 
-		IF UPB part + next > width THEN
+		IF UPB part + next - 1 > width THEN
 			IF next > width THEN
 				INT len = width - UPB part - 1;
 				parts +:= part + text[text i:][:len] + "-";
@@ -87,4 +87,26 @@ PROC wrap text = (STRING text, INT width) [] STRING: (
 	OD;
 
 	parts +:= part
+);
+
+PROC center text = (STRING text, INT width) STRING: (
+	STRING new := text;
+	INT missing = width - UPB text;
+
+	IF missing > 0 THEN
+		REAL part = missing / 2;
+		INT
+			left := ENTIER part,
+			right := left + (part - left > 0 | 1 | 0);
+
+		IF right > left THEN
+			left +:= 1;
+			right -:= 1
+		FI;
+
+		TO left  DO new := " " + new OD;
+		TO right DO new := new + " " OD
+	FI;
+
+	new
 )
