@@ -83,4 +83,39 @@ PROC get today groups = [] GROUP: (
 	));
 
 	groups
+);
+
+PROC get today items = [] ITEM: (
+	[] TASK tasks = get today tasks;
+	[] NOTE notes = get today notes;
+	[] GROUP groups = get today groups;
+
+	FLEX [0] ITEM items;
+
+	FOR i TO UPB tasks DO items +:= ITEM(tasks[i]) OD;
+	FOR i TO UPB notes DO items +:= ITEM(notes[i]) OD;
+
+	quick sort(items, 1, UPB items);
+
+	FOR i TO UPB groups DO
+		FLEX [0] ITEM these items;
+		FLEX [0] ITEM other items;
+		INT append index := 1;
+
+		FOR j TO UPB items DO
+			ITEM item = items[j];
+			INT id = get item id(item);
+			BOOL in group = includes(ids OF groups[i], id);
+
+			(in group | these items | other items) +:= item;
+
+			IF in group AND append index = 1 AND (get item time(item) :/=: REF TIME(NIL)) THEN
+				append index := j
+			FI
+		OD;
+
+		items := other items[:append index] + these items + other items[append index + 1:]
+	OD;
+
+	items
 )

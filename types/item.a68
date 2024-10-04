@@ -12,6 +12,13 @@ OP +:= = (REF FLEX [] ITEM in out, ITEM item) VOID: (
 	in out := new
 );
 
+OP + = ([] ITEM in1, [] ITEM in2) [] ITEM: (
+	[UPB in1 + UPB in2] ITEM new;
+	new[:UPB in1] := in1;
+	new[UPB in1 + 1:] := in2;
+	new
+);
+
 PROC get item id = (ITEM v) INT:
 	CASE v IN
 		(TASK v): id OF v,
