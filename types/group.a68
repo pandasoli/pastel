@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*- #
 
-STRING group csv header = "TITLE,DATE,IDS";
+STRING group csv header = "ID,TITLE,DATE,IDS";
 
 MODE GROUP = STRUCT (
+	INT id,
 	STRING title,
 	DATE date,
 	FLEX [0] INT ids
@@ -34,9 +35,10 @@ PROC csv to group = (FLEXCSVFIELDS fields) GROUP: (
 	);
 
 	GROUP(
-		# title # fields[1],
-		# date # str to date(fields[2]),
-		# ids # split ids(fields[3])
+		# id # TOINT fields[1],
+		# title # fields[2],
+		# date # str to date(fields[3]),
+		# ids # split ids(fields[4])
 	)
 );
 
@@ -48,6 +50,7 @@ PROC group to csv = (GROUP group) STRING: (
 	OD;
 
 	[] STRING fields = (
+		# id # whole(id OF group, 0),
 		# title # """" + title OF group + """",
 		# date # REPR date OF group,
 		# ids # ids

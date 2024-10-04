@@ -42,6 +42,11 @@ PROC get all notes = (PROC (NOTE) VOID callback) VOID:
 		callback(csv to note(fields))
 	);
 
+PROC get all groups = (PROC (GROUP) VOID callback) VOID:
+	read csv slowly(groups data path, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to group(fields))
+	);
+
 PROC get all weeks = (PROC (WEEK) VOID callback) VOID:
 	read csv slowly(weeks data path, (FLEXCSVFIELDS fields) VOID:
 		callback(csv to week(fields))

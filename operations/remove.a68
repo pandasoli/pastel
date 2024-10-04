@@ -7,14 +7,7 @@ PROC remove = (REF INT argi) VOID: (
 	STRING arg := get argv(argi +:= 1, "Expected index after 'remove'");
 	INT index = TOINT arg;
 
-	[] TASK tasks = get today tasks;
-	[] NOTE notes = get today notes;
-	FLEX [0] ITEM items;
-
-	FOR i TO UPB tasks DO items +:= tasks[i] OD;
-	FOR i TO UPB notes DO items +:= notes[i] OD;
-
-	quick sort(items, 1, UPB items);
+	[] ITEM items = get today items;
 
 	IF index > UPB items THEN
 		putf(stand error, ($g"[31m"gg"[m"ll$, esc, "There're not many items in today's list", esc));
@@ -22,33 +15,18 @@ PROC remove = (REF INT argi) VOID: (
 	FI;
 
 	ITEM item = items[index];
+	INT id = get item id(item);
 
-	PROC process = (ITEM item, PROC (PROC (ITEM) VOID) VOID get all, PROC (ITEM) STRING encode) VOID: (
-		INT id = get item id(item);
-
-		get all((ITEM i) VOID:
-			IF get item id(i) /= id THEN
-				STRING str = encode(i);
-				append file("./new.csv", str)
-			FI
-		)
-	);
-
+	# Remove from items list #
 	CASE item IN
 		(NOTE note):
 			BEGIN
 				append file("./new.csv", note csv header);
 
-				process(
-					item,
-					(PROC (ITEM) VOID callback) VOID:
-						get all notes((NOTE n) VOID:
-							callback(ITEM(n))
-						),
-					(ITEM item) STRING:
-						CASE item IN
-							(NOTE note): note to csv(note)
-						ESAC
+				get all notes((NOTE n) VOID:
+					IF id OF n /= id OF note THEN
+						append file("./new.csv", note to csv(n))
+					FI
 				);
 
 				move file("./new.csv", notes data path)
@@ -58,19 +36,50 @@ PROC remove = (REF INT argi) VOID: (
 			BEGIN
 				append file("./new.csv", task csv header);
 
-				process(
-					item,
-					(PROC (ITEM) VOID callback) VOID:
-						get all tasks((TASK t) VOID:
-							callback(ITEM(t))
-						),
-					(ITEM item) STRING:
-						CASE item IN
-							(TASK task): task to csv(task)
-						ESAC
+				get all tasks((TASK t) VOID:
+					IF id OF t /= id OF task THEN
+						append file("./new.csv", task to csv(t))
+					FI
 				);
 
 				move file("./new.csv", tasks data path)
 			END
-	ESAC
+	ESAC;
+
+	# Remove from group #
+	[] GROUP groups = get today groups;
+	REF GROUP group := NIL;
+
+	FOR i TO UPB groups DO
+		IF includes(ids OF groups[i], id) THEN
+			group := LOC GROUP := groups[i];
+			finish groups
+		FI
+	OD;
+	finish groups:
+
+	IF group :/=: REF GROUP(NIL) THEN
+		# Remove id from group #
+		[] INT ids = ids OF group;
+		ids OF group := ~;
+
+		FOR i TO UPB ids DO
+			IF ids[i] /= id THEN
+				ids OF group +:= ids[i]
+			FI
+		OD;
+
+		# Store new group #
+		append file("./new.csv", group csv header);
+
+		get all groups((GROUP g) VOID:
+			IF id OF g /= id OF group THEN
+				append file("./new.csv", group to csv(g))
+			ELIF UPB ids OF group > 0 THEN
+				append file("./new.csv", group to csv(group))
+			FI
+		);
+
+		move file("./new.csv", groups data path)
+	FI
 )

@@ -85,9 +85,8 @@ PROC add = (REF INT argi) VOID: (
 	put(f, id);
 	close(f);
 
-	IF arg = "note" THEN
-		append file(notes data path, note to csv(process note))
-	ELSE
-		append file(tasks data path, task to csv(process task))
-	FI
+	append file(
+		(arg = "note" | notes data path | tasks data path),
+		(arg = "note" | note to csv(process note) | task to csv(process task))
+	)
 )

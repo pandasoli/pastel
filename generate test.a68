@@ -29,7 +29,7 @@ PROC generate test = VOID: (
 	);
 
 	[] GROUP groups = (
-		GROUP ("Some things", today date, (3, 6, 8))
+		GROUP (1, "Some things", today date, (3, 6, 8))
 	);
 
 	FILE f1, f2, f3, f4, f5;
