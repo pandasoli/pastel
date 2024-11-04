@@ -7,6 +7,7 @@ PR include "operations/show tasks.a68" PR
 PR include "operations/add.a68" PR
 PR include "operations/edit.a68" PR
 PR include "operations/remove.a68" PR;
+PR include "printing/week.a68" PR;
 PR include "utils.a68" PR;
 
 BEGIN
@@ -37,13 +38,7 @@ IF a68g argc = 1 THEN
 
 	get all weeks((WEEK week) VOID:
 		IF week start = date OF week THEN
-			[] STRING parts = wrap text(description OF week, 30);
-
-			printf(($"          "gl$, center text(title OF week, 30)));
-
-			FOR i TO UPB parts DO
-				printf(($"          "gl$, center text(parts[i], 30)))
-			OD
+			print week(week)
 		FI
 	);
 

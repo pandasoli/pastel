@@ -1,0 +1,11 @@
+# -*- coding: utf-8 -*- #
+
+PROC print week = (WEEK week) VOID: (
+	[] STRING parts = wrap text(description OF week, 30);
+
+	printf(($"          "gl$, center text(title OF week, 30)));
+
+	FOR i TO UPB parts DO
+		printf(($"          "gl$, center text(parts[i], 30)))
+	OD
+)
