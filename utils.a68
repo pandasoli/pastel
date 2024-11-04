@@ -27,6 +27,20 @@ PROC includes = ([] INT list, INT item) BOOL: (
 	res
 );
 
+PROC index of = ([] STRING list, STRING item) INT: (
+	INT index := 0;
+
+	FOR i TO UPB list DO
+		IF list[i] = item THEN
+			index := i;
+			done
+		FI
+	OD;
+	done:
+
+	index
+);
+
 OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
 	[UPB in out + 1] STRING new;
 	new[:UPB in out] := in out;

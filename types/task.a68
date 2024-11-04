@@ -8,7 +8,7 @@ PR include "../csv.a68" PR;
 STRING task csv header = "ID,TITLE,DESCRIPTION,REASON,STATUS,DATE,START,FINISH,REPETITION";
 
 MODE TASKSTATE = SHORT INT;
-MODE TASKREPEATITION = SHORT INT;
+MODE TASKREPETITION = SHORT INT;
 
 MODE TIMES = STRUCT(
 	REF TIME start, # nullable #
@@ -23,20 +23,20 @@ MODE TASK = STRUCT (
 	TASKSTATE state,
 	DATE date,
 	TIMES time,
-	TASKREPEATITION repeatition
+	TASKREPETITION repetition
 );
 
 TASKSTATE pending = 1;
 TASKSTATE done = 2;
 TASKSTATE canceled = 3;
 
-TASKREPEATITION today = 1;
-TASKREPEATITION todaystack = 2;
-TASKREPEATITION daily = 3;
-TASKREPEATITION weekly = 4;
-TASKREPEATITION monthly = 5;
-TASKREPEATITION annually = 6;
-TASKREPEATITION everyweekday = 7;
+TASKREPETITION today = 1;
+TASKREPETITION todaystack = 2;
+TASKREPETITION daily = 3;
+TASKREPETITION weekly = 4;
+TASKREPETITION monthly = 5;
+TASKREPETITION annually = 6;
+TASKREPETITION everyweekday = 7;
 
 OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	[UPB in out + 1] TASK new;
@@ -59,7 +59,7 @@ PROC csv to task = (FLEXCSVFIELDS fields) TASK: (
 		# state # TOINT fields[5],
 		# date # str to date(fields[6]),
 		# time # times,
-		# repeatition # TOINT fields[9]
+		# repetition # TOINT fields[9]
 	)
 );
 
@@ -79,7 +79,7 @@ PROC task to csv = (TASK task) STRING: (
 		# date # REPR date OF task,
 		# start # (has time | REPR start OF time OF task | ""),
 		# finish # (has finish | REPR finish OF time OF task | ""),
-		# repeatition # whole(repeatition OF task, 0)
+		# repetition # whole(repetition OF task, 0)
 	);
 
 	join(fields, ",")
