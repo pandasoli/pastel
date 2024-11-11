@@ -4,7 +4,24 @@ PR include "../globals.a68" PR
 PR include "../quick sort.a68" PR;
 
 PROC remove = (REF INT argi) VOID: (
-	STRING arg := get argv(argi +:= 1, "Expected index after 'remove'");
+	STRING arg := get argv(argi +:= 1, "Expected index or 'week' after 'remove'");
+
+	IF arg = "week" THEN
+		REF STRING arg := (argi < a68g argc | LOC STRING := a68g argv(argi +:= 1) | NIL);
+		DATE date = (arg :=: REF STRING(NIL) | get week start | get week start of day(str to date(arg)));
+
+		append file("./new.csv", week csv header);
+
+		get all weeks((WEEK w) VOID:
+			IF date OF w /= date THEN
+				append file("./new.csv", week to csv(w))
+			FI
+		);
+
+		move file("./new.csv", weeks data path);
+		stop
+	FI;
+
 	INT index = TOINT arg;
 
 	[] ITEM items = get today items;

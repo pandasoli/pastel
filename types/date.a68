@@ -17,6 +17,11 @@ OP = = (DATE a, b) BOOL:
 	month OF a = month OF b AND
 	year OF a = year OF b;
 
+OP /= = (DATE a, b) BOOL:
+	day OF a /= day OF b OR
+	month OF a /= month OF b OR
+	year OF a /= year OF b;
+
 PROC str to date = (STRING str) DATE: (
 	IF UPB str /= 10 OR
 		 str[3] /= "/" OR str[6] /= "/"

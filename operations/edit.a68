@@ -3,9 +3,46 @@
 PR include "../utils.a68" PR;
 
 PROC edit = (REF INT argi) VOID: (
-	# NOTE: Implement for week #
-	INT index = TOINT get argv(argi +:= 1, "Expected index after 'edit'");
-	STRING arg := get argv(argi +:= 1, "Expected new note content, new task title or task attribute");
+	STRING arg := get argv(argi +:= 1, "Expected index or 'week' after 'edit'");
+
+	IF arg = "week" THEN
+		arg := get argv(argi +:= 1, "Expected week date or 'this' after 'week'");
+		DATE date = (arg = "this" | get week start | get week start of day(str to date(arg)));
+
+		WEEK week;
+
+		get all weeks((WEEK w) VOID:
+			IF date OF w = date THEN
+				week := w
+			FI
+		);
+
+		BOOL processed title := FALSE;
+		arg := get argv(argi +:= 1, "Expected new week title or week attribute");
+
+		process args(BOOL:
+			IF arg = "description" OR arg = "desc" THEN
+				description OF week := get argv(argi +:= 1, "Expected new description after '" + arg + "'");
+				TRUE
+			ELIF NOT processed title THEN
+				title OF week := arg;
+				processed title := TRUE
+			ELSE FALSE
+			FI
+		);
+
+		append file("./new.csv", week csv header);
+
+		get all weeks((WEEK w) VOID:
+			append file("./new.csv", week to csv((date OF w = date OF week | week | w )))
+		);
+
+		move file("./new.csv", weeks data path);
+		stop
+	FI;
+
+	INT index = TOINT arg;
+	arg := get argv(argi +:= 1, "Expected new note content, new task title or task attribute");
 
 	[] ITEM items = get today items;
 
@@ -16,7 +53,6 @@ PROC edit = (REF INT argi) VOID: (
 
 	ITEM item = items[index];
 
-	REF TIME start time := get item time(item);
 	DATE date := get item date(item);
 
 	#
@@ -25,10 +61,7 @@ PROC edit = (REF INT argi) VOID: (
 	#
 	PROC process args = (PROC BOOL callback) VOID:
 		WHILE argi <= a68g argc DO
-			IF arg = "time" THEN
-				arg := get argv(argi +:= 1, "Expected time after 'time'");
-				start time := LOC TIME := str to time(arg)
-			ELIF arg = "date" THEN
+			IF arg = "date" THEN
 				arg := get argv(argi +:= 1, "Expected date after 'date'");
 				date := str to date(arg)
 			ELIF NOT callback THEN
@@ -58,6 +91,10 @@ PROC edit = (REF INT argi) VOID: (
 						TRUE
 					ELSE FALSE
 					FI
+				ELIF arg = "time" THEN
+					arg := get argv(argi +:= 1, "Expected time after 'time'");
+					start OF time OF task := LOC TIME := str to time(arg);
+					TRUE
 				ELIF NOT processed title THEN
 					title OF task := arg;
 					processed title := TRUE
@@ -65,7 +102,6 @@ PROC edit = (REF INT argi) VOID: (
 				FI
 			);
 
-			start OF time OF task := start time;
 			date OF task := date;
 
 			append file("./new.csv", task csv header);
@@ -85,11 +121,14 @@ PROC edit = (REF INT argi) VOID: (
 				IF NOT processed content THEN
 					content OF note := arg;
 					processed content := TRUE
+				ELIF arg = "time" THEN
+					arg := get argv(argi +:= 1, "Expected time after 'time'");
+					time OF note := LOC TIME := str to time(arg);
+					TRUE
 				ELSE FALSE
 				FI
 			);
 
-			time OF note := start time;
 			date OF note := date;
 
 			append file("./new.csv", note csv header);

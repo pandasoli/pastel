@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../types/task.a68" PR
-PR include "../globals.a68" PR;
+PR include "../globals.a68" PR
+PR include "../utils.a68" PR;
 PR include "../unix.a68" PR;
 
 PROC add = (REF INT argi) VOID: (
@@ -81,12 +82,31 @@ PROC add = (REF INT argi) VOID: (
 		task
 	);
 
+	PROC process week = WEEK: (
+		WEEK week := (
+			# title # "",
+			# description # "",
+			# date # get week start
+		);
+
+		title OF week := get argv(argi +:= 1, "Expected week's title");
+		description OF week := (argi < a68g argc | a68g argv(argi +:= 1) | "");
+
+		week
+	);
+
 	openf(f, last id data path, stand out channel);
 	put(f, id);
 	close(f);
 
 	append file(
-		(arg = "note" | notes data path | tasks data path),
-		(arg = "note" | note to csv(process note) | task to csv(process task))
+		(  arg = "note" | notes data path
+		|: arg = "week" | weeks data path
+		| tasks data path
+		),
+		(  arg = "note" | note to csv(process note)
+		|: arg = "week" | week to csv(process week)
+		| task to csv(process task)
+		)
 	)
 )
