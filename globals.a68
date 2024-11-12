@@ -52,6 +52,17 @@ PROC get all weeks = (PROC (WEEK) VOID callback) VOID:
 		callback(csv to week(fields))
 	);
 
+PROC find weeks = (PROC (WEEK) BOOL callback) WEEK: (
+	WEEK week;
+	get all weeks((WEEK w) VOID: (
+		week := w;
+		IF callback(w) THEN
+			done
+		FI
+	));
+	done: week
+);
+
 PROC get today tasks = [] TASK: (
 	FLEX [0] TASK tasks;
 

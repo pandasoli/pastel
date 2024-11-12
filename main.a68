@@ -3,9 +3,9 @@
 
 PR nowarnings PR
 PR include "generate test.a68" PR
-PR include "operations/show tasks.a68" PR
-PR include "operations/add.a68" PR
-PR include "operations/edit.a68" PR
+PR include "operations/show tasks.a68" PR;
+PR include "operations/add.a68" PR;
+PR include "operations/edit.a68" PR;
 PR include "operations/remove.a68" PR;
 PR include "printing/week.a68" PR;
 PR include "utils.a68" PR;

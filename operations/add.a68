@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../types/task.a68" PR
-PR include "../globals.a68" PR
-PR include "../utils.a68" PR;
+PR include "./types/task/add.a68" PR;
+PR include "./types/note/add.a68" PR;
+PR include "./types/week/add.a68" PR;
 PR include "../unix.a68" PR;
 
 PROC add = (REF INT argi) VOID: (
@@ -10,103 +10,27 @@ PROC add = (REF INT argi) VOID: (
 	FILE f;
 
 	INT id;
-	REF TIME start time := NIL;
 
-	BEGIN
+	IF arg = "task" ORF arg = "note" THEN
 		openf(f, last id data path, stand in channel);
 		get(f, id);
 		close(f);
 
-		id +:= 1
-	END;
+		id +:= 1;
 
-	#
-		NOTE: When updating this procedure,
-		only add attributes available for all items.
-	#
-	PROC process args = (PROC (REF STRING) BOOL callback) VOID:
-		WHILE argi < a68g argc DO
-			arg := a68g argv(argi +:= 1);
-
-			IF arg = "at" THEN
-				arg := get argv(argi +:= 1, "Expected time after 'at'");
-				start time := LOC TIME := str to time(arg)
-			ELIF NOT callback(arg) THEN
-				putf(stand error, ($g"[31mUnexpected '"g"' in here"g"[m"ll$, esc, arg, esc));
-				stop
-			FI
-		OD;
-
-	PROC process note = NOTE: (
-		# local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-
-		NOTE note := (
-			# id # id,
-			# content # "",
-			# date # today date,
-			# time # LOC TIME := (local time[4], local time[5])
-		);
-
-		content OF note := get argv(argi +:= 1, "Expected note's content");
-		time OF note := start time;
-
-		note
-	);
-
-	PROC process task = TASK: (
-		TASK task := (
-			# id # id,
-			# title # arg,
-			# description # "",
-			# reason # NIL,
-			# state # pending,
-			# date # today date,
-			# time # (NIL, NIL),
-			# repeatition # today stack
-		);
-
-		process args((REF STRING arg) BOOL:
-			IF arg = "to" THEN
-				arg := get argv(argi +:= 1, "Expected time after 'to'");
-				finish OF time OF task := LOC TIME := str to time(arg);
-				TRUE
-			ELIF UPB description OF task = 0 THEN
-				description OF task := arg;
-				TRUE
-			ELSE FALSE
-			FI
-		);
-
-		start OF time OF task := start time;
-
-		task
-	);
-
-	PROC process week = WEEK: (
-		WEEK week := (
-			# title # "",
-			# description # "",
-			# date # get week start
-		);
-
-		title OF week := get argv(argi +:= 1, "Expected week's title");
-		description OF week := (argi < a68g argc | a68g argv(argi +:= 1) | "");
-
-		week
-	);
-
-	openf(f, last id data path, stand out channel);
-	put(f, id);
-	close(f);
+		openf(f, last id data path, stand out channel);
+		put(f, id);
+		close(f)
+	FI;
 
 	append file(
 		(  arg = "note" | notes data path
 		|: arg = "week" | weeks data path
 		| tasks data path
 		),
-		(  arg = "note" | note to csv(process note)
-		|: arg = "week" | week to csv(process week)
-		| task to csv(process task)
+		(  arg = "note" | note to csv(process note add(arg, argi, id))
+		|: arg = "week" | week to csv(process week add(arg, argi))
+		| task to csv(process task add(arg, argi, id))
 		)
 	)
 )

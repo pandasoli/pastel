@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*- #
+
+PROC process task remove = (INT id) VOID: (
+	append file("./new.csv", task csv header);
+
+	get all tasks((TASK t) VOID:
+		IF id OF t /= id THEN
+			append file("./new.csv", task to csv(t))
+		FI
+	);
+
+	move file("./new.csv", tasks data path)
+)

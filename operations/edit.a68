@@ -1,43 +1,15 @@
 # -*- coding: utf-8 -*- #
 
+PR include "./types/task/edit.a68" PR;
+PR include "./types/note/edit.a68" PR;
+PR include "./types/week/edit.a68" PR
 PR include "../utils.a68" PR;
 
 PROC edit = (REF INT argi) VOID: (
 	STRING arg := get argv(argi +:= 1, "Expected index or 'week' after 'edit'");
 
 	IF arg = "week" THEN
-		arg := get argv(argi +:= 1, "Expected week date or 'this' after 'week'");
-		DATE date = (arg = "this" | get week start | get week start of day(str to date(arg)));
-
-		WEEK week;
-
-		get all weeks((WEEK w) VOID:
-			IF date OF w = date THEN
-				week := w
-			FI
-		);
-
-		BOOL processed title := FALSE;
-		arg := get argv(argi +:= 1, "Expected new week title or week attribute");
-
-		process args(BOOL:
-			IF arg = "description" OR arg = "desc" THEN
-				description OF week := get argv(argi +:= 1, "Expected new description after '" + arg + "'");
-				TRUE
-			ELIF NOT processed title THEN
-				title OF week := arg;
-				processed title := TRUE
-			ELSE FALSE
-			FI
-		);
-
-		append file("./new.csv", week csv header);
-
-		get all weeks((WEEK w) VOID:
-			append file("./new.csv", week to csv((date OF w = date OF week | week | w )))
-		);
-
-		move file("./new.csv", weeks data path);
+		process week edit(arg, argi);
 		stop
 	FI;
 
@@ -53,91 +25,8 @@ PROC edit = (REF INT argi) VOID: (
 
 	ITEM item = items[index];
 
-	DATE date := get item date(item);
-
-	#
-		NOTE: When updating this procedure,
-		only add attributes available for all items.
-	#
-	PROC process args = (PROC BOOL callback) VOID:
-		WHILE argi <= a68g argc DO
-			IF arg = "date" THEN
-				arg := get argv(argi +:= 1, "Expected date after 'date'");
-				date := str to date(arg)
-			ELIF NOT callback THEN
-				putf(stand error, ($g"[31mUnexpected '"g"' in here"g"[m"ll$, esc, arg, esc));
-				stop
-			FI;
-
-			arg := a68g argv(argi +:= 1)
-		OD;
-
 	CASE item IN
-		(TASK otask): (
-			BOOL processed title := FALSE;
-			TASK task := otask;
-
-			process args(BOOL:
-				IF   arg = "description" OR arg = "desc" THEN description OF task    := get argv(argi +:= 1, "Expected new description after '" + arg + "'"); TRUE
-				ELIF arg = "finish"                      THEN finish OF time OF task := LOC TIME := str to time(get argv(argi +:= 1, "Expected new finish time after 'finish'")); TRUE
-				ELIF arg = "repetition" OR arg = "rep"   THEN
-					arg := get argv(argi +:= 1, "Expected new repetition after '" + arg + "'");
-
-					[] STRING repetition list = ("today", "todaystack", "daily", "weekly", "monthly", "annually", "everyweekday");
-					INT repetition = index of(repetition list, arg);
-
-					IF repetition > 0 THEN
-						repetition OF task := repetition;
-						TRUE
-					ELSE FALSE
-					FI
-				ELIF arg = "time" THEN
-					arg := get argv(argi +:= 1, "Expected time after 'time'");
-					start OF time OF task := LOC TIME := str to time(arg);
-					TRUE
-				ELIF NOT processed title THEN
-					title OF task := arg;
-					processed title := TRUE
-				ELSE FALSE
-				FI
-			);
-
-			date OF task := date;
-
-			append file("./new.csv", task csv header);
-
-			get all tasks((TASK t) VOID:
-				append file("./new.csv", task to csv((id OF t = id OF task | task | t )))
-			);
-
-			move file("./new.csv", tasks data path)
-		),
-
-		(NOTE onote): (
-			BOOL processed content := FALSE;
-			NOTE note := onote;
-
-			process args(BOOL:
-				IF NOT processed content THEN
-					content OF note := arg;
-					processed content := TRUE
-				ELIF arg = "time" THEN
-					arg := get argv(argi +:= 1, "Expected time after 'time'");
-					time OF note := LOC TIME := str to time(arg);
-					TRUE
-				ELSE FALSE
-				FI
-			);
-
-			date OF note := date;
-
-			append file("./new.csv", note csv header);
-
-			get all notes((NOTE n) VOID:
-				append file("./new.csv", note to csv((id OF n = id OF note | note | n )))
-			);
-
-			move file("./new.csv", notes data path)
-		)
+		(TASK otask): process task edit(arg, argi, otask),
+		(NOTE onote): process note edit(arg, argi, onote)
 	ESAC
 )

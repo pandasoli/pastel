@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*- #
+
+PROC process week edit = (REF STRING arg, REF INT argi) VOID: (
+	arg := get argv(argi +:= 1, "Expected week date or 'this' after 'week'");
+	DATE date = (arg = "this" | get week start | get week start of day(str to date(arg)));
+
+	WEEK week := find weeks((WEEK w) BOOL: date OF w = date);
+
+	IF date OF week /= date THEN
+		putf(stand error, ($g"[31mCouldn't find week of '"g"'"g"[m"ll$, esc, arg, esc));
+		stop
+	FI;
+
+	# Edit data #
+	BOOL processed title := FALSE;
+
+	WHILE argi < a68g argc DO
+		arg := a68g argv(argi +:= 1);
+
+		IF arg = "description" OR arg = "desc" THEN
+			description OF week := get argv(argi +:= 1, "Expected new description after '" + arg + "'")
+		ELIF arg = "date" THEN
+			arg := get argv(argi +:= 1, "Expected date after 'date'");
+			date OF week := get week start of day(str to date(arg))
+		ELIF NOT processed title THEN
+			title OF week := arg;
+			processed title := TRUE
+		ELSE
+			putf(stand error, ($g"[31mUnexpected '"g"'"g"[m"ll$, esc, arg, esc));
+			stop
+		FI
+	OD;
+
+	# Update data file #
+	append file("./new.csv", week csv header);
+
+	get all weeks((WEEK w) VOID:
+		append file("./new.csv", week to csv((date OF w = date OF week | week | w )))
+	);
+
+	move file("./new.csv", weeks data path)
+)

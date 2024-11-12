@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*- #
+
+PROC process task edit = (REF STRING arg, REF INT argi, TASK old) VOID: (
+	TASK task := old;
+	BOOL processed title := FALSE;
+
+	WHILE argi < a68g argc DO
+		arg := a68g argv(argi +:= 1);
+
+		IF arg = "description" OR arg = "desc" THEN
+			description OF task := get argv(argi +:= 1, "Expected new description after '" + arg + "'")
+		ELIF arg = "repetition" OR arg = "rep" THEN
+			arg := get argv(argi +:= 1, "Expected new repetition after '" + arg + "'");
+
+			[] STRING repetition list = ("today", "todaystack", "daily", "weekly", "monthly", "annually", "everyweekday");
+			INT repetition = index of(repetition list, arg);
+
+			IF repetition > 0 THEN
+				repetition OF task := repetition
+			ELSE
+				putf(stand error, ($g"[31m'"g"' is not a known repetition"g"[m"ll$, esc, arg, esc));
+				stop
+			FI
+		ELIF arg = "at" THEN
+			arg := get argv(argi +:= 1, "Expected time after 'time'");
+			start OF time OF task := LOC TIME := str to time(arg)
+		ELIF arg = "to" THEN
+			arg := get argv(argi +:= 1, "Expected new finish time after 'finish'");
+			finish OF time OF task := LOC TIME := str to time(arg)
+		ELIF NOT processed title THEN
+			title OF task := arg;
+			processed title := TRUE
+		ELSE
+			putf(stand error, ($g"[31mUnexpected '"g"'"g"[m"ll$, esc, arg, esc));
+			stop
+		FI
+	OD;
+
+	# Update data file #
+	append file("./new.csv", task csv header);
+
+	get all tasks((TASK t) VOID:
+		append file("./new.csv", task to csv((id OF t = id OF task | task | t )))
+	);
+
+	move file("./new.csv", tasks data path)
+)

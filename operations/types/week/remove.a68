@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*- #
+
+PROC process week remove = (REF STRING arg, REF INT argi) VOID: (
+	arg := (argi < a68g argc | a68g argv(argi +:= 1) | "");
+	DATE date = (
+		arg = "" | get week start |
+		get week start of day(str to date(arg))
+	);
+
+	# Update data file #
+	append file("./new.csv", week csv header);
+
+	get all weeks((WEEK w) VOID:
+		IF date OF w /= date THEN
+			append file("./new.csv", week to csv(w))
+		FI
+	);
+
+	move file("./new.csv", weeks data path)
+)
