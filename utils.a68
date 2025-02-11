@@ -1,52 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PROC openf = (REF FILE f, STRING file name, CHANNEL chann) VOID:
-	IF file is regular(file name) THEN
-		IF open(f, file name, chann) /= 0 THEN
-			putf(stand error, ($"Couldn't open file "gl$, file name));
-			stop
-		FI
-	ELSE
-		IF establish(f, file name, chann) /= 0 THEN
-			putf(stand error, ($"Couldn't establish file "gl$, file name));
-			stop
-		FI
-	FI;
-
-PROC includes = ([] INT list, INT item) BOOL: (
-	BOOL res := FALSE;
-
-	FOR i TO UPB list DO
-		IF list[i] = item THEN
-			res := TRUE;
-			done
-		FI
-	OD;
-	done:
-
-	res
-);
-
-PROC index of = ([] STRING list, STRING item) INT: (
-	INT index := 0;
-
-	FOR i TO UPB list DO
-		IF list[i] = item THEN
-			index := i;
-			done
-		FI
-	OD;
-	done:
-
-	index
-);
-
-OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
-	[UPB in out + 1] STRING new;
-	new[:UPB in out] := in out;
-	new[UPB new] := item;
-	in out := new
-);
+CHAR esc = REPR 27;
 
 OP +:= = (REF FLEX [] INT in out, INT item) REF FLEX [] INT: (
 	[UPB in out + 1] INT new;
@@ -55,44 +9,15 @@ OP +:= = (REF FLEX [] INT in out, INT item) REF FLEX [] INT: (
 	in out := new
 );
 
-PROC get days in month = (INT month, year) INT:
-	CASE month IN
-		31,
-		IF
-			IF year MOD 400 = 0 THEN TRUE
-			ELSE
-				(year MOD 4 = 0 | year MOD 100 /= 0 | FALSE)
-			FI
-		THEN 29
-		ELSE 28
-		FI,
-		31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-	ESAC;
+PRIO INCL = 5;
+OP INCL = (INT item, [] INT list) BOOL: (
+	BOOL res := FALSE;
 
-PROC get week start = DATE:
-	# local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
-	get week start of day((
-		local time[2],
-		local time[3] - local time[7],
-		local time[1]
-	));
-
-PROC get week start of day = (DATE date) DATE: (
-	INT
-		day := day OF date,
-		month := month OF date,
-		year := year OF date;
-
-	IF day <= 0 THEN
-		month -:= 1;
-
-		IF month = 0 THEN
-			month := 12;
-			year -:= 1
-		FI;
-
-		day +:= get days in month(month, year)
-	FI;
-
-	(month, day, year)
+	FOR i TO UPB list DO
+		IF list[i] = item THEN
+			res := TRUE;
+			done incl
+		FI
+	OD;
+	done incl: res
 )

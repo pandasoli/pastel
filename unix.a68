@@ -1,41 +1,32 @@
 # -*- coding: utf-8 -*- #
 
+
 PROC append file = (STRING path, raw text) VOID: (
 	STRING text = sh scape(raw text, """");
 	STRING cmd = "echo """ + text + """>>" + path;
-	INT err = execve child("/bin/sh", ("sh", "-c", cmd), "");
 
-	IF err < 0 THEN
-		putf(stand error, ($"Couldn't append to file "gl$, path));
+	IF system(cmd) /= 0 THEN
+		putf(stand error, ($"Couldn't append to "gl$, path));
 		stop
 	FI
 );
 
-PROC move file = (STRING from, to) VOID: (
-	STRING sh from = sh scape(from, " ");
-	STRING sh to = sh scape(to, " ");
-	INT err = execve child("/bin/sh", ("sh", "-c", "mv " + sh from + " " + sh to), "");
-
-	IF err < 0 THEN
-		putf(stand error, ($"Couldn't move file "g" to "gl$, from, to));
+PROC move file = (STRING from, to) VOID:
+	IF system("mv " + from + " " + to) /= 0 THEN
+		putf(stand error, ($"Couldn't move "g" to "gl$, from, to));
 		stop
-	FI
-);
+	FI;
 
-PROC create directory = (STRING path) VOID: (
-	INT err = execve child("/bin/sh", ("sh", "-c", "mkdir " + data path), "");
-
-	IF err < 0 THEN
-		putf(stand error, ($"Couldn't create directory "gl$, data path));
+PROC create directory = (STRING path) VOID:
+	IF system("mkdir " + path) /= 0 THEN
+		putf(stand error, ($"Couldn't create "gl$, path));
 		stop
-	FI
-);
+	FI;
 
 PROC whoami = STRING: (
 	STRING output;
-	INT err = execve output("/bin/sh", ("sh", "-c", "whoami"), "", output);
 
-	IF err < 0 THEN
+	IF execve output("/bin/sh", ("sh", "-c", "whoami"), "", output) < 0 THEN
 		putf(stand error, $"Couldn't execute whoami"l$);
 		stop
 	FI;

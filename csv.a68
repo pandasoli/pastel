@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*- #
 
-MODE FLEXCSVFIELD = STRING;
+MODE CSVFIELD = [0] CHAR;
+MODE FLEXCSVFIELD = FLEX CSVFIELD;
 MODE CSVFIELDS = [0] FLEXCSVFIELD;
-MODE FLEXCSVFIELDS =  REF CSVFIELDS;
+MODE FLEXCSVFIELDS = REF CSVFIELDS;
 
 OP +:= = (REF FLEXCSVFIELDS in out, FLEXCSVFIELD item) REF FLEXCSVFIELDS: (
 	HEAP [UPB in out + 1] FLEXCSVFIELD new;
@@ -59,31 +60,23 @@ PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 					fields[UPB fields] +:= current;
 					next
 				FI
-			ELIF current = "," THEN
-				fields +:= "";
-				next
-			ELIF current = """" THEN
-				in quotes := TRUE;
-				next
-			ELIF current = nl THEN
-				next;
-				GOTO done
-			ELSE
-				fields[UPB fields] +:= current;
-				next
+			ELIF current = "," THEN fields +:= ""; next
+			ELIF current = """" THEN in quotes := TRUE; next
+			ELIF current = nl THEN next; GOTO done nl
+			ELSE fields[UPB fields] +:= current; next
 			FI
 		OD;
 
 		done eof:
 		finished := TRUE;
 
-		done:
+		done nl:
 		IF fields count > 0 AND UPB fields /= fields count THEN
-			printf(($"Error: unexpected number of fields ("g(-0)") in line "g(-0)" (expected "g(-0)")"l$, UPB fields, line count, fields count))
+			putf(stand error, ($"Error: unexpected number of fields ("g(-0)") in line "g(-0)" (expected "g(-0)")"l$, UPB fields, line count, fields count))
 		FI;
 
 		IF in quotes THEN
-			printf(($"Error: unclosed quotes starting in line "g(-0)" column "g(-0)l$, line count, quote start))
+			putf(stand error, ($"Error: unclosed quotes starting in line "g(-0)" column "g(-0)l$, line count, quote start))
 		FI;
 
 		fields

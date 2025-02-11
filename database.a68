@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*- #
+
+PR include "types/todo.a68" PR
+PR include "unix.a68" PR
+PR include "csv.a68" PR;
+
+STRING
+	data path = "/home/" + whoami + "/.local/share/todo",
+	todos path = data path + "/todos.csv",
+	last id path = data path + "/last id.txt"
+;
+
+PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
+	FILE f;
+
+	IF open(f, path, stand in channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path));
+		stop
+	FI;
+
+	read csv(f, callback);
+	close(f)
+);
+
+PROC get todos = (PROC (TODO) VOID callback) VOID:
+	read db(todos path, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to todo(fields))
+	);
+
+PROC get all todos = [] TODO: (
+	FLEX [0] TODO todos;
+
+	read db(todos path, (FLEXCSVFIELDS fields) VOID:
+		todos +:= csv to todo(fields));
+
+	todos
+);
+
+PROC get all today todos = [] TODO: (
+	FLEX [0] TODO todos;
+
+	get todos((TODO todo) VOID:
+		IF date OF todo = today
+		THEN todos +:= todo
+		FI
+	);
+
+	todos
+)

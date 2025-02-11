@@ -1,0 +1,44 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../csv.a68" PR;
+PR include "date.a68" PR;
+
+STRING todo csv header = "ID,TITLE,STATUS,DATE";
+
+MODE TODOSTATE = SHORT INT;
+
+MODE TODO = STRUCT (
+	INT id,
+	STRING title,
+	TODOSTATE state,
+	DATE date
+);
+
+TODOSTATE todo_pending = 1;
+TODOSTATE todo_done = 2;
+
+OP +:= = (REF FLEX [] TODO in out, TODO item) VOID: (
+	[UPB in out + 1] TODO new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to todo = (FLEXCSVFIELDS fields) TODO:
+	TODO(
+		# id # TOINT fields[1],
+		# title # fields[2],
+		# state # TOINT fields[3],
+		# date # str to date(fields[4])
+	);
+
+OP REPR = (TODO todo) STRING: (
+	[] STRING fields = (
+		# id # whole(id OF todo, 0),
+		# title # """" + title OF todo + """",
+		# state # whole(state OF todo, 0),
+		# date # REPR date OF todo
+	);
+
+	join(fields, ",")
+)

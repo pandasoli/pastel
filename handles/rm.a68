@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../unix.a68" PR
+PR include "../utils.a68" PR;
+PR include "../database.a68" PR
+
+PROC rm = (INT argi) VOID: (
+	FLEX [0] INT indexes;
+
+	FOR j FROM argi TO a68g argc DO
+		STRING arg = a68g argv(j);
+		indexes +:= TOINT arg
+	OD;
+
+	append file("new.csv", todo csv header);
+	[] TODO todos = get all todos;
+	INT i := 1;
+
+	FOR j TO UPB todos DO
+		IF date OF todos[j] = today THEN
+			IF NOT (i INCL indexes)
+			THEN append file("new.csv", REPR todos[j])
+			FI;
+
+			i +:= 1
+		FI
+	OD;
+
+	move file("new.csv", todos path)
+)

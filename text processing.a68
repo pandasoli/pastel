@@ -13,6 +13,16 @@ OP TOINT = (STRING str) INT: (
 	n * sign
 );
 
+PROC join = ([] STRING list, STRING delim) STRING: (
+	STRING res;
+
+	FOR i TO UPB list DO
+		res +:= list[i] + (i < UPB list | delim | "")
+	OD;
+
+	res
+);
+
 PROC sh scape = (STRING str, CHAR ch) STRING: (
 	STRING text := str;
 	INT text len := UPB text, i := 1;
@@ -28,85 +38,4 @@ PROC sh scape = (STRING str, CHAR ch) STRING: (
 	OD;
 
 	text
-);
-
-PROC strchr = (STRING str, CHAR ch) INT: (
-	INT pos := UPB str;
-
-	FOR i TO UPB str DO
-		IF str[i] = ch THEN
-			pos := i;
-			done
-		FI
-	OD;
-
-	done: pos
-);
-
-PROC join = ([] STRING list, STRING delim) STRING: (
-	STRING res;
-
-	FOR i TO UPB list DO
-		res +:= list[i] + (i < UPB list | delim | "")
-	OD;
-
-	res
-);
-
-PROC wrap text = (STRING text, INT width) [] STRING: (
-	FLEX [0] STRING parts;
-	STRING part;
-	INT text i := 1;
-
-	WHILE text i < UPB text DO
-		INT
-			next space = strchr(text[text i:], " "),
-			next dash = strchr(text[text i:], "-");
-
-		INT next := (next space < next dash | next space | next dash);
-
-		IF UPB part + next - 1 > width THEN
-			IF next > width THEN
-				INT len = width - UPB part - 1;
-				parts +:= part + text[text i:][:len] + "-";
-				next := len;
-				part := ""
-			ELSE
-				parts +:= part;
-
-				IF part[UPB part] = " " THEN
-					parts[UPB parts] := part[:UPB part - 1]
-				FI;
-				part := text[text i:][:next]
-			FI
-		ELSE
-			part +:= text[text i:][:next]
-		FI;
-
-		text i +:= next
-	OD;
-
-	parts +:= part
-);
-
-PROC center text = (STRING text, INT width) STRING: (
-	STRING new := text;
-	INT missing = width - UPB text;
-
-	IF missing > 0 THEN
-		REAL part = missing / 2;
-		INT
-			left := ENTIER part,
-			right := left + (part - left > 0 | 1 | 0);
-
-		IF right > left THEN
-			left +:= 1;
-			right -:= 1
-		FI;
-
-		TO left  DO new := " " + new OD;
-		TO right DO new := new + " " OD
-	FI;
-
-	new
 )
