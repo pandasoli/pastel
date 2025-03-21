@@ -7,7 +7,7 @@ MODE DATE = STRUCT ( INT month, day, year );
 # local time: year, month, day, hours, minutes, seconds, day of week and daylight-saving-time flag #
 DATE today = (local time[2], local time[3], local time[1]);
 
-OP REPR = (DATE date) STRING: 
+OP REPR = (DATE date) STRING:
 	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
 	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
 	whole(year OF date, 0);

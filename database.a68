@@ -5,7 +5,7 @@ PR include "unix.a68" PR
 PR include "csv.a68" PR;
 
 STRING
-	data path = "/home/" + whoami + "/.local/share/todo",
+	data path = "/home/" + whoami + "/.local/share/pastel",
 	todos path = data path + "/todos.csv",
 	last id path = data path + "/last id.txt"
 ;
