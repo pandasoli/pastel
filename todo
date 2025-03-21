@@ -9,7 +9,8 @@ PR include "database.a68" PR;
 PR include "handles/add.a68" PR
 PR include "handles/rm.a68" PR;
 PR include "handles/done.a68" PR
-PR include "handles/sort.a68" PR;
+PR include "handles/sort.a68" PR
+PR include "handles/cal.a68" PR;
 PR include "unix.a68" PR;
 PR include "utils.a68" PR;
 
@@ -53,5 +54,6 @@ ELSE
 	ELIF arg = "rm"   THEN rm(argi)
 	ELIF arg = "done" THEN done(argi)
 	ELIF arg = "sort" THEN sort(argi)
+	ELIF arg = "cal"  THEN cal(argi)
 	FI
 FI

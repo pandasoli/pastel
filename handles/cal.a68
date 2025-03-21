@@ -1,0 +1,119 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../unix.a68" PR
+PR include "../utils.a68" PR
+PR include "../database.a68" PR;
+PR include "../text processing.a68" PR;
+
+PROC first week month day = (INT month, year) INT: (
+	# Zeller's Congruence algorithm #
+	INT h, q, m, k, j, y := year;
+
+	IF month < 3 THEN
+		m := month + 12;
+		y := year - 1
+	ELSE
+		m := month
+	FI;
+
+	q := 1;
+	k := y MOD 100;
+	j := (y % 100);
+
+	h := (q + ((13 * (m + 1)) % 5) + k + (k % 4) + (j % 4) + (5 * j)) MOD 7;
+
+	(h + 6) MOD 7 + 1
+);
+
+PROC print calendar = (INT month, day, year, [] TODO todos) VOID: (
+	[] STRING months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	[] INT days in month = (
+		31,
+		# Leap yaer #
+		(year MOD 4 = 0 AND (year MOD 100 /= 0 OR year MOD 400 = 0) | 29 | 28),
+		31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+	);
+
+	# Print header #
+	printf(($glgl$,
+		center text(months[month] + " " + whole(year, 0), 20),
+		"Su Mo Tu We Th Fr Sa"
+	));
+
+	# Space until first day's week day #
+	INT first day := first week month day(month, year);
+
+	TO first day - 1 DO print("   ")
+	OD;
+
+	INT day i := 1;
+
+	TO 6 DO
+		FROM first day TO 7 DO
+			IF day i <= days in month[month] THEN
+				BOOL is today =
+					(year = year OF today) AND
+					(month = month OF today) AND
+					(day i = day OF today);
+				BOOL has todos := FALSE;
+
+				FOR i TO UPB todos DO
+					IF day OF date OF todos[i] = day i
+					THEN has todos := TRUE
+					FI
+				OD;
+
+				IF is today THEN printf(($g"[30;47m"$, REPR 27))
+				ELIF has todos THEN printf(($g"[37;100m"$, REPR 27))
+				FI;
+
+				printf(($gg(0)$, (day i < 10 | " " | ""), day i));
+
+				IF is today OR has todos
+				THEN printf(($g"[m"$, REPR 27))
+				FI;
+
+				print(" ");
+				day i +:= 1
+			ELSE print("   ")
+			FI
+		OD;
+
+		newline(stand out);
+		first day := 1
+	OD
+);
+
+PROC cal = (INT argi) VOID: (
+	STRING arg = a68g argv(argi);
+	INT index = TOINT arg;
+	FLEX [0] TODO todos;
+
+	INT
+		month := month OF today,
+		day := day OF today,
+		year := year OF today;
+
+	# Ajust based on received index #
+	month +:= index;
+
+	WHILE month > 12 DO
+		year +:= 1;
+		month -:= 12
+	OD;
+
+	WHILE month < 1 DO
+		year -:= 1;
+		month +:= 12
+	OD;
+
+	get todos((TODO todo) VOID:
+		IF year OF date OF todo = year
+		AND month OF date OF todo = month
+		THEN
+			todos +:= todo
+		FI
+	);
+
+	print calendar(month, day, year, todos)
+)

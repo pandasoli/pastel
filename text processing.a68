@@ -13,6 +13,19 @@ OP TOINT = (STRING str) INT: (
 	n * sign
 );
 
+PROC center text = (STRING str, INT w) STRING: (
+	STRING res := str;
+	INT
+		rest = w - UPB str,
+		part = ENTIER (rest / 2),
+		missing = rest MOD 2;
+
+	TO part DO res := " " + res + " " OD;
+	IF missing = 1 THEN res := res + " " FI;
+
+	res
+);
+
 PROC join = ([] STRING list, STRING delim) STRING: (
 	STRING res;
 
