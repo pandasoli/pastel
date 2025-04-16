@@ -3,12 +3,7 @@
 PR include "types/todo.a68" PR
 PR include "unix.a68" PR
 PR include "csv.a68" PR;
-
-STRING
-	data path = "/home/" + whoami + "/.local/share/pastel",
-	path todos = data path + "/todos.csv",
-	path lastid = data path + "/last id.txt"
-;
+PR include "database/paths.a68" PR;
 
 BEGIN
 	PROC a = (STRING path, header) VOID:
@@ -29,86 +24,4 @@ BEGIN
 
 	a(path todos, todo csv header);
 	a(path lastid, "0")
-END;
-
-PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
-	FILE f;
-
-	IF open(f, path, stand in channel) > 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, path));
-		stop
-	FI;
-
-	read csv(f, callback);
-	close(f)
-);
-
-PROC get todos = (PROC (TODO) VOID callback) VOID:
-	read db(path todos, (FLEXCSVFIELDS fields) VOID:
-		callback(csv to todo(fields))
-	);
-
-PROC get all todos = [] TODO: (
-	FLEX [0] TODO todos;
-
-	read db(path todos, (FLEXCSVFIELDS fields) VOID:
-		todos +:= csv to todo(fields));
-
-	todos
-);
-
-PROC get all today todos = [] TODO: (
-	FLEX [0] TODO todos;
-
-	get todos((TODO todo) VOID:
-		IF date OF todo = today
-		THEN todos +:= todo
-		FI
-	);
-
-	todos
-);
-
-PROC write todo = (TODO todo) VOID:
-	append file(path todos, todo to csv(todo));
-
-PROC write todos = ([] TODO todos) VOID: (
-	FILE f;
-
-	IF open(f, path todos, stand out channel) > 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, path todos));
-		stop
-	FI;
-
-	putf(f, ($gl$, todo csv header));
-
-	FOR i TO UPB todos DO
-		putf(f, ($gl$, todo to csv(todos[i])))
-	OD;
-
-	close(f)
-);
-
-PROC inc id = INT: (
-	FILE f;
-	INT id;
-
-	IF open(f, path lastid, stand in channel) < 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, path lastid));
-		stop
-	FI;
-
-	get(f, id);
-	id +:= 1;
-	close(f);
-
-	IF open(f, path lastid, stand out channel) < 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, path lastid));
-		stop
-	FI;
-
-	put(f, id);
-	close(f);
-
-	id
-)
+END

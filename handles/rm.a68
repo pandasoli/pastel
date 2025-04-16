@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../utils.a68" PR;
-PR include "../database.a68" PR
+PR include "../database/todo.a68" PR
 
 PROC rm = (INT argi) VOID: (
 	FLEX [0] INT indexes;

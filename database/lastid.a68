@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*- #
+
+PR include "paths.a68" PR;
+
+PROC inc id = INT: (
+	FILE f;
+	INT id;
+
+	IF open(f, path lastid, stand in channel) < 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path lastid));
+		stop
+	FI;
+
+	get(f, id);
+	id +:= 1;
+	close(f);
+
+	IF open(f, path lastid, stand out channel) < 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path lastid));
+		stop
+	FI;
+
+	put(f, id);
+	close(f);
+
+	id
+)

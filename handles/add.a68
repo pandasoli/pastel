@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../database.a68" PR;
+PR include "../database/todo.a68" PR
+PR include "../database/lastid.a68" PR;
 
 PROC add = (INT argi) VOID: (
 	FOR i FROM argi TO a68g argc DO

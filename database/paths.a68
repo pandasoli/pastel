@@ -1,0 +1,6 @@
+# -*- coding: utf-8 -*- #
+
+STRING
+	data path = "/home/" + whoami + "/.local/share/pastel",
+	path todos = data path + "/todos.csv",
+	path lastid = data path + "/last id.txt"
