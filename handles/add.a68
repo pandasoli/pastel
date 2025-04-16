@@ -4,15 +4,26 @@ PR include "../database/todo.a68" PR
 PR include "../database/lastid.a68" PR;
 
 PROC add = (INT argi) VOID: (
-	FOR i FROM argi TO a68g argc DO
-		STRING arg = a68g argv(i);
+	INT i := argi;
 
-		TODO todo = (
+	WHILE i <= a68g argc DO
+		STRING arg = a68g argv(i);
+		i +:= 1;
+
+		TODO todo := (
 			# id # inc id,
 			# title # arg,
+			# description # "",
 			# state # todo_pending,
 			# date # today
 		);
+
+		IF i < a68g argc AND a68g argv(i) = "-"
+		THEN i +:= 1;
+			IF i <= a68g argc
+			THEN desc OF todo := a68g argv(i); i +:= 1
+			FI
+		FI;
 
 		write todo(todo)
 	OD

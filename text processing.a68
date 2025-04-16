@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- #
 
+PR include "utils.a68" PR
+
 OP TOINT = (STRING str) INT: (
 	INT n := 0, sign := 1;
 
@@ -51,4 +53,64 @@ PROC sh scape = (STRING str, CHAR ch) STRING: (
 	OD;
 
 	text
+);
+
+PROC wrap text = (STRING str, INT w) []STRING: (
+	FLEX [0] STRING lines;
+	STRING line := "", word := "";
+
+	FOR i TO UPB str DO
+		CHAR ch = str[i];
+
+		IF ch = " " THEN
+			IF UPB word > 0 THEN
+				# Check if we can add this word to current line #
+				IF UPB line = 0 THEN
+					line := word
+				ELIF UPB line + 1 + UPB word <= w THEN
+					line +:= " " + word
+				ELSE
+					# Can't fit, push current line and start new one #
+					lines +:= line;
+					line := word
+				FI;
+
+				word := ""
+			FI
+		ELSE
+			word +:= ch
+		FI;
+
+		# Handle case where a single word exceeds the width #
+		IF UPB word >= w THEN
+			IF UPB line > 0 THEN
+				lines +:= line;
+				line := ""
+			FI;
+
+			# Break the long word (since it exceeds width) #
+			WHILE UPB word >= w DO
+				lines +:= word[:w];
+				word := word[w + 1:]
+			OD
+		FI
+	OD;
+
+	# Add any remaining word #
+	IF UPB word > 0 THEN
+		IF UPB line = 0 THEN
+			line := word
+		ELIF UPB line + 1 + UPB word <= w THEN
+			line +:= " " + word
+		ELSE
+			lines +:= line;
+			line := word
+		FI
+	FI;
+
+	IF UPB line > 0 THEN
+		lines +:= line
+	FI;
+
+	lines
 )

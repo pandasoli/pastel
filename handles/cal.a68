@@ -2,7 +2,7 @@
 
 PR include "../unix.a68" PR
 PR include "../utils.a68" PR
-PR include "../database/todo.a68" PR;
+PR include "../database/todo.a68" PR
 PR include "../text processing.a68" PR;
 
 PROC first week month day = (INT month, year) INT: (

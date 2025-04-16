@@ -3,13 +3,14 @@
 PR include "../csv.a68" PR
 PR include "date.a68" PR;
 
-STRING todo csv header = "ID,TITLE,STATUS,DATE";
+STRING todo csv header = "ID,TITLE,DESCRIPTION,STATUS,DATE";
 
 MODE TODOSTATE = SHORT INT;
 
 MODE TODO = STRUCT (
 	INT id,
 	STRING title,
+	STRING desc,
 	TODOSTATE state,
 	DATE date
 );
@@ -28,14 +29,16 @@ PROC csv to todo = (FLEXCSVFIELDS fields) TODO:
 	TODO(
 		# id # TOINT fields[1],
 		# title # fields[2],
-		# state # TOINT fields[3],
-		# date # str to date(fields[4])
+		# description # fields[3],
+		# state # TOINT fields[4],
+		# date # str to date(fields[5])
 	);
 
 PROC todo to csv = (TODO todo) STRING: (
 	[] STRING fields = (
 		# id # whole(id OF todo, 0),
 		# title # """" + title OF todo + """",
+		# description # """" + desc OF todo + """",
 		# state # whole(state OF todo, 0),
 		# date # date to str(date OF todo)
 	);

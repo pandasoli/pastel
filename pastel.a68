@@ -9,6 +9,7 @@ PR include "handles/sort.a68" PR
 PR include "handles/cal.a68" PR;
 PR include "unix.a68" PR;
 PR include "utils.a68" PR;
+PR include "text processing.a68" PR;
 
 IF a68g argc = 1 THEN
 	[] TODO todos = get all today todos;
@@ -19,6 +20,13 @@ IF a68g argc = 1 THEN
 		IF state OF todos[i] = todo_done
 		THEN printf(($g"[9m"gg"[m"l$, esc, title OF todos[i], esc))
 		ELSE printf(($gl$, title OF todos[i]))
+		FI;
+
+		IF UPB desc OF todos[i] > 0 THEN
+			[] STRING lines = wrap text(desc OF todos[i], 60);
+			STRING desc = join(lines, REPR 10 + "  ");
+
+			printf(($"  "gl$, desc))
 		FI
 	OD
 ELSE

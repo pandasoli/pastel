@@ -9,6 +9,13 @@ OP +:= = (REF FLEX [] INT in out, INT item) REF FLEX [] INT: (
 	in out := new
 );
 
+OP +:= = (REF FLEX [] STRING in out, STRING item) REF FLEX [] STRING: (
+	[UPB in out + 1] STRING new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
 PRIO INCL = 5;
 OP INCL = (INT item, [] INT list) BOOL: (
 	BOOL res := FALSE;
