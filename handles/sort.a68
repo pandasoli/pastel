@@ -16,16 +16,16 @@ PROC sort = (INT argi) VOID: (
 			IF   state OF todos[i] = todo_pending THEN pendings +:= todos[i]
 			ELIF state OF todos[i] = todo_done    THEN dones +:= todos[i]
 			FI
-		ELSE append file("new.csv", REPR todos[i])
+		ELSE append file("new.csv", todo to csv(todos[i]))
 		FI
 	OD;
 
 	FOR i TO UPB pendings
-	DO append file("new.csv", REPR pendings[i])
+	DO append file("new.csv", todo to csv(pendings[i]))
 	OD;
 
 	FOR i TO UPB dones
-	DO append file("new.csv", REPR dones[i])
+	DO append file("new.csv", todo to csv(dones[i]))
 	OD;
 
 	move file("new.csv", todos path)

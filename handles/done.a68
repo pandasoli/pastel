@@ -21,7 +21,7 @@ PROC done = (INT argi) VOID: (
 			i +:= 1
 		FI;
 
-		append file("new.csv", REPR todos[j])
+		append file("new.csv", todo to csv(todos[j]))
 	OD;
 
 	move file("new.csv", todos path)

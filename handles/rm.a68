@@ -19,7 +19,7 @@ PROC rm = (INT argi) VOID: (
 	FOR j TO UPB todos DO
 		IF date OF todos[j] = today THEN
 			IF NOT (i INCL indexes)
-			THEN append file("new.csv", REPR todos[j])
+			THEN append file("new.csv", todo to csv(todos[j]))
 			FI;
 
 			i +:= 1

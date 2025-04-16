@@ -32,12 +32,12 @@ PROC csv to todo = (FLEXCSVFIELDS fields) TODO:
 		# date # str to date(fields[4])
 	);
 
-OP REPR = (TODO todo) STRING: (
+PROC todo to csv = (TODO todo) STRING: (
 	[] STRING fields = (
 		# id # whole(id OF todo, 0),
 		# title # """" + title OF todo + """",
 		# state # whole(state OF todo, 0),
-		# date # REPR date OF todo
+		# date # date to str(date OF todo)
 	);
 
 	join(fields, ",")

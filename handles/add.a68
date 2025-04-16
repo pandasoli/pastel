@@ -35,6 +35,6 @@ PROC add = (INT argi) VOID: (
 			# date # today
 		);
 
-		append file(todos path, REPR todo)
+		append file(todos path, todo to csv(todo))
 	OD
 )
