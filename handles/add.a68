@@ -3,27 +3,6 @@
 PR include "../database.a68" PR;
 
 PROC add = (INT argi) VOID: (
-	PROC inc id = INT: (
-		FILE f;
-		INT id;
-
-		IF open(f, last id path, stand in channel) < 0 THEN
-			putf(stand error, ($"Couldn't open "gl$, last id path));
-			stop
-		FI;
-
-		get(f, id); id +:= 1;
-		close(f);
-
-		IF open(f, last id path, stand out channel) < 0 THEN
-			putf(stand error, ($"Couldn't open "gl$, last id path));
-			stop
-		FI;
-		put(f, id); close(f);
-
-		id
-	);
-
 	FOR i FROM argi TO a68g argc DO
 		STRING arg = a68g argv(i);
 

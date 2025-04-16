@@ -6,9 +6,30 @@ PR include "csv.a68" PR;
 
 STRING
 	data path = "/home/" + whoami + "/.local/share/pastel",
-	todos path = data path + "/todos.csv",
-	last id path = data path + "/last id.txt"
+	path todos = data path + "/todos.csv",
+	path lastid = data path + "/last id.txt"
 ;
+
+BEGIN
+	PROC a = (STRING path, header) VOID:
+		IF NOT file is regular(path)
+		THEN FILE f;
+			IF establish(f, path, stand out channel) < 0 THEN
+				putf(stand error, ($"Couldn't establish "gl$, path));
+				stop
+			FI;
+
+			putf(f, ($gl$, header));
+			close(f)
+		FI;
+
+	IF NOT file is directory(data path)
+	THEN create directory(data path)
+	FI;
+
+	a(path todos, todo csv header);
+	a(path lastid, "0")
+END;
 
 PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 	FILE f;
@@ -23,14 +44,14 @@ PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 );
 
 PROC get todos = (PROC (TODO) VOID callback) VOID:
-	read db(todos path, (FLEXCSVFIELDS fields) VOID:
+	read db(path todos, (FLEXCSVFIELDS fields) VOID:
 		callback(csv to todo(fields))
 	);
 
 PROC get all todos = [] TODO: (
 	FLEX [0] TODO todos;
 
-	read db(todos path, (FLEXCSVFIELDS fields) VOID:
+	read db(path todos, (FLEXCSVFIELDS fields) VOID:
 		todos +:= csv to todo(fields));
 
 	todos
@@ -49,13 +70,13 @@ PROC get all today todos = [] TODO: (
 );
 
 PROC write todo = (TODO todo) VOID:
-	append file(todos path, todo to csv(todo));
+	append file(path todos, todo to csv(todo));
 
 PROC write todos = ([] TODO todos) VOID: (
 	FILE f;
 
-	IF open(f, todos path, stand out channel) > 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, todos path));
+	IF open(f, path todos, stand out channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path todos));
 		stop
 	FI;
 
@@ -66,4 +87,28 @@ PROC write todos = ([] TODO todos) VOID: (
 	OD;
 
 	close(f)
+);
+
+PROC inc id = INT: (
+	FILE f;
+	INT id;
+
+	IF open(f, path lastid, stand in channel) < 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path lastid));
+		stop
+	FI;
+
+	get(f, id);
+	id +:= 1;
+	close(f);
+
+	IF open(f, path lastid, stand out channel) < 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path lastid));
+		stop
+	FI;
+
+	put(f, id);
+	close(f);
+
+	id
 )

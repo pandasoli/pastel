@@ -10,27 +10,6 @@ PR include "handles/cal.a68" PR;
 PR include "unix.a68" PR;
 PR include "utils.a68" PR;
 
-BEGIN
-	PROC a = (STRING path, header) VOID:
-		IF NOT file is regular(path)
-		THEN FILE f;
-			IF establish(f, path, stand out channel) < 0 THEN
-				putf(stand error, ($"Couldn't establish "gl$, path));
-				stop
-			FI;
-
-			put(f, header + REPR 10);
-			close(f)
-		FI;
-
-	IF NOT file is directory(data path)
-	THEN create directory(data path)
-	FI;
-
-	a(todos path, todo csv header);
-	a(last id path, "0")
-END;
-
 IF a68g argc = 1 THEN
 	[] TODO todos = get all today todos;
 
