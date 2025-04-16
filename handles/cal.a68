@@ -2,7 +2,7 @@
 
 PR include "../unix.a68" PR
 PR include "../utils.a68" PR
-PR include "../database/todo.a68" PR
+PR include "../database/task.a68" PR
 PR include "../text processing.a68" PR;
 
 PROC first week month day = (INT month, year) INT: (
@@ -25,7 +25,7 @@ PROC first week month day = (INT month, year) INT: (
 	(h + 6) MOD 7 + 1
 );
 
-PROC print calendar = (INT month, day, year, [] TODO todos) VOID: (
+PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 	[] STRING months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 	[] INT days in month = (
 		31,
@@ -55,21 +55,21 @@ PROC print calendar = (INT month, day, year, [] TODO todos) VOID: (
 					(year = year OF today) AND
 					(month = month OF today) AND
 					(day i = day OF today);
-				BOOL has todos := FALSE;
+				BOOL has tasks := FALSE;
 
-				FOR i TO UPB todos DO
-					IF day OF date OF todos[i] = day i
-					THEN has todos := TRUE
+				FOR i TO UPB tasks DO
+					IF day OF date OF tasks[i] = day i
+					THEN has tasks := TRUE
 					FI
 				OD;
 
 				IF is today THEN printf(($g"[30;47m"$, REPR 27))
-				ELIF has todos THEN printf(($g"[37;100m"$, REPR 27))
+				ELIF has tasks THEN printf(($g"[37;100m"$, REPR 27))
 				FI;
 
 				printf(($gg(0)$, (day i < 10 | " " | ""), day i));
 
-				IF is today OR has todos
+				IF is today OR has tasks
 				THEN printf(($g"[m"$, REPR 27))
 				FI;
 
@@ -87,7 +87,7 @@ PROC print calendar = (INT month, day, year, [] TODO todos) VOID: (
 PROC cal = (INT argi) VOID: (
 	STRING arg = a68g argv(argi);
 	INT index = TOINT arg;
-	FLEX [0] TODO todos;
+	FLEX [0] TASK tasks;
 
 	INT
 		month := month OF today,
@@ -107,13 +107,13 @@ PROC cal = (INT argi) VOID: (
 		month +:= 12
 	OD;
 
-	get todos((TODO todo) VOID:
-		IF year OF date OF todo = year
-		AND month OF date OF todo = month
+	get tasks((TASK task) VOID:
+		IF year OF date OF task = year
+		AND month OF date OF task = month
 		THEN
-			todos +:= todo
+			tasks +:= task
 		FI
 	);
 
-	print calendar(month, day, year, todos)
+	print calendar(month, day, year, tasks)
 )

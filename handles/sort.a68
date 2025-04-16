@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../utils.a68" PR
-PR include "../database/todo.a68" PR
+PR include "../database/task.a68" PR
 
 PROC sort = (INT argi) VOID: (
-	FLEX [0] TODO pendings;
-	FLEX [0] TODO dones;
-	FLEX [0] TODO new todos;
-	[] TODO todos = get all todos;
+	FLEX [0] TASK pendings;
+	FLEX [0] TASK dones;
+	FLEX [0] TASK new tasks;
+	[] TASK tasks = get all tasks;
 
-	FOR i TO UPB todos DO
-		IF   date OF todos[i] /= today THEN new todos +:= todos[i]
-		ELIF state OF todos[i] = todo_pending THEN pendings +:= todos[i]
-		ELIF state OF todos[i] = todo_done    THEN dones +:= todos[i]
+	FOR i TO UPB tasks DO
+		IF   date OF tasks[i] /= today THEN new tasks +:= tasks[i]
+		ELIF state OF tasks[i] = task_pending THEN pendings +:= tasks[i]
+		ELIF state OF tasks[i] = task_done    THEN dones +:= tasks[i]
 		FI
 	OD;
 
 	FOR i TO UPB pendings
-	DO new todos +:= pendings[i]
+	DO new tasks +:= pendings[i]
 	OD;
 
 	FOR i TO UPB dones
-	DO new todos +:= dones[i]
+	DO new tasks +:= dones[i]
 	OD;
 
-	write todos(new todos)
+	write tasks(new tasks)
 )

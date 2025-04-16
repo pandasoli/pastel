@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "types/todo.a68" PR
+PR include "types/task.a68" PR
 PR include "database.a68" PR
 PR include "handles/add.a68" PR
 PR include "handles/rm.a68" PR
@@ -12,18 +12,18 @@ PR include "utils.a68" PR;
 PR include "text processing.a68" PR;
 
 IF a68g argc = 1 THEN
-	[] TODO todos = get all today todos;
+	[] TASK tasks = get all today tasks;
 
-	FOR i TO UPB todos DO
+	FOR i TO UPB tasks DO
 		printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
 
-		IF state OF todos[i] = todo_done
-		THEN printf(($g"[9m"gg"[m"l$, esc, title OF todos[i], esc))
-		ELSE printf(($gl$, title OF todos[i]))
+		IF state OF tasks[i] = task_done
+		THEN printf(($g"[9m"gg"[m"l$, esc, title OF tasks[i], esc))
+		ELSE printf(($gl$, title OF tasks[i]))
 		FI;
 
-		IF UPB desc OF todos[i] > 0 THEN
-			[] STRING lines = wrap text(desc OF todos[i], 60);
+		IF UPB desc OF tasks[i] > 0 THEN
+			[] STRING lines = wrap text(desc OF tasks[i], 60);
 			STRING desc = join(lines, REPR 10 + "  ");
 
 			printf(($"  "gl$, desc))

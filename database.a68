@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "types/todo.a68" PR
+PR include "types/task.a68" PR
 PR include "unix.a68" PR
 PR include "csv.a68" PR;
 PR include "database/paths.a68" PR;
@@ -22,6 +22,6 @@ BEGIN
 	THEN create directory(data path)
 	FI;
 
-	a(path todos, todo csv header);
+	a(path tasks, task csv header);
 	a(path lastid, "0")
 END

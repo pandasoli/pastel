@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../database/todo.a68" PR;
+PR include "../database/task.a68" PR;
 
 PROC done = (INT argi) VOID: (
 	FLEX [0] INT indexes;
@@ -10,18 +10,18 @@ PROC done = (INT argi) VOID: (
 		indexes +:= TOINT arg
 	OD;
 
-	[0] TODO todos := get all todos;
+	[0] TASK tasks := get all tasks;
 	INT i := 1;
 
-	FOR j TO UPB todos DO
-		IF date OF todos[j] = today THEN
+	FOR j TO UPB tasks DO
+		IF date OF tasks[j] = today THEN
 			IF i INCL indexes
-			THEN state OF todos[j] := todo_done
+			THEN state OF tasks[j] := task_done
 			FI;
 
 			i +:= 1
 		FI
 	OD;
 
-	write todos(todos)
+	write tasks(tasks)
 )

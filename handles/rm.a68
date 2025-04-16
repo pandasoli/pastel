@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../utils.a68" PR;
-PR include "../database/todo.a68" PR
+PR include "../database/task.a68" PR
 
 PROC rm = (INT argi) VOID: (
 	FLEX [0] INT indexes;
@@ -11,16 +11,16 @@ PROC rm = (INT argi) VOID: (
 		indexes +:= TOINT arg
 	OD;
 
-	FLEX [0] TODO new todos;
+	FLEX [0] TASK new tasks;
 	INT i := 1;
 
-	get todos((TODO todo) VOID:
-		IF date OF todo = today THEN
+	get tasks((TASK task) VOID:
+		IF date OF task = today THEN
 			IF NOT (i INCL indexes)
-			THEN new todos +:= todo FI;
+			THEN new tasks +:= task FI;
 			i +:= 1
 		FI
 	);
 
-	write todos(new todos)
+	write tasks(new tasks)
 )

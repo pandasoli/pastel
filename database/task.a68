@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*- #
+
+PR include "paths.a68" PR;
+
+PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
+	FILE f;
+
+	IF open(f, path, stand in channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path));
+		stop
+	FI;
+
+	read csv(f, callback);
+	close(f)
+);
+
+PROC get tasks = (PROC (TASK) VOID callback) VOID:
+	read db(path tasks, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to task(fields))
+	);
+
+PROC get all tasks = [] TASK: (
+	FLEX [0] TASK tasks;
+
+	read db(path tasks, (FLEXCSVFIELDS fields) VOID:
+		tasks +:= csv to task(fields));
+
+	tasks
+);
+
+PROC get all today tasks = [] TASK: (
+	FLEX [0] TASK tasks;
+
+	get tasks((TASK task) VOID:
+		IF date OF task = today
+		THEN tasks +:= task
+		FI
+	);
+
+	tasks
+);
+
+PROC write task = (TASK task) VOID:
+	append file(path tasks, task to csv(task));
+
+PROC write tasks = ([] TASK tasks) VOID: (
+	FILE f;
+
+	IF open(f, path tasks, stand out channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path tasks));
+		stop
+	FI;
+
+	putf(f, ($gl$, task csv header));
+
+	FOR i TO UPB tasks DO
+		putf(f, ($gl$, task to csv(tasks[i])))
+	OD;
+
+	close(f)
+)

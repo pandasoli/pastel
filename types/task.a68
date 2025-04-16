@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../csv.a68" PR
+PR include "date.a68" PR;
+
+STRING task csv header = "ID,TITLE,DESCRIPTION,STATUS,DATE";
+
+MODE TASKSTATE = SHORT INT;
+
+MODE TASK = STRUCT (
+	INT id,
+	STRING title,
+	STRING desc,
+	TASKSTATE state,
+	DATE date
+);
+
+TASKSTATE task_pending = 1;
+TASKSTATE task_done = 2;
+
+OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
+	[UPB in out + 1] TASK new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to task = (FLEXCSVFIELDS fields) TASK:
+	TASK(
+		# id # TOINT fields[1],
+		# title # fields[2],
+		# description # fields[3],
+		# state # TOINT fields[4],
+		# date # str to date(fields[5])
+	);
+
+PROC task to csv = (TASK task) STRING: (
+	[] STRING fields = (
+		# id # whole(id OF task, 0),
+		# title # """" + title OF task + """",
+		# description # """" + desc OF task + """",
+		# state # whole(state OF task, 0),
+		# date # date to str(date OF task)
+	);
+
+	join(fields, ",")
+)

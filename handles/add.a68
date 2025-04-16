@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../database/todo.a68" PR
+PR include "../database/task.a68" PR
 PR include "../database/lastid.a68" PR;
 
 PROC add = (INT argi) VOID: (
@@ -10,21 +10,21 @@ PROC add = (INT argi) VOID: (
 		STRING arg = a68g argv(i);
 		i +:= 1;
 
-		TODO todo := (
+		TASK task := (
 			# id # inc id,
 			# title # arg,
 			# description # "",
-			# state # todo_pending,
+			# state # task_pending,
 			# date # today
 		);
 
 		IF i < a68g argc AND a68g argv(i) = "-"
 		THEN i +:= 1;
 			IF i <= a68g argc
-			THEN desc OF todo := a68g argv(i); i +:= 1
+			THEN desc OF task := a68g argv(i); i +:= 1
 			FI
 		FI;
 
-		write todo(todo)
+		write task(task)
 	OD
 )
