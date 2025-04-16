@@ -11,19 +11,16 @@ PROC rm = (INT argi) VOID: (
 		indexes +:= TOINT arg
 	OD;
 
-	[] TODO todos = get all todos;
 	FLEX [0] TODO new todos;
 	INT i := 1;
 
-	FOR j TO UPB todos DO
-		IF date OF todos[j] = today THEN
+	get todos((TODO todo) VOID:
+		IF date OF todo = today THEN
 			IF NOT (i INCL indexes)
-			THEN new todos +:= todos[j]
-			FI;
-
+			THEN new todos +:= todo FI;
 			i +:= 1
 		FI
-	OD;
+	);
 
 	write todos(new todos)
 )
