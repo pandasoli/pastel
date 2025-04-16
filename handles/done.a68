@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*- #
 
+PR include "../database.a68" PR;
+
 PROC done = (INT argi) VOID: (
 	FLEX [0] INT indexes;
 
@@ -8,7 +10,6 @@ PROC done = (INT argi) VOID: (
 		indexes +:= TOINT arg
 	OD;
 
-	append file("new.csv", todo csv header);
 	[0] TODO todos := get all todos;
 	INT i := 1;
 
@@ -19,10 +20,8 @@ PROC done = (INT argi) VOID: (
 			FI;
 
 			i +:= 1
-		FI;
-
-		append file("new.csv", todo to csv(todos[j]))
+		FI
 	OD;
 
-	move file("new.csv", todos path)
+	write todos(todos)
 )

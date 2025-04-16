@@ -46,4 +46,24 @@ PROC get all today todos = [] TODO: (
 	);
 
 	todos
+);
+
+PROC write todo = (TODO todo) VOID:
+	append file(todos path, todo to csv(todo));
+
+PROC write todos = ([] TODO todos) VOID: (
+	FILE f;
+
+	IF open(f, todos path, stand out channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, todos path));
+		stop
+	FI;
+
+	putf(f, ($gl$, todo csv header));
+
+	FOR i TO UPB todos DO
+		putf(f, ($gl$, todo to csv(todos[i])))
+	OD;
+
+	close(f)
 )

@@ -1,32 +1,28 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../unix.a68" PR
-PR include "../utils.a68" PR;
+PR include "../utils.a68" PR
 PR include "../database.a68" PR
 
 PROC sort = (INT argi) VOID: (
-	append file("new.csv", todo csv header);
-
 	FLEX [0] TODO pendings;
 	FLEX [0] TODO dones;
+	FLEX [0] TODO new todos;
 	[] TODO todos = get all todos;
 
 	FOR i TO UPB todos DO
-		IF date OF todos[i] = today THEN
-			IF   state OF todos[i] = todo_pending THEN pendings +:= todos[i]
-			ELIF state OF todos[i] = todo_done    THEN dones +:= todos[i]
-			FI
-		ELSE append file("new.csv", todo to csv(todos[i]))
+		IF   date OF todos[i] /= today THEN new todos +:= todos[i]
+		ELIF state OF todos[i] = todo_pending THEN pendings +:= todos[i]
+		ELIF state OF todos[i] = todo_done    THEN dones +:= todos[i]
 		FI
 	OD;
 
 	FOR i TO UPB pendings
-	DO append file("new.csv", todo to csv(pendings[i]))
+	DO new todos +:= pendings[i]
 	OD;
 
 	FOR i TO UPB dones
-	DO append file("new.csv", todo to csv(dones[i]))
+	DO new todos +:= dones[i]
 	OD;
 
-	move file("new.csv", todos path)
+	write todos(new todos)
 )

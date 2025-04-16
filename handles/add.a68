@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../unix.a68" PR
-PR include "../database.a68" PR
+PR include "../database.a68" PR;
 
 PROC add = (INT argi) VOID: (
 	PROC inc id = INT: (
@@ -35,6 +34,6 @@ PROC add = (INT argi) VOID: (
 			# date # today
 		);
 
-		append file(todos path, todo to csv(todo))
+		write todo(todo)
 	OD
 )

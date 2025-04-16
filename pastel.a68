@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 
 PR include "types/todo.a68" PR
-PR include "database.a68" PR;
+PR include "database.a68" PR
 PR include "handles/add.a68" PR
-PR include "handles/rm.a68" PR;
-PR include "handles/done.a68" PR
+PR include "handles/rm.a68" PR
+PR include "handles/done.a68" PR;
 PR include "handles/sort.a68" PR
 PR include "handles/cal.a68" PR;
 PR include "unix.a68" PR;

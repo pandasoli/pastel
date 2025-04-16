@@ -12,6 +12,8 @@ OP = = (DATE a, b) BOOL:
 	month OF a = month OF b AND
 	year OF a = year OF b;
 
+OP /= = (DATE a, b) BOOL: NOT (a = b);
+
 PROC date to str = (DATE date) STRING:
 	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
 	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
