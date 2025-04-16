@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-exec a68g pastel.a68 -- $*
+exec a68g pastel.a68 -- "$@"
