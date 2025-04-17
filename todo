@@ -1,2 +1,3 @@
 #!/usr/bin/env sh
-exec a68g pastel.a68 -- "$@"
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+exec a68g "$SCRIPT_DIR/pastel.a68" -- "$@"
