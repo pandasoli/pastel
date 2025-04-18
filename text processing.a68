@@ -38,6 +38,43 @@ PROC join = ([] STRING list, STRING delim) STRING: (
 	res
 );
 
+PROC split text = (STRING text, STRING delimiter) [] STRING: (
+	# First count how many splits we'll need #
+	INT split count := 1;
+	INT pos := 1;
+
+	WHILE pos + UPB delimiter - 1 <= UPB text DO
+		IF text[pos:pos + UPB delimiter - 1] = delimiter THEN
+			split count +:= 1;
+			pos +:= UPB delimiter
+		ELSE
+			pos +:= 1
+		FI
+	OD;
+
+	# Now create the result array and populate it #
+	[1:split count] STRING result;
+	INT current split := 1;
+	INT starta := 1; # [Unsolvable] declaration hides a declaration of "start" with larger reach. #
+	pos := 1;
+
+	WHILE pos + UPB delimiter - 1 <= UPB text DO
+		IF text[pos:pos + UPB delimiter-1] = delimiter THEN
+			result[current split] := text[starta:pos - 1];
+			current split +:= 1;
+			pos +:= UPB delimiter;
+			starta := pos
+		ELSE
+			pos +:= 1
+		FI
+	OD;
+
+	# Add the last segment #
+	result[current split] := text[starta:];
+
+	result
+);
+
 PROC sh scape = (STRING str, CHAR ch) STRING: (
 	STRING text := str;
 	INT text len := UPB text, i := 1;

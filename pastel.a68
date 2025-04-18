@@ -25,10 +25,13 @@ IF a68g argc = 1 THEN
 		FI;
 
 		IF UPB desc OF tasks[i] > 0 THEN
-			[] STRING lines = wrap text(desc OF tasks[i], 60);
-			STRING desc = join(lines, REPR 10 + "  ");
+			[] STRING lines = split text(desc OF tasks[i], REPR 10);
 
-			printf(($"  "gl$, desc))
+			FOR j TO UPB lines DO
+				[] STRING parts = wrap text(lines[j], 60);
+				STRING part = join(parts, REPR 10 + "  ");
+				printf(($"  "gl$, part))
+			OD
 		FI
 	OD
 ELSE
