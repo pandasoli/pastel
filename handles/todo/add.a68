@@ -3,8 +3,8 @@
 PR include "../../database/todo.a68" PR
 
 #
-	add (todo description)...
-	add (todo description)... todo
+	add todo <<
+	add todo description ... todo
 #
 PROC todo add = (REF INT argi) VOID:
 	WHILE argi <= a68g argc DO
@@ -19,6 +19,15 @@ PROC todo add = (REF INT argi) VOID:
 
 		IF argi <= a68g argc
 		THEN desc OF todo := a68g argv(argi); argi +:= 1
+		ELSE
+			on logical file end(stand in, (REF FILE f) BOOL: done in);
+
+			DO STRING in;
+				getf(stand in, ($gl$, in));
+				desc OF todo +:= (UPB desc OF todo = 0|""|REPR 10) + in
+			OD;
+
+			done in: ~
 		FI;
 
 		write todo(todo)

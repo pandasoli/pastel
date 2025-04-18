@@ -4,8 +4,8 @@ PR include "../database/task.a68" PR
 PR include "../database/lastid.a68" PR;
 
 #
-	add (task description)...
-	add (task description)... task
+	add todo <<
+	add todo description ... todo
 #
 PROC add = (REF INT argi) VOID:
 	WHILE argi <= a68g argc DO
@@ -22,6 +22,15 @@ PROC add = (REF INT argi) VOID:
 
 		IF argi <= a68g argc
 		THEN desc OF task := a68g argv(argi); argi +:= 1
+		ELSE
+			on logical file end(stand in, (REF FILE f) BOOL: done in);
+
+			DO STRING in;
+				getf(stand in, ($gl$, in));
+				desc OF todo +:= (UPB desc OF todo = 0|""|REPR 10) + in
+			OD;
+
+			done in: ~
 		FI;
 
 		write task(task)
