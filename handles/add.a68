@@ -27,7 +27,7 @@ PROC add = (REF INT argi) VOID:
 
 			DO STRING in;
 				getf(stand in, ($gl$, in));
-				desc OF todo +:= (UPB desc OF todo = 0|""|REPR 10) + in
+				desc OF task +:= (UPB desc OF task = 0|""|REPR 10) + in
 			OD;
 
 			done in: ~
