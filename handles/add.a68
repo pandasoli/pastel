@@ -3,7 +3,10 @@
 PR include "../database/task.a68" PR
 PR include "../database/lastid.a68" PR;
 
-# add (task description)... #
+#
+	add (task description)...
+	add (task description)... task
+#
 PROC add = (REF INT argi) VOID:
 	WHILE argi <= a68g argc DO
 		STRING arg = a68g argv(argi);
