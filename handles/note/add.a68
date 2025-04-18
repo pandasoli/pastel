@@ -3,25 +3,44 @@
 PR include "../../database/note.a68" PR
 
 #
+	add <<
 	add note
 	add notes... group
 #
 PROC note add = (REF INT argi) VOID: (
-	STRING group := "";
+	BOOL single = a68g argc - argi < 0;
 
-	IF a68g argc - argi >= 1
-	THEN group := a68g argv(a68g argc)
-	FI;
-
-	WHILE (group /= ""|argi < a68g argc|argi <= a68g argc) DO
-		STRING arg = a68g argv(argi);
-		argi +:= 1;
-
+	IF single THEN
 		NOTE note := (
-			# content # arg,
-			# group # group
+			# content # "",
+			# group # ""
 		);
 
-		write note(note)
-	OD
+		on logical file end(stand in, (REF FILE f) BOOL: done in);
+
+		DO STRING in;
+			getf(stand in, ($gl$, in));
+			content OF note +:= (content OF note = ""|""|REPR 10) + in
+		OD;
+
+		done in: write note(note)
+	ELSE
+		STRING group := "";
+
+		IF a68g argc - argi >= 1
+		THEN group := a68g argv(a68g argc)
+		FI;
+
+		WHILE (group /= ""|argi < a68g argc|argi <= a68g argc) DO
+			STRING arg = a68g argv(argi);
+			argi +:= 1;
+
+			NOTE note := (
+				# content # arg,
+				# group # group
+			);
+
+			write note(note)
+		OD
+	FI
 )
