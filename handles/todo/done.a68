@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../database/task.a68" PR
+PR include "../../database/todo.a68" PR;
+
+# done indexes... #
+PROC todo done = (INT argi) VOID: (
+	FLEX [0] INT indexes;
+
+	FOR j FROM argi TO a68g argc DO
+		STRING arg = a68g argv(j);
+		indexes +:= TOINT arg
+	OD;
+
+	[] TODO old todos = get all todos;
+	FLEX [0] TODO new todos;
+	FLEX [0] TASK new tasks := get all tasks;
+
+	FOR i TO UPB old todos
+	DO IF NOT (i INCL indexes)
+		THEN new todos +:= old todos[i] FI
+	OD;
+
+	FOR i TO UPB old todos
+	DO IF i INCL indexes
+		THEN new tasks +:= TASK(
+				# id # id OF old todos[i],
+				# title # title OF old todos[i],
+				# description # desc OF old todos[i],
+				# state # task_done,
+				# date # today
+			)
+		FI
+	OD;
+
+	write tasks(new tasks);
+	write todos(new todos)
+)

@@ -4,4 +4,5 @@ STRING
 	data path = "/home/" + whoami + "/.local/share/pastel",
 	path tasks = data path + "/tasks.csv",
 	path notes = data path + "/notes.csv",
+	path todos = data path + "/todos.csv",
 	path lastid = data path + "/last id.txt"

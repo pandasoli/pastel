@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../utils.a68" PR;
+PR include "../../database/todo.a68" PR
+
+# rm indexes... #
+PROC todo rm = (INT argi) VOID: (
+	FLEX [0] INT indexes;
+
+	FOR i FROM argi TO a68g argc DO
+		STRING arg = a68g argv(i);
+		indexes +:= TOINT arg
+	OD;
+
+	FLEX [0] TODO new todos;
+	INT index := 1;
+
+	get todos((TODO todo) VOID: (
+		IF NOT (index INCL indexes)
+		THEN new todos +:= todo FI;
+		index +:= 1
+	));
+
+	write todos(new todos)
+)

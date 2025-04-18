@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../database/todo.a68" PR
+
+#
+	add (todo description)...
+	add (todo description)... todo
+#
+PROC todo add = (REF INT argi) VOID:
+	WHILE argi <= a68g argc DO
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
+
+		TODO todo := (
+			# id # inc id,
+			# title # arg,
+			# description # ""
+		);
+
+		IF argi <= a68g argc
+		THEN desc OF todo := a68g argv(argi); argi +:= 1
+		FI;
+
+		write todo(todo)
+	OD
