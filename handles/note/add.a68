@@ -13,7 +13,7 @@ PROC note add = (REF INT argi) VOID: (
 	THEN group := a68g argv(a68g argc)
 	FI;
 
-	WHILE (UPB group > 0|argi < a68g argc|argi <= a68g argc) DO
+	WHILE (group /= ""|argi < a68g argc|argi <= a68g argc) DO
 		STRING arg = a68g argv(argi);
 		argi +:= 1;
 

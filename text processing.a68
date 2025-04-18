@@ -100,9 +100,9 @@ PROC wrap text = (STRING str, INT w) []STRING: (
 		CHAR ch = str[i];
 
 		IF ch = " " THEN
-			IF UPB word > 0 THEN
+			IF word /= "" THEN
 				# Check if we can add this word to current line #
-				IF UPB line = 0 THEN
+				IF line = "" THEN
 					line := word
 				ELIF UPB line + 1 + UPB word <= w THEN
 					line +:= " " + word
@@ -134,8 +134,8 @@ PROC wrap text = (STRING str, INT w) []STRING: (
 	OD;
 
 	# Add any remaining word #
-	IF UPB word > 0 THEN
-		IF UPB line = 0 THEN
+	IF word /= "" THEN
+		IF line = "" THEN
 			line := word
 		ELIF UPB line + 1 + UPB word <= w THEN
 			line +:= " " + word
@@ -145,7 +145,7 @@ PROC wrap text = (STRING str, INT w) []STRING: (
 		FI
 	FI;
 
-	IF UPB line > 0 THEN
+	IF line /= "" THEN
 		lines +:= line
 	FI;
 

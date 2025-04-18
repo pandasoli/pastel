@@ -24,7 +24,7 @@ IF a68g argc = 1 THEN
 		ELSE printf(($gl$, title OF tasks[i]))
 		FI;
 
-		IF UPB desc OF tasks[i] > 0 THEN
+		IF desc OF tasks[i] /= "" THEN
 			[] STRING lines = split text(desc OF tasks[i], REPR 10);
 
 			FOR j TO UPB lines DO

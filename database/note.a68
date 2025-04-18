@@ -14,7 +14,7 @@ PROC get global notes = [] NOTE: (
 	FLEX [0] NOTE notes;
 
 	get notes((NOTE note) VOID:
-		IF UPB group OF note = 0
+		IF group OF note = ""
 		THEN notes +:= note
 		FI
 	);
@@ -38,7 +38,7 @@ PROC get note groups = [] STRING: (
 	FLEX [0] STRING groups;
 
 	get notes((NOTE note) VOID:
-		IF UPB group OF note > 0 AND NOT (group OF note INCL groups)
+		IF group OF note /= "" AND NOT (group OF note INCL groups)
 		THEN groups +:= group OF note
 		FI
 	);

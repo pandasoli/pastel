@@ -23,7 +23,7 @@ PROC sub todo = (REF INT argi) VOID: (
 			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
 			printf(($gl$, title OF todos[i]));
 
-			IF UPB desc OF todos[i] > 0 THEN
+			IF desc OF todos[i] /= "" THEN
 				[] STRING lines = split text(desc OF todos[i], REPR 10);
 
 				FOR j TO UPB lines DO
