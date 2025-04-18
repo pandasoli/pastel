@@ -26,9 +26,26 @@ learn the code and make your own.
 </div>
 
 ```sh
-$ todo add "Some task for today next fiting hour" ...
-$ todo done 3 ...  # Mark 3rd todo as done
+$ todo                         # List all tasks
+$ todo add 'task' 'description' ... 'task'
+$ todo rm 'index'...
+$ todo done 'index'...
+$ todo sort                    # Order todos by state
+$ todo cal                     # Show calendar
+
+$ todo note                    # Show notes in group '' (global group)
+$ todo note 'group'            # Show notes in group
+$ todo note add 'note'... 'group'
+$ todo note rm 'index'... 'group'
+
+$ todo todo                    # List todos
+$ todo todo add 'todo' 'description' ... 'todo'
+$ todo todo rm 'index'...
+$ todo todo done 'index'...    # Turn todo into done task
 ```
 
-For todos management the index of it in the today's list is used.  
-It seems help the interface's development since no technical info need to be available (i.e. UUID).
+For todos management the indexes in the today's list is used.  
+It seems to help the interface's development since no technical info need to be available (i.e. UUID).
+
+Tasks have a date and state, and become unchangeable once the day passes. In contrast,
+todos don’t have a date—when marked as done, they turn into a completed task for the current day.
