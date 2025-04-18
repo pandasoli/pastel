@@ -3,27 +3,26 @@
 PR include "../../database/note.a68" PR
 
 #
-	add note [group]
-	add note - note [group]
+	add note
+	add notes... group
 #
 PROC note add = (INT argi) VOID: (
 	INT i := argi;
 
-	WHILE i <= a68g argc DO
+	STRING group := "";
+
+	IF a68g argc - argi >= 1
+	THEN group := a68g argv(a68g argc)
+	FI;
+
+	WHILE (UPB group > 0|i < a68g argc|i <= a68g argc) DO
 		STRING arg = a68g argv(i);
 		i +:= 1;
 
 		NOTE note := (
 			# content # arg,
-			# group # ""
+			# group # group
 		);
-
-		IF i <= a68g argc THEN
-			IF a68g argv(i) /= "-"
-			THEN group OF note := a68g argv(i)
-			FI;
-			i +:= 1
-		FI;
 
 		write note(note)
 	OD
