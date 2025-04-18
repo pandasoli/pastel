@@ -21,6 +21,7 @@ PROC note rm = (INT argi) VOID: (
 			IF NOT (index INCL indexes)
 			THEN new notes +:= note FI;
 			index +:= 1
+		ELSE new notes +:= note
 		FI
 	);
 
