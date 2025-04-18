@@ -18,9 +18,9 @@ PROC sub note = (REF INT argi) VOID: (
 		STRING arg = a68g argv(argi);
 		argi +:= 1;
 
-		IF   arg = "add"    THEN note add(argi)
-		ELIF arg = "rm"     THEN note rm(argi)
-		ELIF arg = "groups" THEN
+		IF   arg = "add"    OR arg = "a" THEN note add(argi)
+		ELIF arg = "rm"     OR arg = "r" THEN note rm(argi)
+		ELIF arg = "groups" OR arg = "g" THEN
 			[] STRING groups = get note groups;
 
 			FOR j TO UPB groups

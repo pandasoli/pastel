@@ -11,9 +11,9 @@ PROC sub todo = (REF INT argi) VOID: (
 		STRING arg = a68g argv(argi);
 		argi +:= 1;
 
-		IF   arg = "add"  THEN todo add(argi)
-		ELIF arg = "rm"   THEN todo rm(argi)
-		ELIF arg = "done" THEN todo done(argi)
+		IF   arg = "add"  OR arg = "a" THEN todo add(argi)
+		ELIF arg = "rm"   OR arg = "r" THEN todo rm(argi)
+		ELIF arg = "done" OR arg = "d" THEN todo done(argi)
 		ELSE putf(stand error, ($gl$, "Unimplemented!"))
 		FI
 	ELSE

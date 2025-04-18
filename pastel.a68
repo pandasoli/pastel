@@ -38,12 +38,12 @@ ELSE
 	INT argi := 2;
 	STRING arg = a68g argv(argi); argi +:= 1;
 
-	IF   arg = "add"  THEN add(argi)
-	ELIF arg = "note" THEN sub note(argi)
-	ELIF arg = "todo" THEN sub todo(argi)
-	ELIF arg = "rm"   THEN rm(argi)
-	ELIF arg = "done" THEN done(argi)
-	ELIF arg = "sort" THEN sort(argi)
-	ELIF arg = "cal"  THEN cal(argi)
+	IF   arg = "add"  OR arg = "a" THEN add(argi)
+	ELIF arg = "note" OR arg = "n" THEN sub note(argi)
+	ELIF arg = "todo" OR arg = "t" THEN sub todo(argi)
+	ELIF arg = "rm"   OR arg = "r" THEN rm(argi)
+	ELIF arg = "done" OR arg = "d" THEN done(argi)
+	ELIF arg = "sort" OR arg = "s" THEN sort(argi)
+	ELIF arg = "cal"  OR arg = "c" THEN cal(argi)
 	FI
 FI
