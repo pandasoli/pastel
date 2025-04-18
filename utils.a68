@@ -27,4 +27,16 @@ OP INCL = (INT item, [] INT list) BOOL: (
 		FI
 	OD;
 	done incl: res
+);
+
+OP INCL = (STRING item, [] STRING list) BOOL: (
+	BOOL res := FALSE;
+
+	FOR i TO UPB list DO
+		IF list[i] = item THEN
+			res := TRUE;
+			done incl
+		FI
+	OD;
+	done incl: res
 )

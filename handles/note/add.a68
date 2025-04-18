@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../database/note.a68" PR
+
+#
+	add note [group]
+	add note - note [group]
+#
+PROC note add = (INT argi) VOID: (
+	INT i := argi;
+
+	WHILE i <= a68g argc DO
+		STRING arg = a68g argv(i);
+		i +:= 1;
+
+		NOTE note := (
+			# content # arg,
+			# group # ""
+		);
+
+		IF i <= a68g argc THEN
+			IF a68g argv(i) /= "-"
+			THEN group OF note := a68g argv(i)
+			FI;
+			i +:= 1
+		FI;
+
+		write note(note)
+	OD
+)

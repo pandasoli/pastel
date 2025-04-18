@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*- #
 
-PR include "paths.a68" PR;
-
-PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
-	FILE f;
-
-	IF open(f, path, stand in channel) > 0 THEN
-		putf(stand error, ($"Couldn't open "gl$, path));
-		stop
-	FI;
-
-	read csv(f, callback);
-	close(f)
-);
+PR include "paths.a68" PR
+PR include "utils.a68" PR
+PR include "../types/task.a68" PR;
 
 PROC get tasks = (PROC (TASK) VOID callback) VOID:
 	read db(path tasks, (FLEXCSVFIELDS fields) VOID:

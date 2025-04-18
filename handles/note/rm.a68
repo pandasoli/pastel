@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../utils.a68" PR;
+PR include "../../database/note.a68" PR
+
+# rm indexes... group #
+PROC note rm = (INT argi) VOID: (
+	FLEX [0] INT indexes;
+	STRING group = a68g argv(a68g argc);
+
+	FOR i FROM argi TO a68g argc - 1 DO
+		STRING arg = a68g argv(i);
+		indexes +:= TOINT arg
+	OD;
+
+	FLEX [0] NOTE new notes;
+	INT index := 1;
+
+	get notes((NOTE note) VOID:
+		IF group OF note = group THEN
+			IF NOT (index INCL indexes)
+			THEN new notes +:= note FI;
+			index +:= 1
+		FI
+	);
+
+	write notes(new notes)
+)

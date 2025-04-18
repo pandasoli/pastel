@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- #
 
 PR include "types/task.a68" PR
+PR include "types/note.a68" PR
 PR include "unix.a68" PR
 PR include "csv.a68" PR;
 PR include "database/paths.a68" PR;
@@ -23,5 +24,6 @@ BEGIN
 	FI;
 
 	a(path tasks, task csv header);
+	a(path notes, note csv header);
 	a(path lastid, "0")
 END

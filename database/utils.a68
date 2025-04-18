@@ -1,0 +1,15 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../csv.a68" PR;
+
+PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
+	FILE f;
+
+	IF open(f, path, stand in channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path));
+		stop
+	FI;
+
+	read csv(f, callback);
+	close(f)
+)

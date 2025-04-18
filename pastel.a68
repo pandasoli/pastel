@@ -3,6 +3,7 @@
 PR include "types/task.a68" PR
 PR include "database.a68" PR
 PR include "handles/add.a68" PR
+PR include "handles/note/sub.a68" PR
 PR include "handles/rm.a68" PR
 PR include "handles/done.a68" PR;
 PR include "handles/sort.a68" PR
@@ -34,6 +35,7 @@ ELSE
 	STRING arg = a68g argv(argi); argi +:= 1;
 
 	IF   arg = "add"  THEN add(argi)
+	ELIF arg = "note" THEN sub note(argi)
 	ELIF arg = "rm"   THEN rm(argi)
 	ELIF arg = "done" THEN done(argi)
 	ELIF arg = "sort" THEN sort(argi)

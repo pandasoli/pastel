@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../database/note.a68" PR;
+PR include "add.a68" PR
+PR include "rm.a68" PR;
+
+# note [add|rm|groups|[group]] #
+PROC sub note = (REF INT argi) VOID: (
+	PROC print notes = ([] NOTE notes) VOID:
+		FOR j TO UPB notes DO
+			printf(($g"[1m"g(0)g"[m "$, esc, j, esc));
+			printf(($gl$, content OF notes[j]));
+
+			IF j < UPB notes THEN new line(stand out) FI
+		OD;
+
+	IF argi <= a68g argc THEN
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
+
+		IF   arg = "add"    THEN note add(argi)
+		ELIF arg = "rm"     THEN note rm(argi)
+		ELIF arg = "groups" THEN
+			[] STRING groups = get note groups;
+
+			FOR j TO UPB groups
+			DO printf(($gl$, groups[j]))
+			OD
+		ELSE print notes(get group notes(arg))
+		FI
+	ELSE print notes(get global notes)
+	FI
+)

@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../csv.a68" PR
+PR include "../text processing.a68" PR;
+
+STRING note csv header = "CONTENT,GROUP";
+
+MODE NOTE = STRUCT (
+	STRING content, group
+);
+
+OP +:= = (REF FLEX [] NOTE in out, NOTE item) VOID: (
+	[UPB in out + 1] NOTE new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to note = (FLEXCSVFIELDS fields) NOTE:
+	NOTE(
+		# content # fields[1],
+		# group # fields[2]
+	);
+
+PROC note to csv = (NOTE note) STRING: (
+	[] STRING fields = (
+		# content # "" + content OF note + "",
+		# group # "" + group OF note + ""
+	);
+
+	join(fields, ",")
+)

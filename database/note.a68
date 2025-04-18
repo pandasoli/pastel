@@ -1,0 +1,67 @@
+# -*- coding: utf-8 -*- #
+
+PR include "paths.a68" PR
+PR include "utils.a68" PR
+PR include "../utils.a68" PR
+PR include "../types/note.a68" PR;
+
+PROC get notes = (PROC (NOTE) VOID callback) VOID:
+	read db(path notes, (FLEXCSVFIELDS fields) VOID:
+		callback(csv to note(fields))
+	);
+
+PROC get global notes = [] NOTE: (
+	FLEX [0] NOTE notes;
+
+	get notes((NOTE note) VOID:
+		IF UPB group OF note = 0
+		THEN notes +:= note
+		FI
+	);
+
+	notes
+);
+
+PROC get group notes = (STRING group) [] NOTE: (
+	FLEX [0] NOTE notes;
+
+	get notes((NOTE note) VOID:
+		IF group OF note = group
+		THEN notes +:= note
+		FI
+	);
+
+	notes
+);
+
+PROC get note groups = [] STRING: (
+	FLEX [0] STRING groups;
+
+	get notes((NOTE note) VOID:
+		IF UPB group OF note > 0 AND NOT (group OF note INCL groups)
+		THEN groups +:= group OF note
+		FI
+	);
+
+	groups
+);
+
+PROC write note = (NOTE note) VOID:
+	append file(path notes, note to csv(note));
+
+PROC write notes = ([] NOTE notes) VOID: (
+	FILE f;
+
+	IF open(f, path notes, stand out channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path notes));
+		stop
+	FI;
+
+	putf(f, ($gl$, note csv header));
+
+	FOR i TO UPB notes DO
+		putf(f, ($gl$, note to csv(notes[i])))
+	OD;
+
+	close(f)
+)
