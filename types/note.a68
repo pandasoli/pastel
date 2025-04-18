@@ -24,8 +24,8 @@ PROC csv to note = (FLEXCSVFIELDS fields) NOTE:
 
 PROC note to csv = (NOTE note) STRING: (
 	[] STRING fields = (
-		# content # """" + content OF note + """",
-		# group # """" + group OF note + """"
+		# content # """" + double quotes(content OF note) + """",
+		# group # """" + double quotes(group OF note) + """"
 	);
 
 	join(fields, ",")

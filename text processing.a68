@@ -75,6 +75,22 @@ PROC split text = (STRING text, STRING delimiter) [] STRING: (
 	result
 );
 
+PROC double quotes = (STRING text) STRING: (
+	STRING result := text;
+	INT i := 1;
+
+	WHILE i <= UPB text DO
+		IF text[i] = """" THEN
+			result := result[:i] + """" + result[i + 1:];
+			i +:= 1
+		FI;
+
+		i +:= 1
+	OD;
+
+	result
+);
+
 PROC sh scape = (STRING str, CHAR ch) STRING: (
 	STRING text := str;
 	INT text len := UPB text, i := 1;

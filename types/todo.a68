@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../csv.a68" PR;
+PR include "../csv.a68" PR
+PR include "../text processing.a68" PR;
 
 STRING todo csv header = "ID,TITLE,DESCRIPTION";
 
@@ -27,8 +28,8 @@ PROC csv to todo = (FLEXCSVFIELDS fields) TODO:
 PROC todo to csv = (TODO todo) STRING: (
 	[] STRING fields = (
 		# id # whole(id OF todo, 0),
-		# title # """" + title OF todo + """",
-		# description # """" + desc OF todo + """"
+		# title # """" + double quotes(title OF todo) + """",
+		# description # """" + double quotes(desc OF todo) + """"
 	);
 
 	join(fields, ",")
