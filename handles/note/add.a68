@@ -6,18 +6,16 @@ PR include "../../database/note.a68" PR
 	add note
 	add notes... group
 #
-PROC note add = (INT argi) VOID: (
-	INT i := argi;
-
+PROC note add = (REF INT argi) VOID: (
 	STRING group := "";
 
 	IF a68g argc - argi >= 1
 	THEN group := a68g argv(a68g argc)
 	FI;
 
-	WHILE (UPB group > 0|i < a68g argc|i <= a68g argc) DO
-		STRING arg = a68g argv(i);
-		i +:= 1;
+	WHILE (UPB group > 0|argi < a68g argc|argi <= a68g argc) DO
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
 
 		NOTE note := (
 			# content # arg,

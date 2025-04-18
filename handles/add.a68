@@ -3,12 +3,11 @@
 PR include "../database/task.a68" PR
 PR include "../database/lastid.a68" PR;
 
-PROC add = (INT argi) VOID: (
-	INT i := argi;
-
-	WHILE i <= a68g argc DO
-		STRING arg = a68g argv(i);
-		i +:= 1;
+# add (task description)... #
+PROC add = (REF INT argi) VOID:
+	WHILE argi <= a68g argc DO
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
 
 		TASK task := (
 			# id # inc id,
@@ -18,10 +17,9 @@ PROC add = (INT argi) VOID: (
 			# date # today
 		);
 
-		IF i <= a68g argc
-		THEN desc OF task := a68g argv(i); i +:= 1
+		IF argi <= a68g argc
+		THEN desc OF task := a68g argv(argi); argi +:= 1
 		FI;
 
 		write task(task)
 	OD
-)
