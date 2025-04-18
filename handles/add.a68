@@ -18,11 +18,8 @@ PROC add = (INT argi) VOID: (
 			# date # today
 		);
 
-		IF i < a68g argc AND a68g argv(i) = "-"
-		THEN i +:= 1;
-			IF i <= a68g argc
-			THEN desc OF task := a68g argv(i); i +:= 1
-			FI
+		IF i <= a68g argc
+		THEN desc OF task := a68g argv(i); i +:= 1
 		FI;
 
 		write task(task)
