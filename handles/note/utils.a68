@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*- #
+
+PROC is group = (STRING arg) BOOL:
+	arg[1] = "[" AND arg[UPB arg] = "]";
+
+PROC seek group = (INT argi) STRING: (
+	STRING result;
+	FOR i FROM argi TO a68g argc DO
+		IF is group(a68g argv(i))
+		THEN result := a68g argv(i); done search
+		FI
+	OD;
+	done search: result[2:UPB result - 1]
+)

@@ -10,6 +10,15 @@ PROC get notes = (PROC (NOTE) VOID callback) VOID:
 		callback(csv to note(fields))
 	);
 
+PROC get all notes = [] NOTE: (
+	FLEX [0] NOTE notes;
+
+	read db(path notes, (FLEXCSVFIELDS fields) VOID:
+		notes +:= csv to note(fields));
+
+	notes
+);
+
 PROC get global notes = [] NOTE: (
 	FLEX [0] NOTE notes;
 
