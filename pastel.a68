@@ -14,32 +14,37 @@ PR include "utils.a68" PR;
 PR include "text processing.a68" PR;
 PR include "help.a68" PR;
 
-IF a68g argc = 1 THEN
-	[] TASK tasks = get all today tasks;
+BEGIN
+	INT argi := 3;
+	STRING arg := a68g argv(2);
 
-	FOR i TO UPB tasks DO
-		printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+	IF arg = "debug" THEN
+		arg := a68g argv(argi);
+		argi +:= 1
+	FI;
 
-		IF state OF tasks[i] = task_done
-		THEN printf(($g"[9m"gg"[m"l$, esc, title OF tasks[i], esc))
-		ELSE printf(($gl$, title OF tasks[i]))
-		FI;
+	IF arg = "" THEN
+		[] TASK tasks = get all today tasks;
 
-		IF desc OF tasks[i] /= "" THEN
-			[] STRING lines = split text(desc OF tasks[i], REPR 10);
+		FOR i TO UPB tasks DO
+			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
 
-			FOR j TO UPB lines DO
-				[] STRING parts = wrap text(lines[j], 60);
-				STRING part = join(parts, REPR 10 + "  ");
-				printf(($"  "gl$, part))
-			OD
-		FI
-	OD
-ELSE
-	INT argi := 2;
-	STRING arg = a68g argv(argi); argi +:= 1;
+			IF state OF tasks[i] = task_done
+			THEN printf(($g"[9m"gg"[m"l$, esc, title OF tasks[i], esc))
+			ELSE printf(($gl$, title OF tasks[i]))
+			FI;
 
-	IF   arg = "add"  OR arg = "a" THEN add(argi)
+			IF desc OF tasks[i] /= "" THEN
+				[] STRING lines = split text(desc OF tasks[i], REPR 10);
+
+				FOR j TO UPB lines DO
+					[] STRING parts = wrap text(lines[j], 60);
+					STRING part = join(parts, REPR 10 + "  ");
+					printf(($"  "gl$, part))
+				OD
+			FI
+		OD
+	ELIF arg = "add"  OR arg = "a" THEN add(argi)
 	ELIF arg = "note" OR arg = "n" THEN sub note(argi)
 	ELIF arg = "todo" OR arg = "t" THEN sub todo(argi)
 	ELIF arg = "rm"   OR arg = "r" THEN rm(argi)
@@ -49,4 +54,4 @@ ELSE
 	ELIF arg = "H"                 THEN show help page("pastel long")
 	ELSE show help page("pastel")
 	FI
-FI
+END

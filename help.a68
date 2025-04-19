@@ -36,7 +36,9 @@ PROC show help page = (STRING page) VOID: (
 				"-> todo add  todo description ...   Add todo",
 				"-> todo add  todo <                 Add todo with description thru pipe",
 				"-> todo rm   index...               Remove todo",
-				"-> todo done index...               Turn todo into done task"
+				"-> todo done index...               Turn todo into done task",
+				"",
+				"-> debug [args]...              Use data for debug"
 			)
 		ELIF page = "note" THEN
 			[] STRING (

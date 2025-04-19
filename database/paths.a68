@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*- #
 
+BOOL in debug = a68g argv(2) = "debug";
+
 STRING
-	data path = "/home/" + whoami + "/.local/share/pastel",
+	data path = "/home/" + whoami + "/.local/share/pastel" + (in debug|".debug"|""),
 	path tasks = data path + "/tasks.csv",
 	path notes = data path + "/notes.csv",
 	path todos = data path + "/todos.csv",
