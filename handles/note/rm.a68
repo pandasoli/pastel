@@ -6,32 +6,43 @@ PR include "utils.a68" PR
 
 # rm indexes... ['['group']'] #
 PROC note rm = (INT argi) VOID: (
-	[] NOTE notes = get all notes;
-	FLEX [0] NOTE new notes;
+	FLEX [0] NOTE notes := get all notes;
 
 	STRING group := seek group(argi);
 	FLEX [0] INT indexes;
+
+	PROC remove index = (INT i) VOID: (
+		[UPB notes - 1] NOTE new;
+		new[:i - 1] := notes[:i - 1];
+		new[i:] := notes[i + 1:];
+		notes := new
+	);
+
+	PROC remove indexes = VOID: (
+		INT index := 1;
+
+		FOR j TO UPB notes DO
+			IF group OF notes[j] = group THEN
+				IF index INCL indexesTHEN remove index(j) FI;
+				index +:= 1
+			FI
+		OD
+	);
 
 	FOR i FROM argi TO a68g argc
 	DO STRING arg = a68g argv(i);
 		IF is group(arg) THEN
 			group := seek group(argi);
 			indexes := [] INT ();
-
-			INT index := 1;
-
-			FOR j TO UPB notes
-			DO IF group OF notes[j] = group
-				THEN IF NOT (index INCL indexes)
-					THEN new notes +:= notes[j]
-					FI;
-					index +:= 1
-				ELSE new notes +:= notes[j]
-				FI
-			OD
+			remove indexes
 		ELSE indexes +:= TOINT arg
 		FI
 	OD;
 
-	write notes(new notes)
+	# rm removes when reach a group, this removes the last indexes #
+	IF NOT is group(a68g argv(a68g argc))
+	THEN remove indexes
+	FI;
+
+	write notes(notes)
 )
