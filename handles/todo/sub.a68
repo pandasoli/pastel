@@ -3,7 +3,8 @@
 PR include "../../database/todo.a68" PR;
 PR include "add.a68" PR
 PR include "rm.a68" PR
-PR include "done.a68" PR;
+PR include "done.a68" PR
+PR include "../../help.a68" PR;
 
 # todo [add|rm] #
 PROC sub todo = (REF INT argi) VOID: (
@@ -14,7 +15,7 @@ PROC sub todo = (REF INT argi) VOID: (
 		IF   arg = "add"  OR arg = "a" THEN todo add(argi)
 		ELIF arg = "rm"   OR arg = "r" THEN todo rm(argi)
 		ELIF arg = "done" OR arg = "d" THEN todo done(argi)
-		ELSE putf(stand error, ($gl$, "Unimplemented!"))
+		ELSE show help page("todo")
 		FI
 	ELSE
 		[] TODO todos = get all todos;

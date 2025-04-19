@@ -12,6 +12,7 @@ PR include "handles/cal.a68" PR;
 PR include "unix.a68" PR;
 PR include "utils.a68" PR;
 PR include "text processing.a68" PR;
+PR include "help.a68" PR;
 
 IF a68g argc = 1 THEN
 	[] TASK tasks = get all today tasks;
@@ -45,5 +46,7 @@ ELSE
 	ELIF arg = "done" OR arg = "d" THEN done(argi)
 	ELIF arg = "sort" OR arg = "s" THEN sort(argi)
 	ELIF arg = "cal"  OR arg = "c" THEN cal(argi)
+	ELIF arg = "H"                 THEN show help page("pastel long")
+	ELSE show help page("pastel")
 	FI
 FI

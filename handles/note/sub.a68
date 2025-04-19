@@ -2,7 +2,8 @@
 
 PR include "../../database/note.a68" PR;
 PR include "add.a68" PR
-PR include "rm.a68" PR;
+PR include "rm.a68" PR
+PR include "../../help.a68" PR;
 
 # note [add|rm|groups|[group]] #
 PROC sub note = (REF INT argi) VOID: (
@@ -20,6 +21,7 @@ PROC sub note = (REF INT argi) VOID: (
 
 		IF   arg = "add"    OR arg = "a" THEN note add(argi)
 		ELIF arg = "rm"     OR arg = "r" THEN note rm(argi)
+		ELIF arg = "H"                   THEN show help page("note")
 		ELIF arg = "groups" OR arg = "g" THEN
 			[] STRING groups = get note groups;
 

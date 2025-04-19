@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*- #
+
+PROC show help page = (STRING page) VOID: (
+	[] STRING lines =
+		IF page = "pastel" THEN
+			[] STRING (
+				"-> todo [a|r|d|s|c|n|t] [args]...",
+				"-> add  Add new task",
+				"-> rm   Remove task",
+				"-> done Mark task as done",
+				"-> sort Sort tasks",
+				"-> cal  Show calendar",
+				"-> note List notes",
+				"-> todo List todos",
+				"",
+				"Run 'todo [H]' to see all actions",
+				"and 'todo [todo|note] H' for specific actions"
+			)
+		ELIF page = "pastel long" THEN
+			[] STRING (
+				"-> add  task description ...    Add new task",
+				"-> add  task <                  Add new task with description thru pipe",
+				"-> rm   index...                Remove task",
+				"-> done index...                Mark task as done",
+				"-> sort                         Sort tasks",
+				"-> cal                          Show calendar",
+				"",
+				"-> note                             List notes",
+				"-> note 'groups'                    List groups",
+				"-> note group                       List group notes",
+				"-> note add ['['group']'] <         Add note thru pipe",
+				"-> note add note... ['['group']']   Add note",
+				"-> note rm  index... ['['group']']  Remove note",
+				"",
+				"-> todo                             List notes",
+				"-> todo add  todo description ...   Add todo",
+				"-> todo add  todo <                 Add todo with description thru pipe",
+				"-> todo rm   index...               Remove todo",
+				"-> todo done index...               Turn todo into done task"
+			)
+		ELIF page = "note" THEN
+			[] STRING (
+				"-> todo note [a|r|d] [args]...",
+				"-> note                               List notes",
+				"-> note 'groups'                      List groups",
+				"-> note group                         List group notes",
+				"-> note add   ['['group']'] <         Add note thru pipe",
+				"-> note add   note... ['['group']']   Add note",
+				"-> note rm    index... ['['group']']  Remove note"
+			)
+		ELIF page = "todo" THEN
+			[] STRING (
+				"-> todo todo [a|r|d] [args]...",
+				"-> todo                             List notes",
+				"-> todo add  todo description ...   Add todo",
+				"-> todo add  todo <                 Add todo with description thru pipe",
+				"-> todo rm   index...               Remove todo",
+				"-> todo done index...               Turn todo into done task"
+			)
+		ELSE [] STRING ()
+		FI;
+
+	FOR i TO UPB lines
+	DO printf(($gl$, lines[i]))
+	OD
+)
