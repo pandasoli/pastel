@@ -13,23 +13,8 @@ PROC note add = (REF INT argi) VOID: (
 		# group # seek group(argi)
 	);
 
-	IF
-		a68g argc = argi - 1 ORF # add #
-		(a68g argc = argi ANDF is group(a68g argv(argi))) # add '['group']' #
-	THEN
-		on logical file end(stand in, (REF FILE f) BOOL: done in);
-
-		getf(stand in, ($gl$, content OF note));
-		IF content OF note = "" THEN done in FI;
-
-		DO STRING in;
-			getf(stand in, ($gl$, in));
-			IF in = "EOF" THEN done in FI;
-			content OF note +:= REPR 10 + in
-		OD;
-
-		done in: write note(note)
-	ELSE WHILE argi <= a68g argc DO
+	PROC multiple = VOID:
+		WHILE argi <= a68g argc DO
 			STRING arg = a68g argv(argi);
 			argi +:= 1;
 
@@ -42,6 +27,30 @@ PROC note add = (REF INT argi) VOID: (
 			write note(note);
 
 			done note: ~
-		OD
+		OD;
+
+	PROC single piped = VOID: (
+		on logical file end(stand in, (REF FILE f) BOOL: done in);
+
+		getf(stand in, ($gl$, content OF note));
+		IF content OF note = "" THEN done in FI;
+
+		DO STRING in;
+			getf(stand in, ($gl$, in));
+			IF in = "EOF" THEN done in FI;
+			content OF note +:= REPR 10 + in
+		OD;
+
+		done in: write note(note)
+	);
+
+	# ANDF and ORF show warnings, this avoid their usage required 'by is group'. #
+
+	IF   a68g argc = argi - 1 THEN single piped # add #
+	ELIF a68g argc = argi THEN
+		IF is group(a68g argv(argi)) THEN single piped # add '['group']' #
+		ELSE multiple
+		FI
+	ELSE multiple
 	FI
 )
