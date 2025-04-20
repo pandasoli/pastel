@@ -19,7 +19,6 @@ PROC show help page = (STRING page) VOID: (
 		ELIF page = "pastel long" THEN
 			[] STRING (
 				"-> add  task description ...    Add new task",
-				"-> add  task <                  Add new task with description thru pipe",
 				"-> rm   index...                Remove task",
 				"-> done index...                Mark task as done",
 				"-> sort                         Sort tasks",
@@ -28,13 +27,11 @@ PROC show help page = (STRING page) VOID: (
 				"-> note                             List notes",
 				"-> note 'groups'                    List groups",
 				"-> note group                       List group notes",
-				"-> note add ['['group']'] <         Add note thru pipe",
 				"-> note add note... ['['group']']   Add note",
 				"-> note rm  index... ['['group']']  Remove note",
 				"",
 				"-> todo                             List notes",
 				"-> todo add  todo description ...   Add todo",
-				"-> todo add  todo <                 Add todo with description thru pipe",
 				"-> todo rm   index...               Remove todo",
 				"-> todo done index...               Turn todo into done task",
 				"",
@@ -46,7 +43,6 @@ PROC show help page = (STRING page) VOID: (
 				"-> note                               List notes",
 				"-> note 'groups'                      List groups",
 				"-> note group                         List group notes",
-				"-> note add   ['['group']'] <         Add note thru pipe",
 				"-> note add   note... ['['group']']   Add note",
 				"-> note rm    index... ['['group']']  Remove note"
 			)
@@ -55,7 +51,6 @@ PROC show help page = (STRING page) VOID: (
 				"-> todo todo [a|r|d] [args]...",
 				"-> todo                             List notes",
 				"-> todo add  todo description ...   Add todo",
-				"-> todo add  todo <                 Add todo with description thru pipe",
 				"-> todo rm   index...               Remove todo",
 				"-> todo done index...               Turn todo into done task"
 			)

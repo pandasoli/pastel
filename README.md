@@ -49,3 +49,5 @@ It seems to help the interface's development since no technical info need to be 
 
 Tasks have a date and state, and become unchangeable once the day passes. In contrast,
 todos don’t have a date—when marked as done, they turn into a completed task for the current day.
+
+Multiline support is not giving directly, but through the shell when enter is pressed with an open quote.
