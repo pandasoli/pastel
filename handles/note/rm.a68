@@ -19,13 +19,14 @@ PROC note rm = (INT argi) VOID: (
 	);
 
 	PROC remove indexes = VOID: (
-		INT index := 1;
+		INT i := 1, index := 1;
 
-		FOR j TO UPB notes DO
-			IF group OF notes[j] = group THEN
-				IF index INCL indexesTHEN remove index(j) FI;
+		WHILE i <= UPB notes DO
+			IF group OF notes[i] = groupTHEN
+				IF index INCL indexes THEN remove index(i); i -:= 1 FI;
 				index +:= 1
-			FI
+			FI;
+			i +:= 1
 		OD
 	);
 
