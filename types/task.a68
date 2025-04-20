@@ -26,7 +26,7 @@ OP +:= = (REF FLEX [] TASK in out, TASK item) VOID: (
 	in out := new
 );
 
-PROC csv to task = (FLEXCSVFIELDS fields) TASK:
+PROC csv to task = (CSVFIELDS fields) TASK:
 	TASK(
 		# id # TOINT fields[1],
 		# title # fields[2],

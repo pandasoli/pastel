@@ -18,7 +18,7 @@ OP +:= = (REF FLEX [] TODO in out, TODO item) VOID: (
 	in out := new
 );
 
-PROC csv to todo = (FLEXCSVFIELDS fields) TODO:
+PROC csv to todo = (CSVFIELDS fields) TODO:
 	TODO(
 		# id # TOINT fields[1],
 		# title # fields[2],

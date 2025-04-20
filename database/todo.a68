@@ -5,14 +5,14 @@ PR include "utils.a68" PR
 PR include "../types/todo.a68" PR;
 
 PROC get todos = (PROC (TODO) VOID callback) VOID:
-	read db(path todos, (FLEXCSVFIELDS fields) VOID:
+	read db(path todos, (CSVFIELDS fields) VOID:
 		callback(csv to todo(fields))
 	);
 
 PROC get all todos = [] TODO: (
 	FLEX [0] TODO todos;
 
-	read db(path todos, (FLEXCSVFIELDS fields) VOID:
+	read db(path todos, (CSVFIELDS fields) VOID:
 		todos +:= csv to todo(fields));
 
 	todos

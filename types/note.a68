@@ -16,7 +16,7 @@ OP +:= = (REF FLEX [] NOTE in out, NOTE item) VOID: (
 	in out := new
 );
 
-PROC csv to note = (FLEXCSVFIELDS fields) NOTE:
+PROC csv to note = (CSVFIELDS fields) NOTE:
 	NOTE(
 		# content # fields[1],
 		# group # fields[2]

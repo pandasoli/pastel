@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*- #
 
-MODE CSVFIELD = [0] CHAR;
-MODE FLEXCSVFIELD = FLEX CSVFIELD;
-MODE CSVFIELDS = [0] FLEXCSVFIELD;
-MODE FLEXCSVFIELDS = REF CSVFIELDS;
+MODE CSVFIELD = STRING;
+MODE CSVFIELDS = FLEX [0] CSVFIELD;
 
-OP +:= = (REF FLEXCSVFIELDS in out, FLEXCSVFIELD item) REF FLEXCSVFIELDS: (
-	HEAP [UPB in out + 1] FLEXCSVFIELD new;
+# OP +:= = (REF CSVFIELDS in out, CSVFIELD item) REF CSVFIELDS: (
+	HEAP [UPB in out + 1] CSVFIELD new;
 	new[:UPB in out] := in out;
 	new[UPB new] := item;
 	in out := new
-);
+); #
 
 CHAR nl = REPR 10;
 
-PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
-	FLEXCSVFIELD chunk := "";
+PROC read csv = (REF FILE csv, PROC (CSVFIELDS) VOID callback) VOID: (
+	CSVFIELD chunk := "";
 	INT chunk counter := 0;
 	INT fields count := 0;
 	INT line count := 0;
@@ -38,10 +36,10 @@ PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 
 	next;
 
-	PROC parse = FLEXCSVFIELDS: (
+	PROC parse = CSVFIELDS: (
 		on logical file end(csv, (REF FILE eof csv) BOOL: ( done eof; TRUE ));
 
-		FLEXCSVFIELDS fields := HEAP CSVFIELDS := "";
+		CSVFIELDS fields := "";
 		BOOL in quotes := FALSE;
 		INT quote start := 0;
 
@@ -51,19 +49,19 @@ PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 					# This probably would generate an error if eof
 						but I couldn't check it #
 					IF next = """" THEN
-						fields[UPB fields] +:= """";
+						fields[UPB fields] := fields[UPB fields] + """";
 						next
 					ELSE
 						in quotes := FALSE
 					FI
 				ELSE
-					fields[UPB fields] +:= current;
+					fields[UPB fields] := fields[UPB fields] + current;
 					next
 				FI
 			ELIF current = "," THEN fields +:= ""; next
 			ELIF current = """" THEN in quotes := TRUE; next
 			ELIF current = nl THEN next; GOTO done nl
-			ELSE fields[UPB fields] +:= current; next
+			ELSE fields[UPB fields] := fields[UPB fields] + current; next
 			FI
 		OD;
 
@@ -82,7 +80,7 @@ PROC read csv = (REF FILE csv, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
 		fields
 	);
 
-	FLEXCSVFIELDS header = parse;
+	CSVFIELDS header = parse;
 	fields count := UPB header;
 
 	WHILE NOT finished DO

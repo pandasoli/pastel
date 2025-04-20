@@ -5,14 +5,14 @@ PR include "utils.a68" PR
 PR include "../types/task.a68" PR;
 
 PROC get tasks = (PROC (TASK) VOID callback) VOID:
-	read db(path tasks, (FLEXCSVFIELDS fields) VOID:
+	read db(path tasks, (CSVFIELDS fields) VOID:
 		callback(csv to task(fields))
 	);
 
 PROC get all tasks = [] TASK: (
 	FLEX [0] TASK tasks;
 
-	read db(path tasks, (FLEXCSVFIELDS fields) VOID:
+	read db(path tasks, (CSVFIELDS fields) VOID:
 		tasks +:= csv to task(fields));
 
 	tasks

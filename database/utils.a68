@@ -2,7 +2,7 @@
 
 PR include "../csv.a68" PR;
 
-PROC read db = (STRING path, PROC (FLEXCSVFIELDS) VOID callback) VOID: (
+PROC read db = (STRING path, PROC (CSVFIELDS) VOID callback) VOID: (
 	FILE f;
 
 	IF open(f, path, stand in channel) > 0 THEN
