@@ -30,7 +30,7 @@ PROC add = (REF INT argi) VOID:
 
 			DO STRING in;
 				getf(stand in, ($gl$, in));
-				IF in = "" THEN done in FI;
+				IF in = "EOF" THEN done in FI;
 				desc OF task +:= REPR 10 + in
 			OD;
 

@@ -22,9 +22,13 @@ PROC todo add = (REF INT argi) VOID:
 		ELSE
 			on logical file end(stand in, (REF FILE f) BOOL: done in);
 
+			getf(stand in, ($gl$, desc OF todo));
+			IF desc OF todo = "" THEN done in FI;
+
 			DO STRING in;
 				getf(stand in, ($gl$, in));
-				desc OF todo +:= (desc OF todo = ""|""|REPR 10) + in
+				IF in = "EOF" THEN done in FI;
+				desc OF todo +:= REPR 10 + in
 			OD;
 
 			done in: ~
