@@ -15,7 +15,7 @@ PROC append file = (STRING path, raw text) VOID: (
 		cmd := "echo " + text + ">> """ + path + """"
 	ELIF os = "Unix-like" THEN
 		text := sh scape(raw text, """");
-		cmd := "echo """ + text + """>>> """ + path + """"
+		cmd := "echo """ + text + """>> """ + path + """"
 	ELSE
 		putf(stand error, ($"Couldn't append to file. Unknown system"l$));
 		stop
