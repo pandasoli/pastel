@@ -15,7 +15,8 @@ PROC todo add = (REF INT argi) VOID:
 		);
 
 		IF argi <= a68g argc
-		THEN desc OF todo := a68g argv(argi)
+		THEN desc OF todo := a68g argv(argi);
+			argi +:= 1
 		FI;
 
 		write todo(todo)

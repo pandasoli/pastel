@@ -18,7 +18,8 @@ PROC add = (REF INT argi) VOID:
 		);
 
 		IF argi <= a68g argc
-		THEN desc OF task := a68g argv(argi)
+		THEN desc OF task := a68g argv(argi);
+			argi +:= 1
 		FI;
 
 		write task(task)
