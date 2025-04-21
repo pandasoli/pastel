@@ -20,6 +20,7 @@ PROC rm = (INT argi) VOID: (
 			IF NOT (i INCL indexes)
 			THEN new tasks +:= task FI;
 			i +:= 1
+		ELSE new tasks +:= task
 		FI
 	);
 
