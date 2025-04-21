@@ -9,7 +9,7 @@ PR include "handles/rm.a68" PR
 PR include "handles/done.a68" PR;
 PR include "handles/sort.a68" PR
 PR include "handles/cal.a68" PR;
-PR include "unix.a68" PR;
+PR include "os.a68" PR;
 PR include "utils.a68" PR;
 PR include "text processing.a68" PR;
 PR include "help.a68" PR;

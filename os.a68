@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*- #
 
+PROC detect os = STRING:
+    IF get env("OS") /= "" THEN "Windows"
+    ELIF get env("SHELL") /= "" THEN "Unix-like"
+    ELSE "Unknown"
+    FI;
 
 PROC append file = (STRING path, raw text) VOID: (
-	STRING text = sh scape(raw text, """");
-	STRING cmd = "echo """ + text + """>>" + path;
+	STRING os = detect os;
+	STRING text, cmd;
+
+	IF os = "Windows" THEN
+		text := raw text;
+		cmd := "echo " + text + ">> """ + path + """"
+	ELIF os = "Unix-like" THEN
+		text := sh scape(raw text, """");
+		cmd := "echo """ + text + """>>> """ + path + """"
+	ELSE
+		putf(stand error, ($"Couldn't append to file. Unknown system"l$));
+		stop
+	FI;
 
 	IF system(cmd) /= 0 THEN
 		putf(stand error, ($"Couldn't append to "gl$, path));
@@ -35,3 +51,4 @@ PROC whoami = STRING: (
 
 	output[:UPB output - 1]
 )
+

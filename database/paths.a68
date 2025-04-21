@@ -1,9 +1,24 @@
 # -*- coding: utf-8 -*- #
 
+PR include "../os.a68" PR;
+
+PROC get system appdata = STRING: (
+	STRING os = detect os;
+
+	IF os = "Windows" THEN
+		get env("APPDATA") + "\"
+	ELIF os = "Unix-like" THEN
+		"/home/" + whoami + "/.local/share/"
+	ELSE
+		putf(stand error, ($"Couldn't get system appdata. Unknown system"l$));
+		stop
+	FI
+);
+
 BOOL in debug = a68g argv(2) = "debug";
 
 STRING
-	data path = "/home/" + whoami + "/.local/share/pastel" + (in debug|".debug"|""),
+	data path = get system appdata + "pastel" + (in debug|".debug"|""),
 	path tasks = data path + "/tasks.csv",
 	path notes = data path + "/notes.csv",
 	path todos = data path + "/todos.csv",
