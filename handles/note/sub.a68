@@ -30,6 +30,15 @@ PROC sub note = (REF INT argi) VOID: (
 			OD
 		ELSE print notes(get group notes(arg))
 		FI
-	ELSE print notes(get global notes)
+	ELSE
+		[] STRING groups = get note groups;
+
+		FOR j TO UPB groups
+		DO printf(($"["g"]"l$, groups[j]))
+		OD;
+
+		new line(stand out);
+
+		print notes(get global notes)
 	FI
 )
