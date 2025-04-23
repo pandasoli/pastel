@@ -8,11 +8,20 @@ PR include "../../help.a68" PR;
 # note [add|rm|groups|[group]] #
 PROC sub note = (REF INT argi) VOID: (
 	PROC print notes = ([] NOTE notes) VOID:
-		FOR j TO UPB notes DO
-			printf(($g"[1m"g(0)g"[m "$, esc, j, esc));
-			printf(($gl$, content OF notes[j]));
+		FOR i TO UPB notes DO
+			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
 
-			IF j < UPB notes THEN new line(stand out) FI
+			[] STRING lines = split text(content OF notes[i], REPR 10);
+
+			IF UPB lines = 1
+			THEN printf(($gl$, lines[1]))
+			ELSE
+				new line(stand out);
+				FOR j TO UPB lines
+				DO printf(($"  "gl$, lines[j])) OD
+			FI;
+
+			IF i < UPB notes THEN new line(stand out) FI
 		OD;
 
 	IF argi <= a68g argc THEN
