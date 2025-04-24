@@ -3,8 +3,8 @@
 PR include "handles/sub.a68" PR;
 
 BEGIN
-	INT argi := 3;
-	STRING arg := a68g argv(2);
+	INT argi := 2;
+	STRING arg := a68g argv(argi);
 
 	IF arg = "debug" THEN
 		arg := a68g argv(argi);

@@ -15,7 +15,8 @@ PR include "../text processing.a68" PR;
 PR include "../help.a68" PR;
 
 PROC main sub = (REF INT argi) VOID: (
-	STRING arg := a68g argv(argi - 1);
+	STRING arg := a68g argv(argi);
+	argi +:= 1;
 
 	IF arg = "" THEN
 		[] TASK tasks = get all today tasks;
