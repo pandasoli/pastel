@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../types/task.a68" PR
+PR include "../database.a68" PR
+PR include "add.a68" PR
+PR include "note/sub.a68" PR
+PR include "todo/sub.a68" PR
+PR include "rm.a68" PR
+PR include "done.a68" PR;
+PR include "sort.a68" PR
+PR include "cal.a68" PR;
+PR include "../os.a68" PR;
+PR include "../utils.a68" PR;
+PR include "../text processing.a68" PR;
+PR include "../help.a68" PR;
+
+PROC main sub = (REF INT argi) VOID: (
+	STRING arg := a68g argv(argi - 1);
+
+	IF arg = "" THEN
+		[] TASK tasks = get all today tasks;
+
+		FOR i TO UPB tasks DO
+			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+
+			IF state OF tasks[i] = task_done
+			THEN printf(($g"[9m"gg"[m"l$, esc, title OF tasks[i], esc))
+			ELSE printf(($gl$, title OF tasks[i]))
+			FI;
+
+			IF desc OF tasks[i] /= "" THEN
+				[] STRING lines = split text(desc OF tasks[i], REPR 10);
+
+				FOR j TO UPB lines DO
+					[] STRING parts = wrap text(lines[j], 60);
+					STRING part = join(parts, REPR 10 + "  ");
+					printf(($"  "gl$, part))
+				OD
+			FI
+		OD
+	ELIF arg = "add"  OR arg = "a" THEN add(argi)
+	ELIF arg = "note" OR arg = "n" THEN sub note(argi)
+	ELIF arg = "todo" OR arg = "t" THEN sub todo(argi)
+	ELIF arg = "rm"   OR arg = "r" THEN rm(argi)
+	ELIF arg = "done" OR arg = "d" THEN done(argi)
+	ELIF arg = "sort" OR arg = "s" THEN sort(argi)
+	ELIF arg = "cal"  OR arg = "c" THEN cal(argi)
+	ELIF arg = "H"                 THEN show help page("pastel long")
+	ELSE show help page("pastel")
+	FI
+)
