@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../../database/todo.a68" PR
-
 # add todo description ... todo #
 PROC todo add = (REF INT argi) VOID:
 	WHILE argi <= a68g argc DO

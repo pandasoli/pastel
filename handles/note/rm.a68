@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../../utils.a68" PR;
-PR include "../../database/note.a68" PR
-PR include "utils.a68" PR
-
 # rm indexes... ['['group']'] #
 PROC note rm = (INT argi) VOID: (
 	FLEX [0] NOTE notes := get all notes;

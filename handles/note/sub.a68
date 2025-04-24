@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../../database/note.a68" PR;
-PR include "add.a68" PR
-PR include "rm.a68" PR
-PR include "../../help.a68" PR;
+
+PR include "utils.a68" PR;
+
+PR include "add.a68" PR;
+PR include "rm.a68" PR;
 
 # note [add|rm|groups|[group]] #
 PROC sub note = (REF INT argi) VOID: (

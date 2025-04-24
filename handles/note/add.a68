@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../../database/note.a68" PR
-PR include "utils.a68" PR;
-
 # add notes ['['group']'] ... #
 PROC note add = (REF INT argi) VOID: (
 	NOTE note := (

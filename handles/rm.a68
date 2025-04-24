@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../utils.a68" PR;
-PR include "../database/task.a68" PR
-
 # rm indexes... #
 PROC rm = (INT argi) VOID: (
 	FLEX [0] INT indexes;

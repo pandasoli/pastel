@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*- #
 
-PR include "../types/task.a68" PR
 PR include "../database.a68" PR
-PR include "add.a68" PR
-PR include "note/sub.a68" PR
-PR include "todo/sub.a68" PR
-PR include "rm.a68" PR
+PR include "../database/task.a68" PR
+PR include "../database/lastid.a68" PR;
+
+PR include "add.a68" PR;
+PR include "rm.a68" PR;
 PR include "done.a68" PR;
-PR include "sort.a68" PR
-PR include "cal.a68" PR;
-PR include "../os.a68" PR;
-PR include "../utils.a68" PR;
-PR include "../text processing.a68" PR;
-PR include "../help.a68" PR;
+PR include "sort.a68" PR;
+PR include "cal.a68" PR
+
+PR include "note/sub.a68" PR
+PR include "todo/sub.a68" PR;
 
 PROC main sub = (REF INT argi) VOID: (
 	STRING arg := a68g argv(argi);

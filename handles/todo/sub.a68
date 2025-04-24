@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 
 PR include "../../database/todo.a68" PR;
-PR include "add.a68" PR
+
+PR include "add.a68" PR;
 PR include "rm.a68" PR
-PR include "done.a68" PR
-PR include "../../help.a68" PR;
+PR include "done.a68" PR;
 
 # todo [add|rm] #
 PROC sub todo = (REF INT argi) VOID: (
