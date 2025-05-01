@@ -4,7 +4,7 @@
 PROC note rm = (INT argi) VOID: (
 	FLEX [0] NOTE notes := get all notes;
 
-	STRING group := seek group(argi);
+	STRING group;
 	FLEX [0] INT indexes;
 
 	PROC remove index = (INT i) VOID: (
@@ -29,16 +29,15 @@ PROC note rm = (INT argi) VOID: (
 	FOR i FROM argi TO a68g argc
 	DO STRING arg = a68g argv(i);
 		IF is group(arg) THEN
-			group := seek group(argi);
-			indexes := [] INT ();
-			remove indexes
+			group := arg;
+			remove indexes;
+			indexes := [] INT ()
 		ELSE indexes +:= TOINT arg
 		FI
 	OD;
 
 	# rm removes when reach a group, this removes the last indexes #
-	IF NOT is group(a68g argv(a68g argc))
-	THEN remove indexes
+	IF UPB indexes > 0 THEN remove indexes
 	FI;
 
 	write notes(notes)
