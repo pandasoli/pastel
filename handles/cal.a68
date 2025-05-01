@@ -22,12 +22,6 @@ PROC first week month day = (INT month, year) INT: (
 
 PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 	[] STRING months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-	[] INT days in month = (
-		31,
-		# Leap yaer #
-		(year MOD 4 = 0 AND (year MOD 100 /= 0 OR year MOD 400 = 0) | 29 | 28),
-		31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-	);
 
 	# Print header #
 	printf(($glgl$,
@@ -45,7 +39,7 @@ PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 
 	TO 6 DO
 		FROM first day TO 7 DO
-			IF day i <= days in month[month] THEN
+			IF day i <= days in month(month, year) THEN
 				BOOL is today =
 					(year = year OF today) AND
 					(month = month OF today) AND
@@ -84,31 +78,34 @@ PROC cal = (INT argi) VOID: (
 	INT index = TOINT arg;
 	FLEX [0] TASK tasks;
 
-	INT
+	IF arg = "H" OR (arg /= "" AND index = 0)
+	THEN show help page("cal")
+	ELSE INT
 		month := month OF today,
 		day := day OF today,
 		year := year OF today;
 
-	# Ajust based on received index #
-	month +:= index;
+		# Ajust based on received index #
+		month +:= index;
 
-	WHILE month > 12 DO
-		year +:= 1;
-		month -:= 12
-	OD;
+		WHILE month > 12 DO
+			year +:= 1;
+			month -:= 12
+		OD;
 
-	WHILE month < 1 DO
-		year -:= 1;
-		month +:= 12
-	OD;
+		WHILE month < 1 DO
+			year -:= 1;
+			month +:= 12
+		OD;
 
-	get tasks((TASK task) VOID:
-		IF year OF date OF task = year
-		AND month OF date OF task = month
-		THEN
-			tasks +:= task
-		FI
-	);
+		get tasks((TASK task) VOID:
+			IF year OF date OF task = year
+			AND month OF date OF task = month
+			THEN
+				tasks +:= task
+			FI
+		);
 
-	print calendar(month, day, year, tasks)
+		print calendar(month, day, year, tasks)
+	FI
 )

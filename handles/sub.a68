@@ -17,27 +17,34 @@ PROC main sub = (REF INT argi) VOID: (
 	STRING arg := a68g argv(argi);
 	argi +:= 1;
 
-	IF arg = "" THEN
-		[] TASK tasks = get all today tasks;
+	PROC print tasks = (DATE date) VOID: (
+		INT i := 1;
 
-		FOR i TO UPB tasks DO
-			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+		get tasks((TASK task) VOID:
+			IF date OF task = date THEN
+				printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
 
-			IF state OF tasks[i] = task_done
-			THEN printf(($g"[9m"gg"[m"l$, esc, title OF tasks[i], esc))
-			ELSE printf(($gl$, title OF tasks[i]))
-			FI;
+				IF state OF task = task_done
+				THEN printf(($g"[9m"gg"[m"l$, esc, title OF task, esc))
+				ELSE printf(($gl$, title OF task))
+				FI;
 
-			IF desc OF tasks[i] /= "" THEN
-				[] STRING lines = split text(desc OF tasks[i], REPR 10);
+				IF desc OF task /= "" THEN
+					[] STRING lines = split text(desc OF task, REPR 10);
 
-				FOR j TO UPB lines DO
-					[] STRING parts = wrap text(lines[j], 60);
-					STRING part = join(parts, REPR 10 + "  ");
-					printf(($"  "gl$, part))
-				OD
+					FOR j TO UPB lines DO
+						[] STRING parts = wrap text(lines[j], 60);
+						STRING part = join(parts, REPR 10 + "  ");
+						printf(($"  "gl$, part))
+					OD
+				FI;
+
+				i +:= 1
 			FI
-		OD
+		)
+	);
+
+	IF arg = "" THEN print tasks(today)
 	ELIF arg = "add"  OR arg = "a" THEN add(argi)
 	ELIF arg = "note" OR arg = "n" THEN sub note(argi)
 	ELIF arg = "todo" OR arg = "t" THEN sub todo(argi)
@@ -46,6 +53,12 @@ PROC main sub = (REF INT argi) VOID: (
 	ELIF arg = "sort" OR arg = "s" THEN sort(argi)
 	ELIF arg = "cal"  OR arg = "c" THEN cal(argi)
 	ELIF arg = "H"                 THEN show help page("pastel long")
-	ELSE show help page("pastel")
+	ELSE
+		INT n = TOINT arg;
+
+		IF n /= 0
+		THEN print tasks(today + n)
+		ELSE show help page("pastel")
+		FI
 	FI
 )

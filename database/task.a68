@@ -18,18 +18,6 @@ PROC get all tasks = [] TASK: (
 	tasks
 );
 
-PROC get all today tasks = [] TASK: (
-	FLEX [0] TASK tasks;
-
-	get tasks((TASK task) VOID:
-		IF date OF task = today
-		THEN tasks +:= task
-		FI
-	);
-
-	tasks
-);
-
 PROC write task = (TASK task) VOID:
 	append file(path tasks, task to csv(task));
 

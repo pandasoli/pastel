@@ -4,7 +4,8 @@ PROC show help page = (STRING page) VOID: (
 	[] STRING lines =
 		IF page = "pastel" THEN
 			[] STRING (
-				"-> todo [a|r|d|s|c|n|t] [args]...",
+				"-> todo [a|r|d|s|c|n|t|<n>] [args]...",
+				"-> <n>  List tasks from index day",
 				"-> add  Add new task",
 				"-> rm   Remove task",
 				"-> done Mark task as done",
@@ -14,7 +15,7 @@ PROC show help page = (STRING page) VOID: (
 				"-> todo List todos",
 				"",
 				"Run 'todo [H]' to see all actions",
-				"and 'todo [todo|note] H' for specific actions"
+				"and 'todo [todo|note|cal] H' for specific actions"
 			)
 		ELIF page = "pastel long" THEN
 			[] STRING (
@@ -53,6 +54,11 @@ PROC show help page = (STRING page) VOID: (
 				"-> todo add  todo description ...   Add todo",
 				"-> todo rm   index...               Remove todo",
 				"-> todo done index...               Turn todo into done task"
+			)
+		ELIF page = "cal" THEN
+			[] STRING (
+				"-> todo cal [<n>]",
+				"-> cal <n>  Print month based on index"
 			)
 		ELSE [] STRING ()
 		FI;

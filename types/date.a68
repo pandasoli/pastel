@@ -14,6 +14,44 @@ OP = = (DATE a, b) BOOL:
 
 OP /= = (DATE a, b) BOOL: NOT (a = b);
 
+OP + = (DATE date, INT days) DATE: (
+	DATE result := date;
+	day OF result +:= days;
+
+	WHILE day OF result > days in month(month OF result, year OF result) DO
+		day OF result -:= days in month(month OF result, year OF result);
+		month OF result +:= 1;
+
+		IF month OF result > 12 THEN
+			month OF result := 1;
+			year OF result +:= 1
+		FI
+	OD;
+
+	WHILE day OF result < 1 DO
+		month OF result -:= 1;
+
+		IF month OF result < 1 THEN
+			month OF result := 12;
+			year OF result -:= 1
+		FI;
+
+		day OF result +:= days in month(month OF result, year OF result)
+	OD;
+
+	result
+);
+
+PROC days in month = (INT month, year) INT: (
+	IF month = 2 THEN (is leap year(year) | 29 | 28)
+	ELIF month = 4 OR month = 6 OR month = 9 OR month = 11 THEN 30
+	ELSE 31
+	FI
+);
+
+PROC is leap year = (INT year) BOOL:
+	year MOD 4 = 0 AND (year MOD 100 /= 0 OR year MOD 400 = 0);
+
 PROC date to str = (DATE date) STRING:
 	(month OF date <= 9 | "0" | "") + whole(month OF date, 0) + "/" +
 	(day OF date <= 9 | "0" | "") + whole(day OF date, 0) + "/" +
