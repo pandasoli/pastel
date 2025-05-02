@@ -22,6 +22,7 @@ PROC first week month day = (INT month, year) INT: (
 
 PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 	[] STRING months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+	INT days in month = get days in month(month, year);
 
 	# Print header #
 	printf(($glgl$,
@@ -39,7 +40,7 @@ PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 
 	TO 6 DO
 		FROM first day TO 7 DO
-			IF day i <= days in month(month, year) THEN
+			IF day i <= days in month THEN
 				BOOL is today =
 					(year = year OF today) AND
 					(month = month OF today) AND

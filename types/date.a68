@@ -18,8 +18,8 @@ OP + = (DATE date, INT days) DATE: (
 	DATE result := date;
 	day OF result +:= days;
 
-	WHILE day OF result > days in month(month OF result, year OF result) DO
-		day OF result -:= days in month(month OF result, year OF result);
+	WHILE day OF result > get days in month(month OF result, year OF result) DO
+		day OF result -:= get days in month(month OF result, year OF result);
 		month OF result +:= 1;
 
 		IF month OF result > 12 THEN
@@ -36,13 +36,13 @@ OP + = (DATE date, INT days) DATE: (
 			year OF result -:= 1
 		FI;
 
-		day OF result +:= days in month(month OF result, year OF result)
+		day OF result +:= get days in month(month OF result, year OF result)
 	OD;
 
 	result
 );
 
-PROC days in month = (INT month, year) INT: (
+PROC get days in month = (INT month, year) INT: (
 	IF month = 2 THEN (is leap year(year) | 29 | 28)
 	ELIF month = 4 OR month = 6 OR month = 9 OR month = 11 THEN 30
 	ELSE 31
