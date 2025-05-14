@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 
 PROC detect os = STRING:
-    IF get env("OS") /= "" THEN "Windows"
-    ELIF get env("SHELL") /= "" THEN "Unix-like"
-    ELSE "Unknown"
-    FI;
+	IF get env("OS") /= "" THEN "Windows"
+	ELIF get env("SHELL") /= "" THEN "Unix-like"
+	ELSE "Unknown"
+	FI;
 
 PROC append file = (STRING path, raw text) VOID: (
 	STRING os = detect os;
@@ -27,14 +27,6 @@ PROC append file = (STRING path, raw text) VOID: (
 	FI
 );
 
-CO
-PROC move file = (STRING from, to) VOID:
-	IF system("mv " + from + " " + to) /= 0 THEN
-		putf(stand error, ($"Couldn't move "g" to "gl$, from, to));
-		stop
-	FI;
-CO
-
 PROC create directory = (STRING path) VOID:
 	IF system("mkdir " + path) /= 0 THEN
 		putf(stand error, ($"Couldn't create "gl$, path));
@@ -51,4 +43,3 @@ PROC whoami = STRING: (
 
 	output[:UPB output - 1]
 )
-
