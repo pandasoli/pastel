@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
+# Avoid generating .Random.seed everywhere.
+cd ~
 exec a68g "$SCRIPT_DIR/pastel.a68" -- "$@"
+cd $OLDPWD
