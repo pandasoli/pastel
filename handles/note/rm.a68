@@ -18,7 +18,7 @@ PROC note rm = (INT argi) VOID: (
 		INT i := 1, index := 1;
 
 		WHILE i <= UPB notes DO
-			IF group OF notes[i] = groupTHEN
+			IF group OF notes[i] = group THEN
 				IF index INCL indexes THEN remove index(i); i -:= 1 FI;
 				index +:= 1
 			FI;
@@ -29,7 +29,7 @@ PROC note rm = (INT argi) VOID: (
 	FOR i FROM argi TO a68g argc
 	DO STRING arg = a68g argv(i);
 		IF is group(arg) THEN
-			group := arg;
+			group := arg[2:UPB arg - 1];
 			remove indexes;
 			indexes := [] INT ()
 		ELSE indexes +:= TOINT arg
