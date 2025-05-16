@@ -11,7 +11,7 @@ PR include "rm.a68" PR;
 PROC sub note = (REF INT argi) VOID: (
 	PROC print notes = ([] NOTE notes) VOID:
 		FOR i TO UPB notes DO
-			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+			printf(($gg(0)g" "$, cl one, i, cl clear));
 
 			[] STRING lines = split text(content OF notes[i], REPR 10);
 
@@ -45,7 +45,7 @@ PROC sub note = (REF INT argi) VOID: (
 		[] STRING groups = get note groups;
 
 		FOR j TO UPB groups
-		DO printf(($"["g"]"l$, groups[j]))
+		DO printf(($g"["g"]"gl$, cl one, groups[j], cl clear))
 		OD;
 
 		new line(stand out);

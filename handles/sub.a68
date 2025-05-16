@@ -22,10 +22,10 @@ PROC main sub = (REF INT argi) VOID: (
 
 		get tasks((TASK task) VOID:
 			IF date OF task = date THEN
-				printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+				printf(($gg(0)g" "$, cl one, i, cl clear));
 
 				IF state OF task = task_done
-				THEN printf(($g"[9m"gg"[m"l$, esc, title OF task, esc))
+				THEN printf(($gggl$, cl three, title OF task, cl clear))
 				ELSE printf(($gl$, title OF task))
 				FI;
 

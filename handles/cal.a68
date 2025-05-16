@@ -53,8 +53,8 @@ PROC print calendar = (INT month, day, year, [] TASK tasks) VOID: (
 					FI
 				OD;
 
-				IF is today THEN printf(($g"[30;47m"$, REPR 27))
-				ELIF has tasks THEN printf(($g"[37;100m"$, REPR 27))
+				IF is today THEN printf(($gg"[7m"$, cl one, esc))
+				ELIF has tasks THEN print(cl two)
 				FI;
 
 				printf(($gg(0)$, (day i < 10 | " " | ""), day i));

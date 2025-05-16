@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*- #
 
-
 PR include "os.a68" PR;
 PR include "utils.a68" PR;
 PR include "text processing.a68" PR;
 PR include "help.a68" PR
 
 PR include "handles/sub.a68" PR;
+
+STRING
+  cl clear = esc + "[m",
+  cl one = esc + "[1;31m",
+  cl two = esc + "[37;100m",
+  cl three = esc + "[9m";
 
 BEGIN
 	INT argi := 2;

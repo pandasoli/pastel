@@ -21,7 +21,7 @@ PROC sub todo = (REF INT argi) VOID: (
 		[] TODO todos = get all todos;
 
 		FOR i TO UPB todos DO
-			printf(($g"[1m"g(0)g"[m "$, esc, i, esc));
+			printf(($gg(0)g" "$, cl one, i, cl clear));
 			printf(($gl$, title OF todos[i]));
 
 			IF desc OF todos[i] /= "" THEN
