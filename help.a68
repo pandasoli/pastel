@@ -1,64 +1,66 @@
 # -*- coding: utf-8 -*- #
 
 PROC show help page = (STRING page) VOID: (
+  PROC arrow = STRING: REPR 27 + "[1;31m->" + REPR 27 + "[m ";
+
 	[] STRING lines =
 		IF page = "pastel" THEN
 			[] STRING (
-				"-> todo [a|r|d|s|c|n|t|<n>] [args]...",
-				"-> <n>  List tasks from index day",
-				"-> add  Add new task",
-				"-> rm   Remove task",
-				"-> done Mark task as done",
-				"-> sort Sort tasks",
-				"-> cal  Show calendar",
-				"-> note List notes",
-				"-> todo List todos",
+				arrow + "todo [a|r|d|s|c|n|t|<n>] [args]...",
+				arrow + "<n>  List tasks from index day",
+				arrow + "add  Add new task",
+				arrow + "rm   Remove task",
+				arrow + "done Mark task as done",
+				arrow + "sort Sort tasks",
+				arrow + "cal  Show calendar",
+				arrow + "note List notes",
+				arrow + "todo List todos",
 				"",
 				"Run 'todo [H]' to see all actions",
 				"and 'todo [todo|note|cal] H' for specific actions"
 			)
 		ELIF page = "pastel long" THEN
 			[] STRING (
-				"-> add  task description ...    Add new task",
-				"-> rm   index...                Remove task",
-				"-> done index...                Mark task as done",
-				"-> sort                         Sort tasks",
-				"-> cal                          Show calendar",
+				arrow + "add  task description ...    Add new task",
+				arrow + "rm   index...                Remove task",
+				arrow + "done index...                Mark task as done",
+				arrow + "sort                         Sort tasks",
+				arrow + "cal                          Show calendar",
 				"",
-				"-> note                             List notes",
-				"-> note 'groups'                    List groups",
-				"-> note group                       List group notes",
-				"-> note add note... ['['group']']   Add note",
-				"-> note rm  index... ['['group']']  Remove note",
+				arrow + "note                             List notes",
+				arrow + "note 'groups'                    List groups",
+				arrow + "note group                       List group notes",
+				arrow + "note add note... ['['group']']   Add note",
+				arrow + "note rm  index... ['['group']']  Remove note",
 				"",
-				"-> todo                             List notes",
-				"-> todo add  todo description ...   Add todo",
-				"-> todo rm   index...               Remove todo",
-				"-> todo done index...               Turn todo into done task",
+				arrow + "todo                             List notes",
+				arrow + "todo add  todo description ...   Add todo",
+				arrow + "todo rm   index...               Remove todo",
+				arrow + "todo done index...               Turn todo into done task",
 				"",
-				"-> debug [args]...              Use data for debug"
+				arrow + "debug [args]...              Use data for debug"
 			)
 		ELIF page = "note" THEN
 			[] STRING (
-				"-> todo note [a|r|d] [args]...",
-				"-> note                               List notes",
-				"-> note 'groups'                      List groups",
-				"-> note group                         List group notes",
-				"-> note add   note... ['['group']']   Add note",
-				"-> note rm    index... ['['group']']  Remove note"
+				arrow + "todo note [a|r|d] [args]...",
+				arrow + "note                               List notes",
+				arrow + "note 'groups'                      List groups",
+				arrow + "note group                         List group notes",
+				arrow + "note add   note... ['['group']']   Add note",
+				arrow + "note rm    index... ['['group']']  Remove note"
 			)
 		ELIF page = "todo" THEN
 			[] STRING (
-				"-> todo todo [a|r|d] [args]...",
-				"-> todo                             List notes",
-				"-> todo add  todo description ...   Add todo",
-				"-> todo rm   index...               Remove todo",
-				"-> todo done index...               Turn todo into done task"
+				arrow + "todo todo [a|r|d] [args]...",
+				arrow + "todo                             List notes",
+				arrow + "todo add  todo description ...   Add todo",
+				arrow + "todo rm   index...               Remove todo",
+				arrow + "todo done index...               Turn todo into done task"
 			)
 		ELIF page = "cal" THEN
 			[] STRING (
-				"-> todo cal [<n>]",
-				"-> cal <n>  Print month based on index"
+				arrow + "todo cal [<n>]",
+				arrow + "cal <n>  Print month based on index"
 			)
 		ELSE [] STRING ()
 		FI;
