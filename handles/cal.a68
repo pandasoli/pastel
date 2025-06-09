@@ -79,8 +79,8 @@ PROC cal = (INT argi) VOID: (
 	INT index = TOINT arg;
 	FLEX [0] TASK tasks;
 
-	IF arg = "H" OR (arg /= "" AND index = 0)
-	THEN show help page("cal")
+	IF arg /= "" AND index = 0
+	THEN printf(($"Unexpected option '"g"'"l$, arg))
 	ELSE INT
 		month := month OF today,
 		day := day OF today,

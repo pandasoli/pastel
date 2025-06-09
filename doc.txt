@@ -1,0 +1,95 @@
+PASTEL(1)                   User Commands                  PASTEL(1)
+
+NAME
+       pastel - task and note management system
+
+SYNOPSIS
+       todo [COMMAND] [ARGUMENTS...]
+
+DESCRIPTION
+       Pastel is an open-source, self-organizer task list CLI
+       program I'm planning and making myself, and for myself use.
+       All features and use cases are made based on my personal use
+       and needs.
+
+       I really encourage you not using this app, instead learn the
+       code and make your own.
+
+GENERAL COMMANDS
+       todo [a|r|d|m|s|c|n|t|e|N] [ARGUMENTS...]
+              Main command with various subcommands
+
+       todo N
+              List tasks from day index N
+
+TASK COMMANDS
+       todo [a|r|d|m|s] [ARGUMENTS...]
+
+       todo add TITLE [DESCRIPTION]...
+              Add new task with optional description
+
+       todo rm INDEX...
+              Remove task(s) by index number(s)
+
+       todo done INDEX...
+              Mark task(s) as completed
+
+       todo move DAY-FROM-INDEX INDEX... DAY-TO-INDEX
+              Move task(s) between days
+
+       todo sort
+              Sort tasks
+
+NOTE COMMANDS
+       todo note [g|a|r] [ARGUMENTS...]
+
+       todo note
+              List all notes
+
+       todo note groups
+              List all groups
+
+       todo note GROUP
+              List all note in group (global group if not specified)
+
+       todo note add NOTE ["["GROUP"]"]
+              Add new note in group (global group if not specified)
+
+       todo note rm INDEX... ["["GROUP"]"]
+              Remove note(s) from group (global group if not specified)
+
+TODO COMMANDS
+       todo todo [a|r|d] [ARGUMENTS...]
+
+       todo todo
+              List all todo items
+
+       todo todo add TODO [DESCRIPTION]...
+              Add new todo item
+
+       todo todo rm INDEX...
+              Remove todo item(s)
+
+       todo todo done INDEX...
+              Mark todo item(s) as completed
+
+EVENT COMMANDS
+       todo todo [a|r|reset] [ARGUMENTS...]
+
+       todo event
+              List all events
+
+       todo event add TITLE [DATE]
+              Add new event (date format: MM/DD/YYYY - today if not specified)
+
+       todo event rm INDEX...
+              Remove event(s)
+
+       todo event reset INDEX...
+              Reset event time to default
+
+CALENDAR COMMANDS
+       todo cal [N]
+              Show calendar for month index N (current month if omitted)
+
+PASTEL(1)                   June 2024                      PASTEL(1)

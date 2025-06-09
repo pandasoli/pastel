@@ -32,7 +32,6 @@ PROC sub note = (REF INT argi) VOID: (
 
 		IF   arg = "add"    OR arg = "a" THEN note add(argi)
 		ELIF arg = "rm"     OR arg = "r" THEN note rm(argi)
-		ELIF arg = "H"                   THEN show help page("note")
 		ELIF arg = "groups" OR arg = "g" THEN
 			[] STRING groups = get note groups;
 

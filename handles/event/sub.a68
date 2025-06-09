@@ -15,7 +15,7 @@ PROC sub event = (REF INT argi) VOID:
 		IF   arg = "add"   OR arg = "a" THEN event add(argi)
 		ELIF arg = "rm"    OR arg = "r" THEN event rm(argi)
 		ELIF arg = "reset"              THEN event reset(argi)
-		ELIF arg = "H"                  THEN show help page("event")
+		ELSE printf(($"Unexpected option '"g"'"l$, arg))
 		FI
 	ELSE
 		[] EVENT events = get all events;

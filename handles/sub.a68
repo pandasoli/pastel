@@ -56,13 +56,12 @@ PROC main sub = (REF INT argi) VOID: (
 	ELIF arg = "move"  OR arg = "m" THEN move(argi)
 	ELIF arg = "sort"  OR arg = "s" THEN sort(argi)
 	ELIF arg = "cal"   OR arg = "c" THEN cal(argi)
-	ELIF arg = "H"                  THEN show help page("pastel long")
 	ELSE
 		INT n = TOINT arg;
 
 		IF n /= 0
 		THEN print tasks(today + n)
-		ELSE show help page("pastel")
+		ELSE printf(($"Unexpected option '"g"'"l$, arg))
 		FI
 	FI
 )

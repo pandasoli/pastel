@@ -27,7 +27,7 @@ learn the code and make your own.
 </div>
 
 ```sh
-$ todo H     # Print usage help page
+$ man ./doc.txt     # Print usage help page
 ```
 
 <br>
