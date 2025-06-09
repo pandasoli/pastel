@@ -6,19 +6,20 @@ PROC show help page = (STRING page) VOID: (
 	[] STRING lines =
 		IF page = "pastel" THEN
 			[] STRING (
-				arrow + "todo [a|r|d|m|s|c|n|t|<n>] [args]...",
-				arrow + "<n>  List tasks from index day",
-				arrow + "add  Add new task",
-				arrow + "rm   Remove task",
-				arrow + "done Mark task as done",
-				arrow + "cal  Show calendar",
-				arrow + "sort Sort tasks",
-				arrow + "move Move tasks",
-				arrow + "note List notes",
-				arrow + "todo List todos",
+				arrow + "todo [a|r|d|m|s|c|n|t|e|<n>] [args]...",
+				arrow + "<n>   List tasks from index day",
+				arrow + "add   Add new task",
+				arrow + "rm    Remove task",
+				arrow + "done  Mark task as done",
+				arrow + "cal   Show calendar",
+				arrow + "sort  Sort tasks",
+				arrow + "move  Move tasks",
+				arrow + "note  List notes",
+				arrow + "todo  List todos",
+				arrow + "event List events",
 				"",
 				"Run 'todo [H]' to see all actions",
-				"and 'todo [todo|note|cal] H' for specific actions"
+				"and 'todo [todo|note|event|cal] H' for specific actions"
 			)
 		ELIF page = "pastel long" THEN
 			[] STRING (
@@ -40,6 +41,11 @@ PROC show help page = (STRING page) VOID: (
 				arrow + "todo rm   index...               Remove todo",
 				arrow + "todo done index...               Turn todo into done task",
 				"",
+        arrow + "event                       List events",
+        arrow + "event add   title date ...  Add event",
+        arrow + "event rm    index...        Remove event",
+        arrow + "event reset index...        Reset event time",
+        "",
 				arrow + "debug [args]...              Use data for debug"
 			)
 		ELIF page = "note" THEN
@@ -59,6 +65,14 @@ PROC show help page = (STRING page) VOID: (
 				arrow + "todo rm   index...               Remove todo",
 				arrow + "todo done index...               Turn todo into done task"
 			)
+    ELIF page = "event" THEN
+      [] STRING (
+        arrow + "todo event [a|r|reset] [args]...",
+        arrow + "event                       List events",
+        arrow + "event add   title date ...  Add event",
+        arrow + "event rm    index...        Remove event",
+        arrow + "event reset index...        Reset event time"
+      )
 		ELIF page = "cal" THEN
 			[] STRING (
 				arrow + "todo cal [<n>]",

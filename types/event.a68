@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*- #
+
+PR include "date.a68" PR;
+
+STRING event csv header = "TITLE,DATE";
+
+MODE EVENT = STRUCT (
+  STRING title,
+  DATE date
+);
+
+OP +:= = (REF FLEX [] EVENT in out, EVENT item) VOID: (
+	[UPB in out + 1] EVENT new;
+	new[:UPB in out] := in out;
+	new[UPB new] := item;
+	in out := new
+);
+
+PROC csv to event = (CSVFIELDS fields) EVENT:
+	EVENT(
+		# title # fields[1],
+		# date # str to date(fields[2])
+	);
+
+PROC event to csv = (EVENT event) STRING: (
+	[] STRING fields = (
+		# title # title OF event,
+		# date # date to str(date OF event)
+	);
+
+	join(fields, ",")
+)

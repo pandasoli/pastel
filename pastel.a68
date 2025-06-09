@@ -11,7 +11,8 @@ STRING
   cl clear = esc + "[m",
   cl one = esc + "[1;31m",
   cl two = esc + "[37;100m",
-  cl three = esc + "[9m";
+  cl three = esc + "[9m",
+  cl four = esc + "[90m";
 
 BEGIN
 	INT argi := 2;

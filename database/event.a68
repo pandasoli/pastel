@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*- #
+
+PR include "paths.a68" PR
+PR include "utils.a68" PR
+PR include "../utils.a68" PR
+PR include "../types/event.a68" PR;
+
+PROC get events = (PROC (EVENT) VOID callback) VOID:
+	read db(path events, (CSVFIELDS fields) VOID:
+		callback(csv to event(fields))
+	);
+
+PROC get all events = [] EVENT: (
+	FLEX [0] EVENT events;
+
+	read db(path events, (CSVFIELDS fields) VOID:
+		events +:= csv to event(fields));
+
+	events
+);
+
+PROC write event = (EVENT event) VOID:
+	append file(path events, event to csv(event));
+
+PROC write events = ([] EVENT events) VOID: (
+	FILE f;
+
+	IF open(f, path events, stand out channel) > 0 THEN
+		putf(stand error, ($"Couldn't open "gl$, path events));
+		stop
+	FI;
+
+	putf(f, ($gl$, event csv header));
+
+	FOR i TO UPB events DO
+		putf(f, ($gl$, event to csv(events[i])))
+	OD;
+
+	close(f)
+)

@@ -1,0 +1,24 @@
+# -*- coding: utf-8 -*- #
+
+# reset index ... #
+PROC event reset = (REF INT argi) VOID: (
+	FLEX [0] INT indexes;
+
+	FOR j FROM argi TO a68g argc DO
+		STRING arg = a68g argv(j);
+		indexes +:= TOINT arg
+	OD;
+
+	[0] EVENT events := get all events;
+	INT i := 1;
+
+	FOR j TO UPB events DO
+    IF i INCL indexes
+    THEN date OF events[j] := today
+    FI;
+
+    i +:= 1
+	OD;
+
+	write events(events)
+)

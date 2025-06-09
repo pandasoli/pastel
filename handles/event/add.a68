@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*- #
+
+# add title date... title #
+PROC event add = (REF INT argi) VOID:
+	WHILE argi <= a68g argc DO
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
+
+		EVENT event := (
+			# title # arg,
+			# date # today
+		);
+
+		IF argi <= a68g argc
+		THEN date OF event := str to date(a68g argv(argi));
+			argi +:= 1
+		FI;
+
+		write event(event)
+	OD

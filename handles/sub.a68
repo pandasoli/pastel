@@ -12,7 +12,8 @@ PR include "cal.a68" PR;
 PR include "move.a68" PR
 
 PR include "note/sub.a68" PR
-PR include "todo/sub.a68" PR;
+PR include "todo/sub.a68" PR
+PR include "event/sub.a68" PR;
 
 PROC main sub = (REF INT argi) VOID: (
 	STRING arg := a68g argv(argi);
@@ -46,15 +47,16 @@ PROC main sub = (REF INT argi) VOID: (
 	);
 
 	IF arg = "" THEN print tasks(today)
-	ELIF arg = "add"  OR arg = "a" THEN add(argi)
-	ELIF arg = "note" OR arg = "n" THEN sub note(argi)
-	ELIF arg = "todo" OR arg = "t" THEN sub todo(argi)
-	ELIF arg = "rm"   OR arg = "r" THEN rm(argi)
-	ELIF arg = "done" OR arg = "d" THEN done(argi)
-	ELIF arg = "move" OR arg = "m" THEN move(argi)
-	ELIF arg = "sort" OR arg = "s" THEN sort(argi)
-	ELIF arg = "cal"  OR arg = "c" THEN cal(argi)
-	ELIF arg = "H"                 THEN show help page("pastel long")
+	ELIF arg = "note"  OR arg = "n" THEN sub note(argi)
+	ELIF arg = "todo"  OR arg = "t" THEN sub todo(argi)
+	ELIF arg = "event" OR arg = "e" THEN sub event(argi)
+	ELIF arg = "add"   OR arg = "a" THEN add(argi)
+	ELIF arg = "rm"    OR arg = "r" THEN rm(argi)
+	ELIF arg = "done"  OR arg = "d" THEN done(argi)
+	ELIF arg = "move"  OR arg = "m" THEN move(argi)
+	ELIF arg = "sort"  OR arg = "s" THEN sort(argi)
+	ELIF arg = "cal"   OR arg = "c" THEN cal(argi)
+	ELIF arg = "H"                  THEN show help page("pastel long")
 	ELSE
 		INT n = TOINT arg;
 

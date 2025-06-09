@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*- #
+
+PR include "../../database/event.a68" PR;
+
+PR include "add.a68" PR;
+PR include "rm.a68" PR;
+PR include "reset.a68" PR;
+
+# event [add|rm|reset] #
+PROC sub event = (REF INT argi) VOID:
+	IF argi <= a68g argc THEN
+		STRING arg = a68g argv(argi);
+		argi +:= 1;
+
+		IF   arg = "add"   OR arg = "a" THEN event add(argi)
+		ELIF arg = "rm"    OR arg = "r" THEN event rm(argi)
+		ELIF arg = "reset"              THEN event reset(argi)
+		ELIF arg = "H"                  THEN show help page("event")
+		FI
+	ELSE
+		[] EVENT events = get all events;
+
+		FOR i TO UPB events DO
+			printf(($gg(0)g" "$, cl one, i, cl clear));
+
+      printf(($g$, title OF events[i]));
+
+      printf(($g$, cl four, " -- ", cl clear));
+      printf(($g$, cl one, date to str(date OF events[i]), cl clear));
+
+      newline(stand out)
+		OD
+	FI

@@ -1,0 +1,22 @@
+# -*- coding: utf-8 -*- #
+
+# rm indexes... #
+PROC event rm = (INT argi) VOID: (
+	FLEX [0] INT indexes;
+
+	FOR i FROM argi TO a68g argc DO
+		STRING arg = a68g argv(i);
+		indexes +:= TOINT arg
+	OD;
+
+	FLEX [0] EVENT new events;
+	INT index := 1;
+
+	get events((EVENT event) VOID: (
+    IF NOT (index INCL indexes)
+    THEN new events +:= event FI;
+    index +:= 1
+	));
+
+	write events(new events)
+)

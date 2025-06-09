@@ -3,6 +3,7 @@
 PR include "types/task.a68" PR
 PR include "types/note.a68" PR
 PR include "types/todo.a68" PR
+PR include "types/event.a68" PR
 PR include "os.a68" PR;
 PR include "csv.a68" PR
 PR include "database/paths.a68" PR;
@@ -27,5 +28,6 @@ BEGIN
 	a(path tasks, task csv header);
 	a(path notes, note csv header);
 	a(path todos, todo csv header);
+	a(path events, event csv header);
 	a(path lastid, "0")
 END
