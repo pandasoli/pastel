@@ -6,13 +6,14 @@ PROC show help page = (STRING page) VOID: (
 	[] STRING lines =
 		IF page = "pastel" THEN
 			[] STRING (
-				arrow + "todo [a|r|d|s|c|n|t|<n>] [args]...",
+				arrow + "todo [a|r|d|m|s|c|n|t|<n>] [args]...",
 				arrow + "<n>  List tasks from index day",
 				arrow + "add  Add new task",
 				arrow + "rm   Remove task",
 				arrow + "done Mark task as done",
-				arrow + "sort Sort tasks",
 				arrow + "cal  Show calendar",
+				arrow + "sort Sort tasks",
+				arrow + "move Move tasks",
 				arrow + "note List notes",
 				arrow + "todo List todos",
 				"",
@@ -24,6 +25,7 @@ PROC show help page = (STRING page) VOID: (
 				arrow + "add  task description ...    Add new task",
 				arrow + "rm   index...                Remove task",
 				arrow + "done index...                Mark task as done",
+        arrow + "move day-i index... day-i    Move tasks",
 				arrow + "sort                         Sort tasks",
 				arrow + "cal                          Show calendar",
 				"",

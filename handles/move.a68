@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*- #
+
+# move day-index indexes... day-index #
+PROC move = (REF INT argi) VOID: (
+	FLEX [0] INT indexes;
+  INT from := 0, to := 0;
+
+	FOR j FROM argi TO a68g argc DO
+		STRING arg = a68g argv(j);
+
+      IF j = argi      THEN from := (arg = "-"|0|TOINT arg)
+    ELIF j = a68g argc THEN to   := (arg = "-"|0|TOINT arg)
+    ELSE indexes +:= TOINT arg
+    FI
+	OD;
+
+  DATE
+    from date = today + from,
+    to date = today + to;
+
+  FLEX [0] TASK new tasks;
+  INT i := 1;
+
+  get tasks((TASK task) VOID: (
+    TASK new := task;
+
+    IF date OF task = from date THEN
+      IF i INCL indexes THEN date OF new := to date
+      FI;
+      i +:= 1
+    FI;
+
+    new tasks +:= new
+  ));
+
+	write tasks(new tasks)
+)
